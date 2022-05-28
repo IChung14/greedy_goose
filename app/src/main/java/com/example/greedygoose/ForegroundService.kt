@@ -17,8 +17,7 @@ class ForegroundService : Service() {
         throw UnsupportedOperationException("Not yet implemented")
     }
 
-    override fun onCreate() {
-        super.onCreate()
+    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         // create the custom or default notification
         // based on the android version
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startMyOwnForeground() else startForeground(
@@ -30,9 +29,7 @@ class ForegroundService : Service() {
         // and display the content on screen
         val window = Window(this)
         window.open()
-    }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         return super.onStartCommand(intent, flags, startId)
     }
 

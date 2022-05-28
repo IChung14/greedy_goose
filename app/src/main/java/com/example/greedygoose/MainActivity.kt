@@ -5,13 +5,22 @@ import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.Settings
+import android.widget.Button
+import com.example.greedygoose.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+
+    lateinit var binding: ActivityMainBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
-        checkOverlayPermission()
-        startService()
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+
+        binding.foreGroundButton.setOnClickListener {
+            checkOverlayPermission()
+            startService()
+        }
     }
 
     // method for starting the service
@@ -35,12 +44,5 @@ class MainActivity : AppCompatActivity() {
             val myIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
             startActivity(myIntent)
         }
-    }
-
-    // check for permission again when user grants it from
-    // the device settings, and start the service
-    override fun onResume() {
-        super.onResume()
-        startService()
     }
 }
