@@ -15,8 +15,8 @@ import android.graphics.Typeface
 import android.text.style.StyleSpan
 
 import android.text.SpannableString
-
-
+import android.view.View
+import android.widget.Button
 
 
 class MainActivity : AppCompatActivity() {
@@ -52,11 +52,14 @@ class MainActivity : AppCompatActivity() {
         greedyGooseText.setText(Html.fromHtml(greedy));
         greedyGooseText.setTextSize(80F)
 
+        val entertainmentButton = findViewById<Button>(R.id.entertainmentButton);
+        entertainmentButton.setOnClickListener(object : View.OnClickListener {
+            override fun onClick(view: View) {
+                val intent = Intent(this,EntertainmentFragment::class.java) startActivity(intent)
+            }
+        })
 
-//        binding.foreGroundButton.setOnClickListener {
-//            checkOverlayPermission()
-//            startService()
-//        }
+
     }
 
     // method for starting the service
