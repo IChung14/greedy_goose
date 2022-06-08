@@ -8,13 +8,7 @@ import android.provider.Settings
 import android.text.Html
 import android.widget.TextView
 import com.example.greedygoose.databinding.ActivityMainBinding
-import android.text.Spanned
 
-import android.graphics.Typeface
-
-import android.text.style.StyleSpan
-
-import android.text.SpannableString
 import android.view.View
 import android.widget.Button
 
@@ -55,7 +49,7 @@ class MainActivity : AppCompatActivity() {
         val entertainmentButton = findViewById<Button>(R.id.entertainmentButton);
         entertainmentButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                val intent = Intent(this,EntertainmentFragment::class.java) startActivity(intent)
+                startActivity(Intent(this@MainActivity, entertainment::class.java))
             }
         })
 
