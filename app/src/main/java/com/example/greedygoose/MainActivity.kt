@@ -39,7 +39,7 @@ class MainActivity : AppCompatActivity() {
         val greedyGooseText = findViewById<TextView>(R.id.textView)
         val greedy = getColoredSpanned("Greedy Goose", "#e83372", "#E191CA")
         greedyGooseText.setText(Html.fromHtml(greedy));
-        greedyGooseText.setTextSize(80F)
+        greedyGooseText.setTextSize(90F)
 
         val entertainmentButton = findViewById<Button>(R.id.entertainmentButton);
         entertainmentButton.setOnClickListener(object : View.OnClickListener {

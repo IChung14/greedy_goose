@@ -7,35 +7,45 @@
     android:background = "@drawable/grass"
     tools:context=".MainActivity">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/productivityButton"
-        android:layout_width="153dp"
-        android:layout_height="70dp"
-        android:layout_marginEnd="40dp"
-        android:background="#E191CA"
-        android:text="Productivity \n Mode"
-        app:layout_constraintBottom_toBottomOf="parent"
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:gravity="center|bottom"
+        android:orientation="horizontal"
+        android:layout_marginBottom="30dp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.079"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.922" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="parent">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/entertainmentButton"
-        android:layout_width="153dp"
-        android:layout_height="70dp"
-        android:layout_marginEnd="220dp"
-        android:background="#E191CA"
-        android:text="Entertainment Mode"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.079"
-        app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.922" />
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/entertainmentButton"
+            android:layout_width="153dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="5sp"
+            android:layout_marginTop="0sp"
+            android:layout_marginRight="2sp"
+            android:layout_marginBottom="5sp"
+            android:background="#E191CA"
+            android:fontFamily="@font/luckiestguy"
+            android:text="Entertainment \n Mode"
+            android:textSize="18sp" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/productivityButton"
+            android:layout_width="153dp"
+            android:layout_height="70dp"
+            android:layout_marginLeft="5sp"
+            android:layout_marginTop="0sp"
+            android:layout_marginRight="2sp"
+            android:layout_marginBottom="5sp"
+            android:background="#E191CA"
+            android:fontFamily="@font/luckiestguy"
+            android:text="Productivity \n Mode"
+            android:textSize="18sp" />
+
+    </LinearLayout>
+
+
 
     <ImageButton
         android:id="@+id/settings_button"
@@ -57,6 +67,11 @@
         android:layout_height="213dp"
         android:gravity="center"
         android:text="GREEDY \n GOOSE"
+        android:fontFamily="@font/luckiestguy"
+        android:shadowColor="#000000"
+        android:shadowDx="5"
+        android:shadowDy="5"
+        android:shadowRadius="2"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.475"
