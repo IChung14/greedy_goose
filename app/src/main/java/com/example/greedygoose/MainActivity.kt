@@ -14,27 +14,21 @@ import android.widget.Button
 
 
 class MainActivity : AppCompatActivity() {
-//    var relativeLayout = (.findViewById(R.id.homeview2) as RelativeLayout)
-//    TextView txt = (TextView)findViewById(R.id.textView)
 
     lateinit var binding: ActivityMainBinding
     private fun getColoredSpanned(text: String, color1: String, color2: String): String? {
         var html = ""
         var color = color1
-        for (i in 0..text.length-1) {
-            val character = text[i]
-            if (character != ' ') {
-                color = if (color == color1) {
-                    color2
-                } else {
-                    color1
-                }
+        for (element in text) {
+            if (element != ' ') {
+                color = if (color == color1) color2 else color1
             }
-            html += "<font color=$color><b>$character</b></font>"
+            html += "<font color=$color><b>$element</b></font>"
         }
-
         return html
     }
+
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,7 +43,7 @@ class MainActivity : AppCompatActivity() {
         val entertainmentButton = findViewById<Button>(R.id.entertainmentButton);
         entertainmentButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
-                startActivity(Intent(this@MainActivity, entertainment::class.java))
+                startActivity(Intent(this@MainActivity, Entertainment::class.java))
             }
         })
 
