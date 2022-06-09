@@ -4,6 +4,7 @@ import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
 import android.provider.Settings
 import android.text.Html
 import android.widget.TextView
@@ -44,6 +45,7 @@ class MainActivity : AppCompatActivity() {
         entertainmentButton.setOnClickListener(object : View.OnClickListener {
             override fun onClick(view: View) {
                 startActivity(Intent(this@MainActivity, Entertainment::class.java))
+                Handler().postDelayed({finish()}, 5000)
             }
         })
 
