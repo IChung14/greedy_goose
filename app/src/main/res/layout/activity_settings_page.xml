@@ -6,6 +6,54 @@
     android:layout_height="match_parent"
     tools:context=".SettingsPage">
 
+    <ImageButton
+        android:id="@+id/customization_image_button3"
+        android:layout_width="86dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="28dp"
+        android:adjustViewBounds="true"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/customization_title"
+        app:srcCompat="@drawable/tie_goose" />
+
+    <CheckBox
+        android:id="@+id/customization_check_box3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:layout_constraintEnd_toEndOf="@+id/customization_image_button3"
+        app:layout_constraintStart_toStartOf="@+id/customization_image_button3"
+        app:layout_constraintTop_toBottomOf="@+id/customization_image_button3" />
+
+    <ImageButton
+        android:id="@+id/customization_image_button2"
+        android:layout_width="86dp"
+        android:layout_height="85dp"
+        android:layout_marginTop="16dp"
+        android:adjustViewBounds="true"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintEnd_toStartOf="@+id/customization_image_button3"
+        app:layout_constraintStart_toEndOf="@+id/customization_image_button1"
+        app:layout_constraintTop_toBottomOf="@+id/customization_title"
+        app:srcCompat="@drawable/tie_goose" />
+
+    <CheckBox
+        android:id="@+id/customization_check_box2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:layout_constraintEnd_toEndOf="@+id/customization_image_button2"
+        app:layout_constraintStart_toStartOf="@+id/customization_image_button2"
+        app:layout_constraintTop_toBottomOf="@+id/customization_image_button2" />
+
     <TextView
         android:id="@+id/settings_title"
         android:layout_width="wrap_content"
@@ -63,5 +111,40 @@
         app:layout_constraintHorizontal_bias="0.109"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/privacy_check_box1" />
+
+    <ImageButton
+        android:id="@+id/customization_image_button1"
+        android:layout_width="86dp"
+        android:layout_height="85dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="16dp"
+        android:adjustViewBounds="true"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/customization_title"
+        app:srcCompat="@drawable/tie_goose" />
+
+    <CheckBox
+        android:id="@+id/customization_check_box1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:minWidth="0dp"
+        android:minHeight="0dp"
+        app:layout_constraintEnd_toEndOf="@+id/customization_image_button1"
+        app:layout_constraintStart_toStartOf="@+id/customization_image_button1"
+        app:layout_constraintTop_toBottomOf="@+id/customization_image_button1" />
+
+    <ImageButton
+        android:id="@+id/back_image_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.079"
+        app:layout_constraintStart_toStartOf="parent"
+        app:srcCompat="?attr/actionModeCloseDrawable" />/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -10,9 +10,6 @@ import android.text.Html
 import android.widget.TextView
 import com.example.greedygoose.databinding.ActivityMainBinding
 
-import android.view.View
-import android.widget.Button
-
 
 class MainActivity : AppCompatActivity() {
 
