@@ -44,6 +44,10 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this@MainActivity, Entertainment::class.java))
         }
 
+        val productivityButton = binding.productivityButton
+        productivityButton.setOnClickListener {
+            startActivity(Intent(this@MainActivity, TimerPage::class.java))
+        }
 
     }
 }

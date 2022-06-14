@@ -20,6 +20,10 @@
             android:exported="true"/>
 
         <activity
+            android:name=".TimerPage"
+            android:exported="false" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="true">
             <intent-filter>
@@ -28,6 +32,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <activity android:name="com.example.greedygoose.Entertainment" ></activity>
 
     </application>
