@@ -44,6 +44,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this@MainActivity, Entertainment::class.java))
         }
 
-
+        val settingsButton = binding.settingsButton
+        settingsButton.setOnClickListener {
+            startActivity(Intent(this@MainActivity, SettingsPage::class.java))
+        }
     }
 }
