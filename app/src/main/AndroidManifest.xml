@@ -3,7 +3,6 @@
     package="com.example.greedygoose">
 
     <!-- add required permission -->
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
@@ -16,7 +15,7 @@
 
         <!-- register the service -->
         <service
-            android:name=".ForegroundService"
+            android:name=".foreground.FloatingService"
             android:enabled="true"
             android:exported="true"/>
 
