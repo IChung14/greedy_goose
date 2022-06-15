@@ -15,8 +15,8 @@ import android.os.Handler
 class Entertainment : Activity() {
 
     private lateinit var binding: EntertainmentBinding
-    private val floatingLayout = FloatingLayout(this)
-    private var gooseMode = true
+    private val floatingLayout = FloatingLayout(this, R.drawable.angry_goose_left)
+    private val floatingEgg = FloatingLayout(this, R.drawable.egg)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,11 +27,8 @@ class Entertainment : Activity() {
 //            floatingLayout.destroy()
 //        }
 //        binding.alterGooseBtn.setOnClickListener {
-//            floatingLayout.updateView { fRoot ->
-//                fRoot.gooseImg.setImageResource(
-//                    if (gooseMode) R.drawable.alter_tie_goose else R.drawable.tie_goose
-//                )
-//                gooseMode = !gooseMode
+//            floatingEgg.updateView { fRoot ->
+//                fRoot.gooseImg.setImageResource(R.drawable.egg)
 //            }
 //        }
 
@@ -49,6 +46,7 @@ class Entertainment : Activity() {
         if (Settings.canDrawOverlays(this)) {
             // start the service based on the android version
             floatingLayout.setView()
+            floatingEgg.setView()
         }
     }
 

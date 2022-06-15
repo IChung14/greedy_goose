@@ -9,13 +9,14 @@ import android.os.IBinder
 import android.os.Looper
 import android.view.View
 import androidx.annotation.LayoutRes
+import com.example.greedygoose.R
 import com.example.greedygoose.databinding.FloatingLayoutBinding
 
 /**
  * FloatingLayout is owned by MainActivity
  * This class is a communication layer between the MainActivity and FloatingService
  */
-class FloatingLayout(private val context: Context) {
+class FloatingLayout(private val context: Context, imgName: Int) {
 
     var isShow = false
         private set
@@ -30,6 +31,10 @@ class FloatingLayout(private val context: Context) {
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             val binder = service as FloatingService.FloatingServiceBinder
             fService = binder.getService()
+
+            updateView { fRoot ->
+                fRoot.gooseImg.setImageResource(imgName)
+            }
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {}

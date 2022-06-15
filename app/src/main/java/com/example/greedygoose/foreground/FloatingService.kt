@@ -8,6 +8,9 @@ import android.os.IBinder
 import android.os.ResultReceiver
 import android.view.View
 import androidx.lifecycle.ViewModelProvider
+import android.R
+import android.widget.ImageView
+
 
 class FloatingService : Service() {
 
@@ -31,7 +34,7 @@ class FloatingService : Service() {
         floatingComponent2 = FloatingComponent(this)
 
         floatingComponent = FloatingComponent(this)         // construct a floating object
-        floatingComponent.setMovementModule {                      // making it responsive
+        floatingComponent2.setMovementModule {                      // making it responsive
             DragMovementModule(
                 it.getParams(),
                 it.binding.rootContainer,       // this is the view that will listen to drags

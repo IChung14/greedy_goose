@@ -53,7 +53,7 @@
         android:layout_height="50dp"
         android:layout_gravity="center"
         android:background="#7D7F7C"
-        android:src="@drawable/settings"
+        android:src="@drawable/egg_small"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.956"
@@ -89,7 +89,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.105"
-        app:srcCompat="@drawable/tie_goose" />
+        app:srcCompat="@drawable/tie_goose_left" />
 
     <ImageView
         android:id="@+id/imageView2"

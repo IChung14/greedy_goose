@@ -10,6 +10,7 @@
         android:id="@+id/gooseImg"
         android:layout_width="180dp"
         android:layout_height="120dp"
-        android:src="@drawable/tie_goose" />
+        android:src="@drawable/tie_goose_left" />
+
 
 </LinearLayout>
