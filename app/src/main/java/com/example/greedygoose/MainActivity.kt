@@ -8,12 +8,14 @@ import android.os.Handler
 import android.provider.Settings
 import android.text.Html
 import android.widget.TextView
+import androidx.lifecycle.ViewModel
 import com.example.greedygoose.databinding.ActivityMainBinding
 
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityMainBinding
+
     private fun getColoredSpanned(text: String, color1: String, color2: String): String? {
         var html = ""
         var color = color1

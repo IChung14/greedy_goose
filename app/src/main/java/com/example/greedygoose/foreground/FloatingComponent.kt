@@ -3,40 +3,26 @@ package com.example.greedygoose.foreground
 import android.content.Context
 import android.os.Bundle
 import android.os.ResultReceiver
-import android.view.View
+import com.example.greedygoose.foreground.movementModule.MovementModule
+import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
-class FloatingComponent(private val layoutRes: Int, private val context: Context) {
-    private var receiver: ResultReceiver? = null
-    private var floatingWindowModule: FloatingWindowModule? = null
-    private var floatingViewMovementModule: FloatingViewMovementModule? = null
+/**
+ * FloatingComponent is Semi
+ */
+class FloatingComponent(context: Context) {
+    var receiver: ResultReceiver? = null
+    var windowModule = FloatingWindowModule(context)
+    private var movementModule: MovementModule? = null
 
-    fun setUp() {
-        val ROOT_CONTAINER_ID = viewRootId
-        floatingWindowModule = FloatingWindowModule(context, layoutRes)
-        floatingWindowModule?.let {
-            it.create()
-            val floatingView: View = it.getView()
-            val rootContainer = floatingView.findViewById<View>(ROOT_CONTAINER_ID)
-            floatingViewMovementModule = FloatingViewMovementModule(
-                it.getParams(),
-                rootContainer,
-                it.windowManager,
-                floatingView
-            )
-            floatingViewMovementModule!!.run()
-        }
+    init {
+        // creating a floating view
+        windowModule.create()
         sendAction(ACTION_ON_CREATE, Bundle())
     }
 
-    fun setReceiver(receiver: ResultReceiver?) {
-        this.receiver = receiver
-    }
-
-    val viewRootId: Int
-        get() = context.resources.getIdentifier("root_container", "id", context.packageName)
-
-    fun getFloatingWindowModule(): FloatingWindowModule? {
-        return floatingWindowModule
+    fun setMovementModule(moduleHelper: (FloatingWindowModule)->MovementModule){
+        movementModule = moduleHelper(windowModule)
+        movementModule!!.run()
     }
 
     private fun sendAction(action: Int, bundle: Bundle) {
@@ -46,10 +32,9 @@ class FloatingComponent(private val layoutRes: Int, private val context: Context
     fun destroy() {
         sendAction(ACTION_ON_CLOSE, Bundle())
 
-        floatingWindowModule?.destroy()
-        floatingWindowModule = null
-        floatingViewMovementModule?.destroy()
-        floatingViewMovementModule = null
+        windowModule.destroy()
+        movementModule?.destroy()
+        movementModule = null
     }
 
     companion object {

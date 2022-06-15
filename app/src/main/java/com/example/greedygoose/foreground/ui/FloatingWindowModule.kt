@@ -1,24 +1,25 @@
-package com.example.greedygoose.foreground
+package com.example.greedygoose.foreground.ui
 
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
+import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
 import androidx.annotation.LayoutRes
+import com.example.greedygoose.databinding.FloatingLayoutBinding
 
-class FloatingWindowModule(
-    private val context: Context,
-    @param:LayoutRes private val layoutRes: Int
-) {
+class FloatingWindowModule(private val context: Context) {
     private var params: WindowManager.LayoutParams? = null
-    private var view: View? = null
+    lateinit var binding: FloatingLayoutBinding
+        private set
     var windowManager: WindowManager? = null
         private set
 
     fun create() {
+        binding = FloatingLayoutBinding.inflate(LayoutInflater.from(context))
         windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowManager!!.addView(getView(), getParams())
+        windowManager!!.addView(binding.root, getParams())
     }
 
     fun getParams(): WindowManager.LayoutParams {
@@ -32,23 +33,17 @@ class FloatingWindowModule(
         return params as WindowManager.LayoutParams
     }
 
-    fun getView(): View {
-        if (view == null) view = View.inflate(context, layoutRes, null)
-        return view!!
-    }
-
     // Set to TYPE_SYSTEM_ALERT so that the Service can display it
     private val windowType: Int
         get() = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
 
     fun destroy() {
         try {
-            if (windowManager != null) if (view != null) windowManager!!.removeViewImmediate(view)
+            if (windowManager != null) windowManager!!.removeViewImmediate(binding.root)
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         } finally {
             params = null
-            view = null
             windowManager = null
         }
     }

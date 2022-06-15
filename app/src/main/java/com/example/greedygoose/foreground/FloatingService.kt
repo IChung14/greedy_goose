@@ -1,41 +1,52 @@
 package com.example.greedygoose.foreground
 
 import android.app.Service
+import android.content.Context
 import android.content.Intent
+import android.os.Binder
 import android.os.IBinder
 import android.os.ResultReceiver
 import android.view.View
+import androidx.lifecycle.ViewModelProvider
 
 class FloatingService : Service() {
-    private var floatingComponent: FloatingComponent? = null
 
-    override fun onBind(intent: Intent): IBinder? {
-        return null
+    // Binder given to clients
+    private val binder = FloatingServiceBinder()
+
+    inner class FloatingServiceBinder : Binder() {
+        // Return this instance of LocalService so clients can call public methods
+        fun getService(): FloatingService = this@FloatingService
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val layoutRes = intent.getIntExtra(EXTRA_LAYOUT_RESOURCE, -1)
-        val receiver: ResultReceiver? = intent.getParcelableExtra(EXTRA_RECEIVER)
-        floatingComponent = FloatingComponent(layoutRes, this)
-        floatingComponent?.let {
-            if (receiver != null) it.setReceiver(receiver)
-            it.setUp()
-            view = it.getFloatingWindowModule()?.getView()
+    // This FloatingComponent holds 1 floating entity
+    lateinit var floatingComponent : FloatingComponent
+    lateinit var floatingComponent2 : FloatingComponent
+
+    override fun onBind(intent: Intent): IBinder? {
+
+        // TODO: THIS IS A DEMO CODE
+        //  This piece of code demonstrates that multiple FloatingComponent creates
+        //  multiple overlay views that moves around independently
+        floatingComponent2 = FloatingComponent(this)
+
+        floatingComponent = FloatingComponent(this)         // construct a floating object
+        floatingComponent.setMovementModule {                      // making it responsive
+            DragMovementModule(
+                it.getParams(),
+                it.binding.rootContainer,       // this is the view that will listen to drags
+                it.windowManager,
+                it.binding.root
+            )
         }
-        return START_STICKY_COMPATIBILITY
+
+        return binder
     }
 
     override fun onDestroy() {
-        floatingComponent?.destroy()
+        floatingComponent.destroy()
+        floatingComponent2.destroy()
         super.onDestroy()
-    }
-
-    companion object {
-        const val EXTRA_LAYOUT_RESOURCE = "extra_layout_resource"
-        const val EXTRA_RECEIVER = "extra_receiver"
-
-        // TODO: Memory leak
-        var view: View? = null
     }
 }
 

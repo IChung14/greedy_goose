@@ -9,17 +9,32 @@ import com.example.greedygoose.databinding.EntertainmentBinding
 import com.example.greedygoose.foreground.FloatingLayout
 import com.example.greedygoose.foreground.FloatingListener
 
+//TODO: consider converting it into a fragment and get viewModel from mainActivity
+class Entertainment : Activity() {
 
-class Entertainment() : Activity() {
     private lateinit var binding: EntertainmentBinding
+    private val floatingLayout = FloatingLayout(this)
+    private var gooseMode = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = EntertainmentBinding.inflate(layoutInflater)
-        setContentView(R.layout.entertainment)
+
+        binding.stopGooseBtn.setOnClickListener {
+            floatingLayout.destroy()
+        }
+        binding.alterGooseBtn.setOnClickListener {
+            floatingLayout.updateView { fRoot ->
+                fRoot.gooseImg.setImageResource(
+                    if (gooseMode) R.drawable.alter_tie_goose else R.drawable.tie_goose
+                )
+                gooseMode = !gooseMode
+            }
+        }
 
         startService()
 
+        setContentView(binding.root)
     }
 
 
@@ -30,14 +45,7 @@ class Entertainment() : Activity() {
         checkOverlayPermission()
         if (Settings.canDrawOverlays(this)) {
             // start the service based on the android version
-            val floatingListener: FloatingListener = object : FloatingListener {
-                override fun onCreateListener(view: View?) {}
-                override fun onCloseListener() {}
-            }
-
-            val floatingLayout = FloatingLayout(this, R.layout.floating_layout)
-            floatingLayout.setFloatingListener(floatingListener)
-            floatingLayout.create()
+            floatingLayout.setView()
         }
     }
 

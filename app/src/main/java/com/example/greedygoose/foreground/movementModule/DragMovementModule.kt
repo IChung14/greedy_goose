@@ -4,14 +4,15 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.View.OnTouchListener
 import android.view.WindowManager
+import com.example.greedygoose.foreground.movementModule.MovementModule
 
-class FloatingViewMovementModule(
+class DragMovementModule(
     private var params: WindowManager.LayoutParams?,
     private val rootContainer: View?,
     private var windowManager: WindowManager?,
     private var baseView: View?
-) {
-    fun run() {
+): MovementModule {
+    override fun run() {
         rootContainer?.setOnTouchListener(object : OnTouchListener {
             private var initialX = 0
             private var initialY = 0
@@ -42,7 +43,7 @@ class FloatingViewMovementModule(
         })
     }
 
-    fun destroy() {
+    override fun destroy() {
         try {
             if (windowManager != null) if (baseView != null) windowManager!!.removeViewImmediate(
                 baseView
