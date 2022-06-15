@@ -41,6 +41,7 @@ class MainActivity : AppCompatActivity() {
         val entertainmentButton = binding.entertainmentButton
         entertainmentButton.setOnClickListener {
             startActivity(Intent(this@MainActivity, Entertainment::class.java))
+            Handler().postDelayed({finish()}, 5000)
         }
 
         val settingsButton = binding.settingsButton
