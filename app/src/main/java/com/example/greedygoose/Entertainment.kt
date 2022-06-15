@@ -16,38 +16,22 @@ class Entertainment : Activity() {
 
     private lateinit var binding: EntertainmentBinding
     private val floatingLayout = FloatingLayout(this, R.drawable.egg)
-//    private val floatingEgg = FloatingLayout(this, R.drawable.egg)
+    private val floatingEgg = FloatingLayout(this, R.drawable.egg)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = EntertainmentBinding.inflate(layoutInflater)
-        //Handler().postDelayed({finish()}, 5000)
-
-//        binding.stopGooseBtn.setOnClickListener {
-//            floatingLayout.destroy()
-//        }
-//        binding.alterGooseBtn.setOnClickListener {
-//            floatingEgg.updateView { fRoot ->
-//                fRoot.gooseImg.setImageResource(R.drawable.egg)
-//            }
-//        }
-
-        startService()
-
+        checkOverlayPermission()
         setContentView(binding.root)
+
     }
 
-
-    // method for starting the service
-    private fun startService() {
-        // check if the user has already granted
-        // the Draw over other apps permission
-        checkOverlayPermission()
+    override fun onPause() {
+        super.onPause()
         if (Settings.canDrawOverlays(this)) {
             // start the service based on the android version
             floatingLayout.setView()
-//            floatingEgg.setView()
-
+            floatingEgg.setView()
         }
     }
 
