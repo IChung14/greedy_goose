@@ -4,10 +4,8 @@ import android.app.*
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.view.View
 import com.example.greedygoose.databinding.EntertainmentBinding
 import com.example.greedygoose.foreground.FloatingLayout
-import com.example.greedygoose.foreground.FloatingListener
 
 //TODO: consider converting it into a fragment and get viewModel from mainActivity
 class Entertainment : Activity() {
