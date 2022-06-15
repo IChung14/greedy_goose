@@ -15,8 +15,8 @@ import android.os.Handler
 class Entertainment : Activity() {
 
     private lateinit var binding: EntertainmentBinding
-    private val floatingLayout = FloatingLayout(this, R.drawable.angry_goose_left)
-    private val floatingEgg = FloatingLayout(this, R.drawable.egg)
+    private val floatingLayout = FloatingLayout(this, R.drawable.egg)
+//    private val floatingEgg = FloatingLayout(this, R.drawable.egg)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,8 @@ class Entertainment : Activity() {
         if (Settings.canDrawOverlays(this)) {
             // start the service based on the android version
             floatingLayout.setView()
-            floatingEgg.setView()
+//            floatingEgg.setView()
+
         }
     }
 

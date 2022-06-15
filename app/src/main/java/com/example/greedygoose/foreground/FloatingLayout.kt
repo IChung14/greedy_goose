@@ -44,7 +44,8 @@ class FloatingLayout(private val context: Context, imgName: Int) {
      * Updates a View under FloatingService
      */
     fun updateView(viewModifier: (FloatingLayoutBinding)->Unit){
-        viewModifier(fService.floatingComponent.windowModule.binding)
+//        viewModifier(fService.floatingComponent.windowModule.binding)
+        viewModifier(fService.floatingComponent2.windowModule.binding)
     }
 
     /**

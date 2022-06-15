@@ -10,6 +10,7 @@ import android.view.View
 import androidx.lifecycle.ViewModelProvider
 import android.R
 import android.widget.ImageView
+import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
 
 
 class FloatingService : Service() {
@@ -34,8 +35,16 @@ class FloatingService : Service() {
         floatingComponent2 = FloatingComponent(this)
 
         floatingComponent = FloatingComponent(this)         // construct a floating object
-        floatingComponent2.setMovementModule {                      // making it responsive
+        floatingComponent.setMovementModule {                      // making it responsive
             DragMovementModule(
+                it.getParams(),
+                it.binding.rootContainer,       // this is the view that will listen to drags
+                it.windowManager,
+                it.binding.root
+            )
+        }
+        floatingComponent2.setMovementModule {                      // making it responsive
+            TouchDeleteModule(
                 it.getParams(),
                 it.binding.rootContainer,       // this is the view that will listen to drags
                 it.windowManager,
