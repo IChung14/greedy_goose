@@ -10,27 +10,26 @@ import androidx.annotation.LayoutRes
 import com.example.greedygoose.databinding.FloatingLayoutBinding
 
 class FloatingWindowModule(private val context: Context) {
-    private var params: WindowManager.LayoutParams? = null
+    var params: WindowManager.LayoutParams? = null
     lateinit var binding: FloatingLayoutBinding
         private set
-    var windowManager: WindowManager? = null
-        private set
+    lateinit var windowManager: WindowManager
 
     fun create() {
+        if(params == null) params = defaultParam()
         binding = FloatingLayoutBinding.inflate(LayoutInflater.from(context))
         windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
-        windowManager!!.addView(binding.root, getParams())
+        windowManager.addView(binding.root, params)
     }
 
-    fun getParams(): WindowManager.LayoutParams {
-        if (params == null) params = WindowManager.LayoutParams(
+    fun defaultParam(): WindowManager.LayoutParams{
+        return WindowManager.LayoutParams(
             WindowManager.LayoutParams.WRAP_CONTENT,
             WindowManager.LayoutParams.WRAP_CONTENT,
             windowType,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
         )
-        return params as WindowManager.LayoutParams
     }
 
     // Set to TYPE_SYSTEM_ALERT so that the Service can display it
@@ -39,12 +38,11 @@ class FloatingWindowModule(private val context: Context) {
 
     fun destroy() {
         try {
-            if (windowManager != null) windowManager!!.removeViewImmediate(binding.root)
+            windowManager.removeViewImmediate(binding.root)
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         } finally {
             params = null
-            windowManager = null
         }
     }
 }

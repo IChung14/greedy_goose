@@ -14,7 +14,7 @@ class FloatingComponent(context: Context) {
     var windowModule = FloatingWindowModule(context)
     private var movementModule: MovementModule? = null
 
-    init {
+    fun createView() {
         // creating a floating view
         windowModule.create()
         sendAction(ACTION_ON_CREATE, Bundle())
