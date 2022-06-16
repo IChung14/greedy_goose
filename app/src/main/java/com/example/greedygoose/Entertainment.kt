@@ -9,6 +9,9 @@ import com.example.greedygoose.foreground.FloatingLayout
 import android.content.DialogInterface
 import android.app.AlertDialog;
 import android.os.Handler
+import android.util.DisplayMetrics
+import android.view.animation.TranslateAnimation
+import java.util.*
 
 
 //TODO: consider converting it into a fragment and get viewModel from mainActivity
@@ -16,7 +19,10 @@ class Entertainment : Activity() {
 
     private lateinit var binding: EntertainmentBinding
     private val floatingLayout = FloatingLayout(this, R.drawable.egg)
-    private val floatingEgg = FloatingLayout(this, R.drawable.egg)
+
+    // store the current coordinates of the goose
+    private var gooseX = 0
+    private var gooseY = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,7 +33,37 @@ class Entertainment : Activity() {
         if (Settings.canDrawOverlays(this)) {
             // start the service based on the android version
             floatingLayout.setView()
-            floatingEgg.setView()
+
+            // get the goose to walk
+            var dp = DisplayMetrics()
+            getWindowManager().getDefaultDisplay().getMetrics(dp)
+            var h = dp.heightPixels
+            var w = dp.widthPixels
+            var r = Random()
+            var newX = r.nextInt(w)
+            var newY = r.nextInt(h)
+
+            var currentX = 0
+            var currentY = 0
+
+            // if the goose has never moved before, get the coordinates from the view
+            if (gooseX == 0 && gooseY == 0){
+                currentX = 500
+                currentY = 500
+            }
+            else{
+                currentX = gooseX
+                currentY = gooseY
+            }
+
+            var anim = TranslateAnimation(currentX.toFloat(), newX.toFloat(),
+                currentY.toFloat(), newY.toFloat())
+            anim.setDuration(1000);
+            anim.setFillAfter(true);
+
+            // update the positioning of the goose
+            currentX = newX
+            currentY = newY
         }
     }
 
