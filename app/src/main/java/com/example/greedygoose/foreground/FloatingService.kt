@@ -34,27 +34,27 @@ class FloatingService : Service() {
         //  This piece of code demonstrates that multiple FloatingComponent creates
         //  multiple overlay views that moves around independently
         floatingComponent2 = FloatingComponent(this)
-        floatingComponent2.setMovementModule {                      // making it responsive
-            TouchDeleteModule(
-                it.params,
-                it.binding.rootContainer,       // this is the view that will listen to drags
-                it.windowManager,
-                it.binding.root
-            )
-        }
-        floatingComponent2.windowModule.params = floatingComponent2.windowModule.defaultParam()
-        floatingComponent2.createView()
+            .setWindowLayoutParams()
+            .setMovementModule {                      // making it responsive
+                TouchDeleteModule(
+                    it.params,
+                    it.binding.rootContainer,       // this is the view that will listen to drags
+                    it.windowManager,
+                    it.binding.root
+                )
+            }
+            .build()
 
         floatingComponent = FloatingComponent(this)         // construct a floating object
-        floatingComponent.setMovementModule {                      // making it responsive
-            DragMovementModule(
-                it.params,
-                it.binding.rootContainer,       // this is the view that will listen to drags
-                it.windowManager,
-                it.binding.root
-            )
-        }
-        floatingComponent.createView()
+            .setMovementModule {                      // making it responsive
+                DragMovementModule(
+                    it.params,
+                    it.binding.rootContainer,       // this is the view that will listen to drags
+                    it.windowManager,
+                    it.binding.root
+                )
+            }
+            .build()
 
         return binder
     }

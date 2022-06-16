@@ -24,10 +24,6 @@ class Entertainment : Activity() {
         checkOverlayPermission()
         setContentView(binding.root)
 
-    }
-
-    override fun onPause() {
-        super.onPause()
         if (Settings.canDrawOverlays(this)) {
             // start the service based on the android version
             floatingLayout.setView()
