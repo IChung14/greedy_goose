@@ -3,7 +3,12 @@ package com.example.greedygoose.foreground
 import android.content.Context
 import android.os.Bundle
 import android.os.ResultReceiver
+import android.view.LayoutInflater
 import android.view.WindowManager
+import android.view.animation.Animation
+import android.view.animation.TranslateAnimation
+import android.widget.ImageView
+import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
@@ -16,12 +21,16 @@ class FloatingComponent(context: Context) {
     private var movementModule: MovementModule? = null
     private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
 
-    fun build(): FloatingComponent {
+    fun build(withMotion: Boolean =false): FloatingComponent {
         // creating a floating view
         windowModule.create()
         moduleHelper?.let {
             movementModule = it(windowModule)
+            if (withMotion) {
+                movementModule!!.move()
+            }
             movementModule!!.run()
+
         }
         sendAction(ACTION_ON_CREATE, Bundle())
         return this

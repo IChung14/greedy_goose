@@ -3,6 +3,7 @@ package com.example.greedygoose.foreground.ui
 import android.content.Context
 import android.graphics.PixelFormat
 import android.os.Build
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.WindowManager
@@ -17,6 +18,7 @@ class FloatingWindowModule(private val context: Context) {
 
     fun create() {
         if(params == null) params = defaultParam()
+        params!!.gravity = Gravity.CENTER;
         binding = FloatingLayoutBinding.inflate(LayoutInflater.from(context))
         windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.addView(binding.root, params)
@@ -29,6 +31,7 @@ class FloatingWindowModule(private val context: Context) {
             windowType,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
+//            PixelFormat.RGBX_8888
         )
     }
 

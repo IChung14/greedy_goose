@@ -4,12 +4,7 @@ import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
 import android.content.ServiceConnection
-import android.os.Handler
 import android.os.IBinder
-import android.os.Looper
-import android.view.View
-import androidx.annotation.LayoutRes
-import com.example.greedygoose.R
 import com.example.greedygoose.databinding.FloatingLayoutBinding
 
 /**
@@ -44,7 +39,6 @@ class FloatingLayout(private val context: Context, imgName: Int) {
      * Updates a View under FloatingService
      */
     fun updateView(viewModifier: (FloatingLayoutBinding)->Unit){
-//        viewModifier(fService.floatingComponent.windowModule.binding)
         viewModifier(fService.floatingComponent2.windowModule.binding)
     }
 

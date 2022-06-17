@@ -1,10 +1,32 @@
 package com.example.greedygoose.foreground
 
-import android.view.MotionEvent
-import android.view.View
+//import android.R
+
+import android.R.attr
+import android.graphics.PixelFormat
+import android.view.*
 import android.view.View.OnTouchListener
-import android.view.WindowManager
+import android.widget.ImageView
+import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
+import android.view.MotionEvent
+
+import android.os.SystemClock
+import android.view.WindowManager
+
+import android.animation.ValueAnimator
+
+import android.R.attr.endY
+
+import android.R.attr.startY
+
+import android.animation.PropertyValuesHolder
+
+import android.R.attr.endX
+
+import android.R.attr.startX
+import android.animation.ValueAnimator.AnimatorUpdateListener
+
 
 class DragMovementModule(
     private var params: WindowManager.LayoutParams?,
@@ -12,6 +34,25 @@ class DragMovementModule(
     private var windowManager: WindowManager?,
     private var baseView: View?
 ): MovementModule {
+//    var img: ImageView? = baseView?.findViewById(R.id.gooseImg)
+
+    override fun move() {
+        val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, 300)
+        val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, 300)
+
+        val translator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+
+        translator.addUpdateListener { valueAnimator ->
+            val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
+            layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
+            layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
+            windowManager!!.updateViewLayout(rootContainer, layoutParams)
+        }
+
+        translator.duration = 1000
+        translator.start()
+    }
+
     override fun run() {
         rootContainer?.setOnTouchListener(object : OnTouchListener {
             private var initialX = 0
@@ -24,6 +65,7 @@ class DragMovementModule(
                         //remember the initial position.
                         initialX = params!!.x
                         initialY = params!!.y
+
                         //get the touch location
                         initialTouchX = event.rawX
                         initialTouchY = event.rawY

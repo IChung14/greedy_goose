@@ -54,8 +54,7 @@ class FloatingService : Service() {
                     it.binding.root
                 )
             }
-            .build()
-
+            .build(true)
         return binder
     }
 
