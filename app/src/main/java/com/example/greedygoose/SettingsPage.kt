@@ -23,6 +23,8 @@ class SettingsPage : AppCompatActivity() {
         val tv1 = binding.eggCount
         tv1.text = egg_count
 
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         val backButton = binding.backImageButton
         backButton.setOnClickListener {
             startActivity(Intent(this@SettingsPage, MainActivity::class.java))

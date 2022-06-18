@@ -5,13 +5,12 @@
       <map>
         <entry key="..\:/workplace/GreedyGoose/app/src/main/res/layout/activity_main.xml" value="0.19010416666666666" />
         <entry key="..\:/workplace/GreedyGoose/app/src/main/res/layout/popup_window.xml" value="0.2046875" />
-        <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.14635416666666667" />
-        <entry key="app/src/main/res/font/bubble.xml" value="0.1703125" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.27527216174183516" />
-        <entry key="app/src/main/res/layout/activity_settings_page.xml" value="0.1390625" />
-        <entry key="app/src/main/res/layout/entertainment_fragment.xml" value="0.1" />
-        <entry key="app/src/main/res/layout/floating_layout.xml" value="0.1390625" />
-        <entry key="app/src/main/res/layout/popup_window.xml" value="0.13020833333333334" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.13229166666666667" />
+        <entry key="app/src/main/res/layout/activity_settings_page.xml" value="0.2349151611328125" />
+        <entry key="app/src/main/res/layout/entertainment.xml" value="0.2635416666666667" />
+        <entry key="app/src/main/res/layout/floating_layout.xml" value="0.2635416666666667" />
+        <entry key="app/src/main/res/layout/fragment_goose.xml" value="0.2635416666666667" />
+        <entry key="app/src/main/res/layout/popup_window.xml" value="0.2635416666666667" />
       </map>
     </option>
   </component>
