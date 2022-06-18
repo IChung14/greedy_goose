@@ -7,85 +7,53 @@
     android:layout_height="match_parent"
     tools:context=".SettingsPage">
 
-    <ImageButton
-        android:id="@+id/customization_image_button2"
-        android:layout_width="86dp"
-        android:layout_height="85dp"
+    <CheckBox
+        android:id="@+id/customization_option2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:adjustViewBounds="true"
+        android:background="@drawable/customization_option_selector1"
+        android:button="@null"
         android:padding="5dp"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.684"
-        app:srcCompat="@drawable/angry_goose_left" />
+        app:layout_constraintHorizontal_bias="0.152"
+        app:layout_constraintStart_toEndOf="@+id/customization_option1"
+        app:layout_constraintTop_toBottomOf="@+id/customization_title"
+        app:layout_constraintVertical_bias="0.097" />
 
     <CheckBox
-        android:id="@+id/customization_check_box1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        app:layout_constraintEnd_toEndOf="@+id/customization_image_button1"
-        app:layout_constraintHorizontal_bias="0.555"
-        app:layout_constraintStart_toStartOf="@+id/customization_image_button1"
-        app:layout_constraintTop_toBottomOf="@+id/customization_image_button1" />
-
-    <CheckBox
-        android:id="@+id/customization_check_box2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        app:layout_constraintEnd_toEndOf="@+id/customization_image_button2"
-        app:layout_constraintStart_toStartOf="@+id/customization_image_button2"
-        app:layout_constraintTop_toBottomOf="@+id/customization_image_button2" />
-
-    <ImageButton
-        android:id="@+id/customization_image_button3"
-        android:layout_width="86dp"
-        android:layout_height="85dp"
+        android:id="@+id/customization_option1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:adjustViewBounds="true"
+        android:background="@drawable/customization_option_selector1"
+        android:button="@null"
         android:padding="5dp"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.901"
+        app:layout_constraintHorizontal_bias="0.086"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.684"
-        app:srcCompat="@drawable/angry_goose_left" />
+        app:layout_constraintTop_toBottomOf="@+id/customization_title"
+        app:layout_constraintVertical_bias="0.102" />
 
     <CheckBox
-        android:id="@+id/customization_check_box3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        app:layout_constraintEnd_toEndOf="@+id/customization_image_button3"
-        app:layout_constraintHorizontal_bias="0.481"
-        app:layout_constraintStart_toStartOf="@+id/customization_image_button3"
-        app:layout_constraintTop_toBottomOf="@+id/customization_image_button3" />
-
-    <ImageButton
-        android:id="@+id/customization_image_button1"
-        android:layout_width="86dp"
-        android:layout_height="85dp"
+        android:id="@+id/customization_option3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
         android:adjustViewBounds="true"
+        android:background="@drawable/customization_option_selector1"
+        android:button="@null"
         android:padding="5dp"
         android:scaleType="fitCenter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.089"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.684"
-        app:srcCompat="@drawable/angry_goose_left" />
+        app:layout_constraintHorizontal_bias="0.517"
+        app:layout_constraintStart_toEndOf="@+id/customization_option2"
+        app:layout_constraintTop_toBottomOf="@+id/customization_title"
+        app:layout_constraintVertical_bias="0.097" />
 
     <TextView
         android:id="@+id/customization_title"
