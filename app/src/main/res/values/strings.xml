@@ -1,7 +1,7 @@
 <resources>
     <string name="app_name">Greedy Goose</string>
     <string name="start">START</string>
-    <string name="stop">STOP</string>
+    <string name="reset">RESET</string>
     <string name="app_selection">App Selection</string>
     <string name="enter_time_in_minutes">Enter time (in minutes)</string>
     <string name="list_of_apps_on_device">List of Apps on Device</string>

@@ -16,6 +16,7 @@ class TimerPage : Activity() {
     private lateinit var binding: TimerPageBinding
     lateinit var timer: CountDownTimer
     var isRunning: Boolean = false;
+    var isPaused: Boolean = false;
     var elapsedTime = 0L
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -28,9 +29,13 @@ class TimerPage : Activity() {
                 pauseTimer()
             } else {
                 val time = binding.userInputTime.text.toString()
-                elapsedTime = time.toLong() * 60000L
+                elapsedTime = time.toLong() * milliSeconds
                 startTimer(elapsedTime)
             }
+        }
+
+        binding.resetBtn.setOnClickListener {
+            resetTimer()
         }
 
         binding.backBtn.setOnClickListener {
@@ -39,9 +44,16 @@ class TimerPage : Activity() {
     }
 
     private fun pauseTimer() {
-        binding.startBtn.text = "START"
-        timer.cancel()
-        isRunning = false
+        if (isPaused) {
+            binding.startBtn.text = "RESUME"
+            startTimer(elapsedTime)
+            isPaused = false
+        }
+        else {
+            binding.startBtn.text = "PAUSE"
+            timer.cancel()
+            isPaused = true
+        }
     }
 
     private fun startTimer(time_in_seconds: Long) {
@@ -64,12 +76,16 @@ class TimerPage : Activity() {
 
     private fun resetTimer() {
         elapsedTime = milliSeconds
+        isRunning = false
+        timer.cancel()
+        binding.userInputTime.visibility = View.VISIBLE
+        binding.timerText.visibility = View.INVISIBLE
         updateTextUI()
     }
 
     private fun updateTextUI() {
-        val minute = (milliSeconds / 1000) / 60
-        val seconds = (milliSeconds / 1000) % 60
+        val minute = (elapsedTime / 1000) / 60
+        val seconds = (elapsedTime / 1000) % 60
 
         binding.timerText.text = "$minute:$seconds"
     }
