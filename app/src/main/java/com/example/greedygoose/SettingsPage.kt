@@ -1,15 +1,13 @@
 package com.example.greedygoose
 
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
-import android.os.Bundle
-import com.example.greedygoose.databinding.ActivitySettingsPageBinding
 import android.R
+import android.graphics.PorterDuff
+import android.os.Bundle
+import android.view.MotionEvent
 import android.view.View
-
-import android.widget.TextView
-
-
+import android.widget.ImageButton
+import androidx.appcompat.app.AppCompatActivity
+import com.example.greedygoose.databinding.ActivitySettingsPageBinding
 
 
 class SettingsPage : AppCompatActivity() {
@@ -23,9 +21,6 @@ class SettingsPage : AppCompatActivity() {
         val tv1 = binding.eggCount
         tv1.text = egg_count
 
-        val backButton = binding.backImageButton
-        backButton.setOnClickListener {
-            startActivity(Intent(this@SettingsPage, MainActivity::class.java))
-        }
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
     }
 }
