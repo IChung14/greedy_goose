@@ -2,33 +2,27 @@ package com.example.greedygoose.foreground
 
 //import android.R
 
-import android.R.attr
-import android.graphics.PixelFormat
 import android.view.*
 import android.view.View.OnTouchListener
-import android.widget.ImageView
 import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import android.view.MotionEvent
 
-import android.os.SystemClock
 import android.view.WindowManager
 
 import android.animation.ValueAnimator
 
-import android.R.attr.endY
-
-import android.R.attr.startY
-
 import android.animation.PropertyValuesHolder
 
-import android.R.attr.endX
+import android.content.Context
+import android.animation.Animator
 
-import android.R.attr.startX
-import android.animation.ValueAnimator.AnimatorUpdateListener
+import android.animation.AnimatorListenerAdapter
+import android.graphics.PixelFormat
 
 
 class DragMovementModule(
+    private var context: Context,
     private var params: WindowManager.LayoutParams?,
     private val rootContainer: View?,
     private var windowManager: WindowManager?,
@@ -50,7 +44,23 @@ class DragMovementModule(
         }
 
         translator.duration = 1000
+        translator.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                var p = params
+                p!!.x = 300
+                p!!.y = 300
+                var floatingComponent : FloatingComponent = FloatingComponent(context).setWindowLayoutParams(
+                    p
+                ).build()
+//                floatingComponent.windowModule.binding.gooseImg.width = 50
+//                floatingComponent.windowModule.binding.gooseImg.height = 50
+
+                floatingComponent.windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
+
+            }
+        })
         translator.start()
+
     }
 
     override fun run() {
