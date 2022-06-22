@@ -20,7 +20,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.684"
-        app:srcCompat="@drawable/angry_goose_left" />
+        app:srcCompat="@drawable/eng_angry_right2" />
 
     <CheckBox
         android:id="@+id/customization_check_box1"
@@ -58,7 +58,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.684"
-        app:srcCompat="@drawable/angry_goose_left" />
+        app:srcCompat="@drawable/sci_angry_right2" />
 
     <CheckBox
         android:id="@+id/customization_check_box3"
@@ -85,7 +85,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.684"
-        app:srcCompat="@drawable/angry_goose_left" />
+        app:srcCompat="@drawable/math_angry_right2" />
 
     <TextView
         android:id="@+id/customization_title"
