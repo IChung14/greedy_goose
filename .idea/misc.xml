@@ -5,12 +5,19 @@
       <map>
         <entry key="..\:/workplace/GreedyGoose/app/src/main/res/layout/activity_main.xml" value="0.19010416666666666" />
         <entry key="..\:/workplace/GreedyGoose/app/src/main/res/layout/popup_window.xml" value="0.2046875" />
-        <entry key="app/src/main/res/layout/activity_main.xml" value="0.13229166666666667" />
-        <entry key="app/src/main/res/layout/activity_settings_page.xml" value="0.2349151611328125" />
-        <entry key="app/src/main/res/layout/entertainment.xml" value="0.2635416666666667" />
-        <entry key="app/src/main/res/layout/floating_layout.xml" value="0.2635416666666667" />
-        <entry key="app/src/main/res/layout/fragment_goose.xml" value="0.2635416666666667" />
-        <entry key="app/src/main/res/layout/popup_window.xml" value="0.2635416666666667" />
+        <entry key="app/src/main/res/drawable/border.xml" value="0.168" />
+        <entry key="app/src/main/res/drawable/customization_option_selector1.xml" value="0.122" />
+        <entry key="app/src/main/res/drawable/customization_option_selector2.xml" value="0.1945" />
+        <entry key="app/src/main/res/drawable/customization_option_selector3.xml" value="0.1945" />
+        <entry key="app/src/main/res/drawable/customization_option_selectorTEST.xml" value="0.122" />
+        <entry key="app/src/main/res/layout/activity_main.xml" value="0.23787532198256342" />
+        <entry key="app/src/main/res/layout/activity_settings_page.xml" value="0.1" />
+        <entry key="app/src/main/res/layout/entertainment.xml" value="0.20833333333333334" />
+        <entry key="app/src/main/res/layout/floating_layout.xml" value="0.20833333333333334" />
+        <entry key="app/src/main/res/layout/fragment_goose.xml" value="0.20833333333333334" />
+        <entry key="app/src/main/res/layout/popup_window.xml" value="0.22053070068359376" />
+        <entry key="app/src/main/res/layout/timerPage.xml" value="0.22204132080078126" />
+        <entry key="app/src/main/res/layout/timer_page.xml" value="0.2850677490234375" />
       </map>
     </option>
   </component>
