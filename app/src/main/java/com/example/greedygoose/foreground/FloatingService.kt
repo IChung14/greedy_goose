@@ -72,13 +72,6 @@ class FloatingService : Service() {
         super.onDestroy()
     }
 }
-//var floatingComponent : FloatingComponent = FloatingComponent(context).setWindowLayoutParams(
-//    p
-//).build()
-////                floatingComponent.windowModule.binding.gooseImg.width = 50
-////                floatingComponent.windowModule.binding.gooseImg.height = 50
-//
-//floatingComponent.windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
 
 
 //class ForegroundService : Service() {
