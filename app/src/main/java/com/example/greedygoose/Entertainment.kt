@@ -18,7 +18,7 @@ import java.util.*
 class Entertainment : Activity() {
 
     private lateinit var binding: EntertainmentBinding
-    private val floatingLayout = FloatingLayout(this, R.drawable.egg)
+    private val floatingLayout = FloatingLayout(this, R.drawable.egg_small)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

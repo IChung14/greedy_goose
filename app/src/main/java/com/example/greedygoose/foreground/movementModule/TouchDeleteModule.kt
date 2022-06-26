@@ -33,9 +33,5 @@ class TouchDeleteModule (
             }
         })
         }
-
-    override fun move() {
-        TODO("Not yet implemented")
-    }
 }
 

@@ -1,17 +1,15 @@
 package com.example.greedygoose.foreground
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.os.ResultReceiver
-import android.view.View
-import androidx.lifecycle.ViewModelProvider
-import android.R
-import android.content.pm.ActivityInfo
-import android.widget.ImageView
+import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 
 class FloatingService : Service() {
@@ -24,28 +22,20 @@ class FloatingService : Service() {
         fun getService(): FloatingService = this@FloatingService
     }
 
-    // This FloatingComponent holds 1 floating entity
-    lateinit var floatingComponent : FloatingComponent
-    lateinit var floatingComponent2 : FloatingComponent
+    // This FloatingGoose holds 1 floating entity
+    lateinit var floatingGoose : FloatingGoose
+    lateinit var floatingEgg : FloatingEgg
+    var job: Job? = null
+    val scope = MainScope()
 
     override fun onBind(intent: Intent): IBinder? {
 
         // TODO: THIS IS A DEMO CODE
-        //  This piece of code demonstrates that multiple FloatingComponent creates
+        //  This piece of code demonstrates that multiple FloatingGoose creates
         //  multiple overlay views that moves around independently
-        floatingComponent2 = FloatingComponent(this)
-            .setWindowLayoutParams()
-            .setMovementModule {                      // making it responsive
-                TouchDeleteModule(
-                    it.params,
-                    it.binding.rootContainer,       // this is the view that will listen to drags
-                    it.windowManager,
-                    it.binding.root
-                )
-            }
-            .build()
 
-        floatingComponent = FloatingComponent(this)         // construct a floating object
+
+        floatingGoose = FloatingGoose(this)         // construct a floating object
             .setMovementModule {                      // making it responsive
                 DragMovementModule(
                     it.params,
@@ -54,16 +44,42 @@ class FloatingService : Service() {
                     it.binding.root
                 )
             }
-            .build(true)
+            .build()
+        job = scope.launch{
+            while(true) {
+                val goose_params = floatingGoose.getLocation()
+                floatingEgg = FloatingEgg(this@FloatingService)
+                    .setWindowLayoutParams(goose_params!!.x, goose_params.y)
+                    .setMovementModule {                      // making it responsive
+                        TouchDeleteModule(
+                            it.params,
+                            it.binding.rootContainer,       // this is the view that will listen to drags
+                            it.windowManager,
+                            it.binding.root
+                        )
+                    }
+                    .build()
+                floatingEgg.windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
+                delay(5000)
+
+            }}
         return binder
     }
 
     override fun onDestroy() {
-        floatingComponent.destroy()
-        floatingComponent2.destroy()
+        floatingGoose.destroy()
+        floatingEgg.destroy()
         super.onDestroy()
     }
 }
+//var floatingComponent : FloatingComponent = FloatingComponent(context).setWindowLayoutParams(
+//    p
+//).build()
+////                floatingComponent.windowModule.binding.gooseImg.width = 50
+////                floatingComponent.windowModule.binding.gooseImg.height = 50
+//
+//floatingComponent.windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
+
 
 //class ForegroundService : Service() {
 //    override fun onBind(intent: Intent): IBinder? {

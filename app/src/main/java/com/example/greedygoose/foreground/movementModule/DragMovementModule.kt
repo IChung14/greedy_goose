@@ -25,7 +25,10 @@ import android.animation.PropertyValuesHolder
 import android.R.attr.endX
 
 import android.R.attr.startX
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
 import android.animation.ValueAnimator.AnimatorUpdateListener
+import java.util.*
 
 
 class DragMovementModule(
@@ -36,24 +39,48 @@ class DragMovementModule(
 ): MovementModule {
 //    var img: ImageView? = baseView?.findViewById(R.id.gooseImg)
 
-    override fun move() {
-        val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, 300)
-        val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, 300)
+//    override fun move() {
+//        val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, 300)
+//        val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, 300)
+//
+//        val translator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+//
+//        translator.addUpdateListener { valueAnimator ->
+//            val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
+//            layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
+//            layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
+//            windowManager!!.updateViewLayout(rootContainer, layoutParams)
+//        }
+//
+//        translator.duration = 1000
+//        translator.start()
+//    }
 
-        val translator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+    override fun run() {
+        val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(2000)-1000)
+        val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(2000)-1000)
 
-        translator.addUpdateListener { valueAnimator ->
+        val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+
+        rootContainer?.setOnTouchListener(null)
+
+        movement.addUpdateListener { valueAnimator ->
             val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
             layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
             windowManager!!.updateViewLayout(rootContainer, layoutParams)
         }
-
-        translator.duration = 1000
-        translator.start()
+        movement.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                // done
+            }
+        })
+        movement.duration = Random().nextInt(2000).toLong() + 2500
+        movement.start()
+        drag()
     }
 
-    override fun run() {
+    fun drag() {
         rootContainer?.setOnTouchListener(object : OnTouchListener {
             private var initialX = 0
             private var initialY = 0
