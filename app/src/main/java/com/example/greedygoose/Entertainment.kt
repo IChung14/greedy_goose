@@ -30,6 +30,11 @@ class Entertainment : Activity() {
             // start the service based on the android version
             floatingLayout.setView()
         }
+
+        val backButton = binding.backImageButton
+        backButton.setOnClickListener {
+            startActivity(Intent(this@Entertainment, MainActivity::class.java))
+        }
     }
 
     // method to ask user to grant the Overlay permission

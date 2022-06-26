@@ -89,7 +89,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.105"
-        app:srcCompat="@drawable/tie_goose_left" />
+        app:srcCompat="@drawable/math_angry_right2" />
 
     <ImageView
         android:id="@+id/imageView2"
