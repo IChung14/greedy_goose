@@ -31,7 +31,6 @@ class FloatingWindowModule(private val context: Context) {
             windowType,
             WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
             PixelFormat.TRANSLUCENT
-//            PixelFormat.RGBX_8888
         )
     }
 

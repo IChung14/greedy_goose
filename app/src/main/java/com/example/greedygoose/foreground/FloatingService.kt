@@ -1,16 +1,9 @@
 package com.example.greedygoose.foreground
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import android.os.ResultReceiver
-import android.view.View
-import androidx.lifecycle.ViewModelProvider
-import android.R
-import android.content.pm.ActivityInfo
-import android.widget.ImageView
 import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
 
 
@@ -29,10 +22,6 @@ class FloatingService : Service() {
     lateinit var floatingComponent2 : FloatingComponent
 
     override fun onBind(intent: Intent): IBinder? {
-
-        // TODO: THIS IS A DEMO CODE
-        //  This piece of code demonstrates that multiple FloatingComponent creates
-        //  multiple overlay views that moves around independently
         floatingComponent2 = FloatingComponent(this)
             .setWindowLayoutParams()
             .setMovementModule {                      // making it responsive
@@ -48,6 +37,7 @@ class FloatingService : Service() {
         floatingComponent = FloatingComponent(this)         // construct a floating object
             .setMovementModule {                      // making it responsive
                 DragMovementModule(
+                    this,
                     it.params,
                     it.binding.rootContainer,       // this is the view that will listen to drags
                     it.windowManager,

@@ -3,6 +3,9 @@ package com.example.greedygoose.foreground.movementModule
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
+import com.example.greedygoose.R
+import com.example.greedygoose.SettingsPage
 
 class TouchDeleteModule (
     private var params: WindowManager.LayoutParams?,
@@ -29,6 +32,12 @@ class TouchDeleteModule (
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent): Boolean {
                 destroy()
+                SettingsPage.egg_count += 1;
+                print("egg! ${SettingsPage.egg_count}")
+//                println("i've been touched")
+
+//                var img: ImageView? = baseView?.findViewById(R.id.gooseImg)
+//                img!!.setAlpha(0)
                 return false
             }
         })
