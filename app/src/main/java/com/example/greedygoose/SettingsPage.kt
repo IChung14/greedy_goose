@@ -30,6 +30,6 @@ class SettingsPage : AppCompatActivity() {
 
     companion object {
         var egg_count = 100
-        var current_goose =
+//        var current_goose =
     }
 }
