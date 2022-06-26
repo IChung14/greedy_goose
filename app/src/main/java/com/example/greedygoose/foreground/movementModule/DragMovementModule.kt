@@ -1,62 +1,49 @@
 package com.example.greedygoose.foreground
 
-//import android.R
-
 import android.view.*
 import android.view.View.OnTouchListener
-import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import android.view.MotionEvent
-
 import android.view.WindowManager
-
 import android.animation.ValueAnimator
-
 import android.animation.PropertyValuesHolder
-
-import android.content.Context
 import android.animation.Animator
-
 import android.animation.AnimatorListenerAdapter
-import android.graphics.PixelFormat
+import java.util.*
 
 
 class DragMovementModule(
-    private var context: Context,
     private var params: WindowManager.LayoutParams?,
     private val rootContainer: View?,
     private var windowManager: WindowManager?,
     private var baseView: View?
 ): MovementModule {
-//    var img: ImageView? = baseView?.findViewById(R.id.gooseImg)
 
-    override fun move() {
-        val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, 300)
-        val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, 300)
+    override fun run() {
+        val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(2000)-1000)
+        val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(2000)-1000)
 
-        val translator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+        val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
-        translator.addUpdateListener { valueAnimator ->
+        rootContainer?.setOnTouchListener(null)
+
+        movement.addUpdateListener { valueAnimator ->
             val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
             layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
             windowManager!!.updateViewLayout(rootContainer, layoutParams)
         }
-
-        translator.duration = 1000
-        translator.addListener(object : AnimatorListenerAdapter() {
+        movement.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                var p = params
-                p!!.x = 300
-                p!!.y = 300
-
+                // done
             }
         })
-        translator.start()
-
+        movement.duration = Random().nextInt(2000).toLong() + 2500
+        movement.start()
+        drag()
     }
 
-    override fun run() {
+    fun drag() {
         rootContainer?.setOnTouchListener(object : OnTouchListener {
             private var initialX = 0
             private var initialY = 0

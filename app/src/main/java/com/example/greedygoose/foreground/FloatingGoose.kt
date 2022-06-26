@@ -1,49 +1,58 @@
 package com.example.greedygoose.foreground
 
+import android.app.ActionBar
 import android.content.Context
 import android.os.Bundle
 import android.os.ResultReceiver
 import android.view.WindowManager
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
- * FloatingComponent is Semi
+ * FloatingGoose is Semi
  */
-class FloatingComponent(context: Context) {
+class FloatingGoose(context: Context) {
     var receiver: ResultReceiver? = null
     var windowModule = FloatingWindowModule(context)
     private var movementModule: MovementModule? = null
     private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
+    var job: Job? = null
+    val scope = MainScope()
 
-    fun build(withMotion: Boolean =false): FloatingComponent {
+    fun build(): FloatingGoose {
         // creating a floating view
         windowModule.create()
         moduleHelper?.let {
             movementModule = it(windowModule)
-            if (withMotion) {
-                movementModule!!.move()
-            }
-            movementModule!!.run()
+//            movementModule!!.run()
 
         }
         sendAction(ACTION_ON_CREATE, Bundle())
+        job = scope.launch{
+            while(true) {
+                movementModule!!.run()
+                delay(5000)
+
+            }}
         return this
     }
 
-//    fun setWindowLayoutParams(
-//        layoutParams: WindowManager.LayoutParams = windowModule.defaultParam()
-//    ): FloatingComponent{
-//        windowModule.params = layoutParams
-//        return this
-//    }
-
-    fun setWindowLayoutParams(layoutParams: WindowManager.LayoutParams = windowModule.defaultParam()): FloatingComponent{
+    fun setWindowLayoutParams(
+        layoutParams: WindowManager.LayoutParams = windowModule.defaultParam()
+    ): FloatingGoose{
         windowModule.params = layoutParams
         return this
     }
 
-    fun setMovementModule(moduleHelper: (FloatingWindowModule)->MovementModule): FloatingComponent{
+    fun getLocation(): WindowManager.LayoutParams? {
+        return this.windowModule.params
+    }
+
+    fun setMovementModule(moduleHelper: (FloatingWindowModule)->MovementModule): FloatingGoose{
         this.moduleHelper = moduleHelper
         return this
     }
