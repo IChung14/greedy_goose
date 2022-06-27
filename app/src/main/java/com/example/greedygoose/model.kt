@@ -8,6 +8,70 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.greedygoose.foreground.FloatingLayout
 
+
+val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
+    "ENG" to hashMapOf(
+        "ANGRY_LEFT" to R.drawable.eng_angry_left,
+        "ANGRY_LEFT2" to R.drawable.eng_angry_left2,
+        "ANGRY_RIGHT" to R.drawable.eng_angry_right,
+        "ANGRY_RIGHT2" to R.drawable.eng_angry_left2,
+        "BEHIND_LEFT" to R.drawable.eng_behind_left,
+        "BEHIND_LEFT2" to R.drawable.eng_behind_left2,
+        "BEHIND_RIGHT" to R.drawable.eng_behind_right,
+        "BEHIND_RIGHT2" to R.drawable.eng_behind_left2,
+        "FLYING_LEFT" to R.drawable.eng_flying_left,
+        "FLYING_RIGHT" to R.drawable.eng_flying_right,
+        "SITTING_LEFT" to R.drawable.eng_sitting_left,
+        "SITTING_RIGHT" to R.drawable.eng_sitting_right,
+        "WALKING_LEFT" to R.drawable.eng_walking_left,
+        "WALKING_LEFT2" to R.drawable.eng_walking_left2,
+        "WALKING_RIGHT" to R.drawable.eng_walking_right,
+        "WALKING_RIGHT2" to R.drawable.eng_walking_right2,
+        "WINDOW_LEFT" to R.drawable.eng_window_left,
+        "WINDOW_RIGHT" to R.drawable.eng_window_right,
+    ),
+    "MATH" to hashMapOf(
+        "ANGRY_LEFT" to R.drawable.math_angry_left,
+        "ANGRY_LEFT2" to R.drawable.math_angry_left2,
+        "ANGRY_RIGHT" to R.drawable.math_angry_right,
+        "ANGRY_RIGHT2" to R.drawable.math_angry_left2,
+        "BEHIND_LEFT" to R.drawable.math_behind_left,
+        "BEHIND_LEFT2" to R.drawable.math_behind_left2,
+        "BEHIND_RIGHT" to R.drawable.math_behind_right,
+        "BEHIND_RIGHT2" to R.drawable.math_behind_left2,
+        "FLYING_LEFT" to R.drawable.math_flying_left,
+        "FLYING_RIGHT" to R.drawable.math_flying_right,
+        "SITTING_LEFT" to R.drawable.math_sitting_left,
+        "SITTING_RIGHT" to R.drawable.math_sitting_right,
+        "WALKING_LEFT" to R.drawable.math_walking_left,
+        "WALKING_LEFT2" to R.drawable.math_walking_left2,
+        "WALKING_RIGHT" to R.drawable.math_walking_right,
+        "WALKING_RIGHT2" to R.drawable.math_walking_right2,
+        "WINDOW_LEFT" to R.drawable.math_window_left,
+        "WINDOW_RIGHT" to R.drawable.math_window_right,
+    ),
+    "SCI" to hashMapOf(
+        "ANGRY_LEFT" to R.drawable.sci_angry_left,
+        "ANGRY_LEFT2" to R.drawable.sci_angry_left2,
+        "ANGRY_RIGHT" to R.drawable.sci_angry_right,
+        "ANGRY_RIGHT2" to R.drawable.sci_angry_left2,
+        "BEHIND_LEFT" to R.drawable.sci_behind_left,
+        "BEHIND_LEFT2" to R.drawable.sci_behind_left2,
+        "BEHIND_RIGHT" to R.drawable.sci_behind_right,
+        "BEHIND_RIGHT2" to R.drawable.sci_behind_left2,
+        "FLYING_LEFT" to R.drawable.sci_flying_left,
+        "FLYING_RIGHT" to R.drawable.sci_flying_right,
+        "SITTING_LEFT" to R.drawable.sci_sitting_left,
+        "SITTING_RIGHT" to R.drawable.sci_sitting_right,
+        "WALKING_LEFT" to R.drawable.sci_walking_left,
+        "WALKING_LEFT2" to R.drawable.sci_walking_left2,
+        "WALKING_RIGHT" to R.drawable.sci_walking_right,
+        "WALKING_RIGHT2" to R.drawable.sci_walking_right2,
+        "WINDOW_LEFT" to R.drawable.sci_window_left,
+        "WINDOW_RIGHT" to R.drawable.sci_window_right,
+    )
+)
+
 class model {
     private var egg_count = MutableLiveData<Int>(100)
     private var theme = MutableLiveData<String>("MATH")
@@ -55,11 +119,8 @@ class model {
     // For now, only taking in a textview
     fun observe_theme(context: LifecycleOwner, ob: ImageView, type: String) {
         this.theme.observe(context, Observer {
-            if (this.theme.value == "ENG") {
-                ob.setImageResource(R.drawable.math_angry_left)
-            } else {
-                ob.setImageResource(R.drawable.sci_angry_left)
-            }
+                theme_map[this.theme.value]?.get("ANGRY_LEFT")
+                    ?.let { it1 -> ob.setImageResource(it1) }
         })
     }
 
