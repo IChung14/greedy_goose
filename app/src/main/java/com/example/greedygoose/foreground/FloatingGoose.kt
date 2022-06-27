@@ -5,8 +5,13 @@ import android.content.Context
 import android.os.Bundle
 import android.os.ResultReceiver
 import android.view.WindowManager
+import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.Observer
+import com.example.greedygoose.MainActivity
+import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
+import com.example.greedygoose.mod
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -40,6 +45,11 @@ class FloatingGoose(context: Context) {
             }}
         return this
     }
+
+    fun observe(life: LifecycleOwner) {
+        mod.observe_theme(life, windowModule.binding.gooseImg, "angry")
+    }
+
 
     fun setWindowLayoutParams(
         layoutParams: WindowManager.LayoutParams = windowModule.defaultParam()

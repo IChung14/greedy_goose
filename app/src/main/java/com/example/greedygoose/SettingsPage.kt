@@ -4,17 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import com.example.greedygoose.databinding.ActivitySettingsPageBinding
-import android.R
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 
-import android.widget.TextView
-import androidx.fragment.app.Fragment
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-
-//var egg_count = MutableLiveData<Int>(100)
 
 class SettingsPage : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsPageBinding

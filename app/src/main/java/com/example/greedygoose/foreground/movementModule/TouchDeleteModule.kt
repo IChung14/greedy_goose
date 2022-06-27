@@ -35,6 +35,7 @@ class TouchDeleteModule (
             override fun onTouch(v: View, event: MotionEvent): Boolean {
                 destroy()
                 mod.increase_egg_count(1)
+                mod.toggle_theme()
                 return false
             }
         })

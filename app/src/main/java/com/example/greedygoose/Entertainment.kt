@@ -11,14 +11,15 @@ import android.app.AlertDialog;
 import android.os.Handler
 import android.util.DisplayMetrics
 import android.view.animation.TranslateAnimation
+import androidx.appcompat.app.AppCompatActivity
 import java.util.*
 
 
 //TODO: consider converting it into a fragment and get viewModel from mainActivity
-class Entertainment : Activity() {
+class Entertainment : AppCompatActivity() {
 
     private lateinit var binding: EntertainmentBinding
-    private val floatingLayout = FloatingLayout(this, R.drawable.egg_small)
+    private var floatingLayout = FloatingLayout(this, R.drawable.egg_small, this)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,13 +29,14 @@ class Entertainment : Activity() {
 
         if (Settings.canDrawOverlays(this)) {
             // start the service based on the android version
-            floatingLayout.setView()
+            floatingLayout!!.setView()
         }
 
         val backButton = binding.backImageButton
         backButton.setOnClickListener {
             startActivity(Intent(this@Entertainment, MainActivity::class.java))
         }
+
     }
 
     // method to ask user to grant the Overlay permission
