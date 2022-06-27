@@ -1,6 +1,5 @@
 package com.example.greedygoose.foreground
 
-import android.app.ActionBar
 import android.content.Context
 import android.os.Bundle
 import android.os.ResultReceiver
@@ -28,8 +27,6 @@ class FloatingGoose(context: Context) {
         windowModule.create()
         moduleHelper?.let {
             movementModule = it(windowModule)
-//            movementModule!!.run()
-
         }
         sendAction(ACTION_ON_CREATE, Bundle())
         job = scope.launch{
@@ -40,6 +37,7 @@ class FloatingGoose(context: Context) {
             }}
         return this
     }
+
 
     fun setWindowLayoutParams(
         layoutParams: WindowManager.LayoutParams = windowModule.defaultParam()

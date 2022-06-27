@@ -4,8 +4,10 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
+import androidx.lifecycle.LifecycleOwner
 import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
+import com.example.greedygoose.mod
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -25,6 +27,7 @@ class FloatingService : Service() {
     // This FloatingGoose holds 1 floating entity
     lateinit var floatingGoose : FloatingGoose
     lateinit var floatingEgg : FloatingEgg
+
     var job: Job? = null
     val scope = MainScope()
 
@@ -34,18 +37,17 @@ class FloatingService : Service() {
         //  This piece of code demonstrates that multiple FloatingGoose creates
         //  multiple overlay views that moves around independently
 
-
-        floatingGoose = FloatingGoose(this)         // construct a floating object
-            .setMovementModule {                      // making it responsive
-                DragMovementModule(
-                    it.params,
-                    it.binding.rootContainer,       // this is the view that will listen to drags
-                    it.windowManager,
-                    it.binding.root
-                )
-            }
-            .build()
         job = scope.launch{
+            floatingGoose = FloatingGoose(this@FloatingService)         // construct a floating object
+                .setMovementModule {                      // making it responsive
+                    DragMovementModule(
+                        it.params,
+                        it.binding.rootContainer,       // this is the view that will listen to drags
+                        it.windowManager,
+                        it.binding.root
+                    )
+                }
+                .build()
             while(true) {
                 val goose_params = floatingGoose.getLocation()
                 floatingEgg = FloatingEgg(this@FloatingService)
