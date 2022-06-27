@@ -37,20 +37,17 @@ class FloatingService : Service() {
         //  This piece of code demonstrates that multiple FloatingGoose creates
         //  multiple overlay views that moves around independently
 
-
-        floatingGoose = FloatingGoose(this)         // construct a floating object
-            .setMovementModule {                      // making it responsive
-                DragMovementModule(
-                    it.params,
-                    it.binding.rootContainer,       // this is the view that will listen to drags
-                    it.windowManager,
-                    it.binding.root
-                )
-            }
-            .build()
-
-
         job = scope.launch{
+            floatingGoose = FloatingGoose(this@FloatingService)         // construct a floating object
+                .setMovementModule {                      // making it responsive
+                    DragMovementModule(
+                        it.params,
+                        it.binding.rootContainer,       // this is the view that will listen to drags
+                        it.windowManager,
+                        it.binding.root
+                    )
+                }
+                .build()
             while(true) {
                 val goose_params = floatingGoose.getLocation()
                 floatingEgg = FloatingEgg(this@FloatingService)
@@ -69,12 +66,6 @@ class FloatingService : Service() {
 
             }}
         return binder
-    }
-
-    fun change_goose(life: LifecycleOwner) {
-        if (floatingGoose != null) {
-            floatingGoose.observe(life)
-        }
     }
 
     override fun onDestroy() {

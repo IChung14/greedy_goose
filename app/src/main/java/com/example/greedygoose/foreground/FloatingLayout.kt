@@ -29,7 +29,6 @@ class FloatingLayout(private val context: Context, imgName: Int, lifecycle: Life
             // We've bound to LocalService, cast the IBinder and get LocalService instance
             val binder = service as FloatingService.FloatingServiceBinder
             fService = binder.getService()
-//            fService.change_goose(lifecycle)
 
             updateView { fRoot ->
                 fRoot.gooseImg.setImageResource(imgName)

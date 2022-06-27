@@ -33,8 +33,6 @@ class FloatingGoose(context: Context) {
         windowModule.create()
         moduleHelper?.let {
             movementModule = it(windowModule)
-//            movementModule!!.run()
-
         }
         sendAction(ACTION_ON_CREATE, Bundle())
         job = scope.launch{
@@ -44,10 +42,6 @@ class FloatingGoose(context: Context) {
 
             }}
         return this
-    }
-
-    fun observe(life: LifecycleOwner) {
-        mod.observe_theme(life, windowModule.binding.gooseImg, "angry")
     }
 
 
