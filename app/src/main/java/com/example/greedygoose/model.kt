@@ -69,12 +69,32 @@ val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
         "WALKING_RIGHT2" to R.drawable.sci_walking_right2,
         "WINDOW_LEFT" to R.drawable.sci_window_left,
         "WINDOW_RIGHT" to R.drawable.sci_window_right,
+    ),
+    "NONE" to hashMapOf(
+        "ANGRY_LEFT" to R.drawable.none_angry_left,
+        "ANGRY_LEFT2" to R.drawable.none_angry_left2,
+        "ANGRY_RIGHT" to R.drawable.none_angry_right,
+        "ANGRY_RIGHT2" to R.drawable.none_angry_left2,
+        "BEHIND_LEFT" to R.drawable.none_behind_left,
+        "BEHIND_LEFT2" to R.drawable.none_behind_left2,
+        "BEHIND_RIGHT" to R.drawable.none_behind_right,
+        "BEHIND_RIGHT2" to R.drawable.none_behind_left2,
+        "FLYING_LEFT" to R.drawable.none_flying_left,
+        "FLYING_RIGHT" to R.drawable.none_flying_right,
+        "SITTING_LEFT" to R.drawable.none_sitting_left,
+        "SITTING_RIGHT" to R.drawable.none_sitting_right,
+        "WALKING_LEFT" to R.drawable.none_walking_left,
+        "WALKING_LEFT2" to R.drawable.none_walking_left2,
+        "WALKING_RIGHT" to R.drawable.none_walking_right,
+        "WALKING_RIGHT2" to R.drawable.none_walking_right2,
+        "WINDOW_LEFT" to R.drawable.none_window_left,
+        "WINDOW_RIGHT" to R.drawable.none_window_right,
     )
 )
 
 class model {
     private var egg_count = MutableLiveData<Int>(100)
-    private var theme = MutableLiveData<String>("MATH")
+    private var theme = MutableLiveData<String>("NONE")
     private var entertainment = MutableLiveData<Boolean>(false)
     private var floatingLayout: FloatingLayout? = null
 
