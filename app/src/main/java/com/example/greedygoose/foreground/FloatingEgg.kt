@@ -53,7 +53,6 @@ class FloatingEgg(context: Context) {
 
     fun destroy() {
         sendAction(ACTION_ON_CLOSE, Bundle())
-
         windowModule.destroy()
         movementModule?.destroy()
         movementModule = null
