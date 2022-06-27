@@ -25,6 +25,7 @@ class DragMovementModule(
 
         val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
+        // Do not allow dragging while the goose is moving
         rootContainer?.setOnTouchListener(null)
 
         movement.addUpdateListener { valueAnimator ->

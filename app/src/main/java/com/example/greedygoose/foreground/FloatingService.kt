@@ -4,14 +4,13 @@ import android.app.Service
 import android.content.Intent
 import android.os.Binder
 import android.os.IBinder
-import androidx.lifecycle.LifecycleOwner
 import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
-import com.example.greedygoose.mod
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.*
 
 
 class FloatingService : Service() {
@@ -30,13 +29,9 @@ class FloatingService : Service() {
 
     var job: Job? = null
     val scope = MainScope()
+    var first = true
 
     override fun onBind(intent: Intent): IBinder? {
-
-        // TODO: THIS IS A DEMO CODE
-        //  This piece of code demonstrates that multiple FloatingGoose creates
-        //  multiple overlay views that moves around independently
-
         job = scope.launch{
             floatingGoose = FloatingGoose(this@FloatingService)         // construct a floating object
                 .setMovementModule {                      // making it responsive
@@ -49,21 +44,28 @@ class FloatingService : Service() {
                 }
                 .build()
             while(true) {
-                val goose_params = floatingGoose.getLocation()
-                floatingEgg = FloatingEgg(this@FloatingService)
-                    .setWindowLayoutParams(goose_params!!.x, goose_params.y)
-                    .setMovementModule {                      // making it responsive
-                        TouchDeleteModule(
-                            it.params,
-                            it.binding.rootContainer,       // this is the view that will listen to drags
-                            it.windowManager,
-                            it.binding.root
-                        )
-                    }
-                    .build()
-                floatingEgg.windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
-                delay(5000)
-
+                // use percentage to determine whether to lay an egg
+                val chance = Random().nextInt(10)
+                if(chance < 3 || first){
+                    first = false
+                    val goose_params = floatingGoose.getLocation()
+                    floatingEgg = FloatingEgg(this@FloatingService)
+                        .setWindowLayoutParams(goose_params!!.x, goose_params.y)
+                        .setMovementModule {
+                            TouchDeleteModule(
+                                it.params,
+                                it.binding.rootContainer,
+                                it.windowManager,
+                                it.binding.root
+                            )
+                        }
+                        .build()
+                    floatingEgg.windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
+                    delay(5000)
+                }
+                else {
+                    delay(5000)
+                }
             }}
         return binder
     }
@@ -74,13 +76,6 @@ class FloatingService : Service() {
         super.onDestroy()
     }
 }
-//var floatingComponent : FloatingComponent = FloatingComponent(context).setWindowLayoutParams(
-//    p
-//).build()
-////                floatingComponent.windowModule.binding.gooseImg.width = 50
-////                floatingComponent.windowModule.binding.gooseImg.height = 50
-//
-//floatingComponent.windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
 
 
 
