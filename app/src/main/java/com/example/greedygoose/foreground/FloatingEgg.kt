@@ -3,32 +3,28 @@ package com.example.greedygoose.foreground
 import android.content.Context
 import android.os.Bundle
 import android.os.ResultReceiver
-import android.view.LayoutInflater
 import android.view.WindowManager
-import android.view.animation.Animation
-import android.view.animation.TranslateAnimation
-import android.widget.ImageView
-import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.MainScope
 
 /**
- * FloatingComponent is Semi
+ * FloatingEgg is Semi
  */
-class FloatingComponent(context: Context) {
+class FloatingEgg(context: Context) {
     var receiver: ResultReceiver? = null
     var windowModule = FloatingWindowModule(context)
     private var movementModule: MovementModule? = null
     private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
+    var job: Job? = null
+    val scope = MainScope()
 
-    fun build(withMotion: Boolean =false): FloatingComponent {
+    fun build(): FloatingEgg {
         // creating a floating view
         windowModule.create()
         moduleHelper?.let {
             movementModule = it(windowModule)
-            if (withMotion) {
-                movementModule!!.move()
-            }
             movementModule!!.run()
 
         }
@@ -36,14 +32,15 @@ class FloatingComponent(context: Context) {
         return this
     }
 
-    fun setWindowLayoutParams(
-        layoutParams: WindowManager.LayoutParams = windowModule.defaultParam()
-    ): FloatingComponent{
+    fun setWindowLayoutParams(x: Int, y: Int): FloatingEgg {
+        var layoutParams: WindowManager.LayoutParams = windowModule.defaultParam()
+        layoutParams.x = x
+        layoutParams.y = y
         windowModule.params = layoutParams
         return this
     }
 
-    fun setMovementModule(moduleHelper: (FloatingWindowModule)->MovementModule): FloatingComponent{
+    fun setMovementModule(moduleHelper: (FloatingWindowModule)->MovementModule): FloatingEgg{
         this.moduleHelper = moduleHelper
         return this
     }
@@ -54,7 +51,6 @@ class FloatingComponent(context: Context) {
 
     fun destroy() {
         sendAction(ACTION_ON_CLOSE, Bundle())
-
         windowModule.destroy()
         movementModule?.destroy()
         movementModule = null
