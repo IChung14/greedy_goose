@@ -15,7 +15,7 @@ class SettingsPage : AppCompatActivity() {
         binding = ActivitySettingsPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
         val tv1 = binding.eggCount
-        tv1.text = egg_count.toString()
+        tv1.text = mod.get_egg_count().toString()
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
@@ -95,14 +95,20 @@ class SettingsPage : AppCompatActivity() {
                 purchase_item("yellow", binding.customizationOption3.text.toString().toInt())
             }
         }
+
+        // We want to listen to any changes in the egg count, and update the number of eggs
+        // displayed in our UI in real time
+        mod.observe_egg(this, tv1)
+        mod.observe_entertainment(this, this)
+
+
     }
-
-
 
     private fun updateSelectedItem() {
         if (is_tie_selected) {
             binding.customizationOption1.setBackgroundResource(R.drawable.highlighted_tie)
             current_goose = "pink"
+            mod.set_theme("MATH")
         }
         else if (is_tie_unlocked) {
             binding.customizationOption1.setBackgroundResource(R.drawable.pink_tie)
@@ -110,6 +116,7 @@ class SettingsPage : AppCompatActivity() {
         if (is_goggle_selected) {
             binding.customizationOption2.setBackgroundResource(R.drawable.highlighted_goggles)
             current_goose = "blue"
+            mod.set_theme("SCI")
         }
         else if (is_goggle_unlocked) {
             binding.customizationOption2.setBackgroundResource(R.drawable.science_goggle)
@@ -117,6 +124,7 @@ class SettingsPage : AppCompatActivity() {
         if (is_hard_hat_selected) {
             binding.customizationOption3.setBackgroundResource(R.drawable.highlighted_hardhat)
             current_goose = "yellow"
+            mod.set_theme("ENG")
         }
         else if (is_hard_hat_unlocked) {
             binding.customizationOption3.setBackgroundResource(R.drawable.yellow_hard_hat)
