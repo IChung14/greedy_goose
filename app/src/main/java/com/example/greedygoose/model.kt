@@ -110,7 +110,6 @@ class model {
 
     fun decrease_egg_count(amt: Int) {
         this.egg_count.value = this.egg_count.value?.minus(amt)
-
     }
 
     fun get_egg_count(): Int? {

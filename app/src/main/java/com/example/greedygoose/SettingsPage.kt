@@ -56,7 +56,6 @@ class SettingsPage : AppCompatActivity() {
                 if (mod.is_tie_selected) {
                     mod.is_tie_selected = false
                     binding.customizationOption1.setBackgroundResource(R.drawable.pink_tie)
-//                    current_goose = "goose"
                     mod.set_theme("NONE")
                 }
                 else {
@@ -75,7 +74,6 @@ class SettingsPage : AppCompatActivity() {
                 if (mod.is_goggle_selected) {
                     mod.is_goggle_selected = false
                     binding.customizationOption2.setBackgroundResource(R.drawable.science_goggle)
-//                    current_goose = "goose"
                     mod.set_theme("NONE")
                 }
                 else {
@@ -94,7 +92,6 @@ class SettingsPage : AppCompatActivity() {
                 if (mod.is_hard_hat_selected) {
                     mod.is_hard_hat_selected = false
                     binding.customizationOption3.setBackgroundResource(R.drawable.yellow_hard_hat)
-//                    current_goose = "goose"
                     mod.set_theme("NONE")
                 }
                 else {
@@ -113,14 +110,11 @@ class SettingsPage : AppCompatActivity() {
         // displayed in our UI in real time
         mod.observe_egg(this, tv1)
         mod.observe_entertainment(this, this)
-
-
     }
 
     private fun updateSelectedItem() {
         if (mod.is_tie_selected) {
             binding.customizationOption1.setBackgroundResource(R.drawable.highlighted_tie)
-//            current_goose = "pink"
             mod.set_theme("MATH")
         }
         else if (mod.is_tie_unlocked) {
@@ -128,7 +122,6 @@ class SettingsPage : AppCompatActivity() {
         }
         if (mod.is_goggle_selected) {
             binding.customizationOption2.setBackgroundResource(R.drawable.highlighted_goggles)
-//            current_goose = "blue"
             mod.set_theme("SCI")
         }
         else if (mod.is_goggle_unlocked) {
@@ -136,7 +129,6 @@ class SettingsPage : AppCompatActivity() {
         }
         if (mod.is_hard_hat_selected) {
             binding.customizationOption3.setBackgroundResource(R.drawable.highlighted_hardhat)
-//            current_goose = "yellow"
             mod.set_theme("ENG")
         }
         else if (mod.is_hard_hat_unlocked) {
@@ -184,14 +176,4 @@ class SettingsPage : AppCompatActivity() {
     private fun checkGoose() {
         updateSelectedItem()
     }
-
-//    companion object {
-//        var mod.is_tie_unlocked = true
-//        var mod.is_goggle_unlocked = false
-//        var mod.is_hard_hat_unlocked = false
-//        var mod.is_tie_selected = false
-//        var mod.is_goggle_selected = false
-//        var mod.is_hard_hat_selected = false
-////        var current_goose = "goose"
-//    }
 }
