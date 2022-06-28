@@ -47,6 +47,7 @@ class SettingsPage : AppCompatActivity() {
                     is_tie_selected = false
                     binding.customizationOption1.setBackgroundResource(R.drawable.pink_tie)
                     current_goose = "goose"
+                    mod.set_theme("NONE")
                 }
                 else {
                     is_tie_selected = true
@@ -65,6 +66,7 @@ class SettingsPage : AppCompatActivity() {
                     is_goggle_selected = false
                     binding.customizationOption2.setBackgroundResource(R.drawable.science_goggle)
                     current_goose = "goose"
+                    mod.set_theme("NONE")
                 }
                 else {
                     is_tie_selected = false
@@ -83,6 +85,7 @@ class SettingsPage : AppCompatActivity() {
                     is_hard_hat_selected = false
                     binding.customizationOption3.setBackgroundResource(R.drawable.yellow_hard_hat)
                     current_goose = "goose"
+                    mod.set_theme("NONE")
                 }
                 else {
                     is_tie_selected = false
