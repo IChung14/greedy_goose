@@ -158,12 +158,12 @@ class SettingsPage : AppCompatActivity() {
             binding.customizationOption3.text = ""
             updateSelectedItem()
         }
-        binding.eggCount.text = egg_count.toString()
+        binding.eggCount.text = mod.get_egg_count().toString()
     }
 
     private fun purchase_item(item_name: String, item_price: Int) {
-        if(egg_count >= item_price){
-            egg_count -= item_price
+        if(mod.get_egg_count()!! >= item_price){
+            mod.decrease_egg_count(item_price)
             updateItem(item_name)
         }
     }
@@ -173,7 +173,6 @@ class SettingsPage : AppCompatActivity() {
     }
 
     companion object {
-        var egg_count = 150
         var is_tie_unlocked = false
         var is_goggle_unlocked = false
         var is_hard_hat_unlocked = true
