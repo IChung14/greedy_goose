@@ -8,39 +8,43 @@ import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 /**
- * FloatingEgg is Semi
+ * FloatingGoose is Semi
  */
-class FloatingEgg(context: Context) {
+class FloatingComponent(context: Context) {
     var receiver: ResultReceiver? = null
     var windowModule = FloatingWindowModule(context)
     private var movementModule: MovementModule? = null
     private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
-    var job: Job? = null
-    val scope = MainScope()
 
-    fun build(): FloatingEgg {
+    fun build(): FloatingComponent {
         // creating a floating view
         windowModule.create()
         moduleHelper?.let {
             movementModule = it(windowModule)
             movementModule!!.run()
-
         }
         sendAction(ACTION_ON_CREATE, Bundle())
         return this
     }
 
-    fun setWindowLayoutParams(x: Int, y: Int): FloatingEgg {
-        var layoutParams: WindowManager.LayoutParams = windowModule.defaultParam()
+
+    fun setWindowLayoutParams(x: Int, y: Int): FloatingComponent {
+        val layoutParams = windowModule.defaultParam()
         layoutParams.x = x
         layoutParams.y = y
         windowModule.params = layoutParams
         return this
     }
 
-    fun setMovementModule(moduleHelper: (FloatingWindowModule)->MovementModule): FloatingEgg{
+    fun getLocation(): WindowManager.LayoutParams? {
+        return this.windowModule.params
+    }
+
+    fun setMovementModule(moduleHelper: (FloatingWindowModule)->MovementModule): FloatingComponent{
         this.moduleHelper = moduleHelper
         return this
     }
@@ -51,6 +55,7 @@ class FloatingEgg(context: Context) {
 
     fun destroy() {
         sendAction(ACTION_ON_CLOSE, Bundle())
+
         windowModule.destroy()
         movementModule?.destroy()
         movementModule = null

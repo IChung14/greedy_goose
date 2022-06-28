@@ -9,6 +9,9 @@ import android.animation.ValueAnimator
 import android.animation.PropertyValuesHolder
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 
 
@@ -19,14 +22,31 @@ class DragMovementModule(
     private var baseView: View?
 ): MovementModule {
 
+    private var isDraggable = true
+
+    // set drag listener
+    init {
+        drag()
+    }
+
     override fun run() {
+        MainScope().launch{
+            while(true) {
+                // Do not allow dragging while the goose is moving
+                isDraggable = false
+                randomWalk()
+                isDraggable = true
+                delay(5000)
+            }
+        }
+    }
+
+    private fun randomWalk() {
         val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(2000)-1000)
         val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(2000)-1000)
 
         val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
-        // Do not allow dragging while the goose is moving
-        rootContainer?.setOnTouchListener(null)
 
         movement.addUpdateListener { valueAnimator ->
             val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
@@ -41,16 +61,19 @@ class DragMovementModule(
         })
         movement.duration = Random().nextInt(2000).toLong() + 2500
         movement.start()
-        drag()
     }
 
-    fun drag() {
+    private fun drag() {
         rootContainer?.setOnTouchListener(object : OnTouchListener {
             private var initialX = 0
             private var initialY = 0
             private var initialTouchX = 0f
             private var initialTouchY = 0f
             override fun onTouch(v: View, event: MotionEvent): Boolean {
+
+                // prevent touch if not draggable
+                if(!isDraggable) return false
+
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
                         //remember the initial position.

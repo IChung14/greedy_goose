@@ -24,32 +24,32 @@ class FloatingService : Service() {
     }
 
     // This FloatingGoose holds 1 floating entity
-    lateinit var floatingGoose : FloatingGoose
-    lateinit var floatingEgg : FloatingEgg
+    lateinit var floatingGoose : FloatingComponent
+    lateinit var floatingEgg : FloatingComponent
 
     var job: Job? = null
     val scope = MainScope()
     var first = true
 
     override fun onBind(intent: Intent): IBinder? {
-        job = scope.launch{
-            floatingGoose = FloatingGoose(this@FloatingService)         // construct a floating object
-                .setMovementModule {                      // making it responsive
-                    DragMovementModule(
-                        it.params,
-                        it.binding.rootContainer,       // this is the view that will listen to drags
-                        it.windowManager,
-                        it.binding.root
-                    )
-                }
-                .build()
+        floatingGoose = FloatingComponent(this@FloatingService)         // construct a floating object
+            .setMovementModule {                      // making it responsive
+                DragMovementModule(
+                    it.params,
+                    it.binding.rootContainer,       // this is the view that will listen to drags
+                    it.windowManager,
+                    it.binding.root
+                )
+            }
+            .build()
+        MainScope().launch{
             while(true) {
                 // use percentage to determine whether to lay an egg
                 val chance = Random().nextInt(10)
                 if(chance < 3 || first){
                     first = false
                     val goose_params = floatingGoose.getLocation()
-                    floatingEgg = FloatingEgg(this@FloatingService)
+                    floatingEgg = FloatingComponent(this@FloatingService)
                         .setWindowLayoutParams(goose_params!!.x, goose_params.y)
                         .setMovementModule {
                             TouchDeleteModule(
