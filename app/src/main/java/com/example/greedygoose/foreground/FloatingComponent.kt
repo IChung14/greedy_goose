@@ -4,6 +4,8 @@ import android.content.Context
 import android.os.Bundle
 import android.os.ResultReceiver
 import android.view.WindowManager
+import androidx.annotation.DrawableRes
+import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 import kotlinx.coroutines.Job
@@ -17,12 +19,14 @@ import kotlinx.coroutines.launch
 class FloatingComponent(context: Context) {
     var receiver: ResultReceiver? = null
     var windowModule = FloatingWindowModule(context)
+    @DrawableRes private var imgRes: Int? = null
     private var movementModule: MovementModule? = null
     private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
 
     fun build(): FloatingComponent {
         // creating a floating view
         windowModule.create()
+        windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
         moduleHelper?.let {
             movementModule = it(windowModule)
             movementModule!!.run()
@@ -31,12 +35,13 @@ class FloatingComponent(context: Context) {
         return this
     }
 
+    fun setImageResource(@DrawableRes resId: Int): FloatingComponent{
+        imgRes = resId
+        return this
+    }
 
-    fun setWindowLayoutParams(x: Int, y: Int): FloatingComponent {
-        val layoutParams = windowModule.defaultParam()
-        layoutParams.x = x
-        layoutParams.y = y
-        windowModule.params = layoutParams
+    fun setWindowLayoutParams(params: WindowManager.LayoutParams): FloatingComponent {
+        windowModule.params = params
         return this
     }
 
