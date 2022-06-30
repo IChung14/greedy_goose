@@ -9,6 +9,9 @@ import android.animation.ValueAnimator
 import android.animation.PropertyValuesHolder
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.app.Service
+import android.content.Context.POWER_SERVICE
+import android.os.PowerManager
 import java.util.*
 
 
@@ -16,32 +19,36 @@ class DragMovementModule(
     private var params: WindowManager.LayoutParams?,
     private val rootContainer: View?,
     private var windowManager: WindowManager?,
-    private var baseView: View?
+    private var baseView: View?,
+    private var context: Service?
 ): MovementModule {
 
     override fun run() {
-        val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(2000)-1000)
-        val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(2000)-1000)
+        val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
+        if (powerManager.isInteractive) {
+                val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(2000)-1000)
+                val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(2000)-1000)
 
-        val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+                val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
-        // Do not allow dragging while the goose is moving
-        rootContainer?.setOnTouchListener(null)
+                // Do not allow dragging while the goose is moving
+                rootContainer?.setOnTouchListener(null)
 
-        movement.addUpdateListener { valueAnimator ->
-            val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
-            layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
-            layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
-            windowManager!!.updateViewLayout(rootContainer, layoutParams)
-        }
-        movement.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                // done
+                movement.addUpdateListener { valueAnimator ->
+                    val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
+                    layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
+                    layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
+                    windowManager!!.updateViewLayout(rootContainer, layoutParams)
+                }
+                movement.addListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationEnd(animation: Animator) {
+                        // done
+                    }
+                })
+                movement.duration = Random().nextInt(2000).toLong() + 2500
+                movement.start()
+                drag()
             }
-        })
-        movement.duration = Random().nextInt(2000).toLong() + 2500
-        movement.start()
-        drag()
     }
 
     fun drag() {

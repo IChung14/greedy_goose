@@ -11,12 +11,7 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
-import android.os.Build
-
 import android.os.PowerManager
-
-
-
 
 
 class FloatingService : Service() {
@@ -30,59 +25,61 @@ class FloatingService : Service() {
     }
 
     // This FloatingGoose holds 1 floating entity
-    lateinit var floatingGoose : FloatingGoose
-    lateinit var floatingEgg : FloatingEgg
+    lateinit var floatingGoose: FloatingGoose
+    lateinit var floatingEgg: FloatingEgg
 
     var job: Job? = null
     val scope = MainScope()
     var first = true
 
     override fun onBind(intent: Intent): IBinder? {
-        job = scope.launch{
-            while(screenOn()){
-                floatingGoose = FloatingGoose(this@FloatingService)         // construct a floating object
-                    .setMovementModule {                      // making it responsive
-                        DragMovementModule(
-                            it.params,
-                            it.binding.rootContainer,       // this is the view that will listen to drags
-                            it.windowManager,
-                            it.binding.root
-                        )
-                    }
-                    .build()
-                while(true) {
-                    // use percentage to determine whether to lay an egg
-                    val chance = Random().nextInt(10)
-                    if(chance < 3 || first){
-                        first = false
-                        val goose_params = floatingGoose.getLocation()
-                        floatingEgg = FloatingEgg(this@FloatingService)
-                            .setWindowLayoutParams(goose_params!!.x, goose_params.y)
-                            .setMovementModule {
-                                TouchDeleteModule(
-                                    it.params,
-                                    it.binding.rootContainer,
-                                    it.windowManager,
-                                    it.binding.root
-                                )
-                            }
-                            .build()
-                        floatingEgg.windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
-                        delay(5000)
-                    }
-                    else {
-                        delay(5000)
+            job = scope.launch {
+                floatingGoose =
+                    FloatingGoose(this@FloatingService)         // construct a floating object
+                        .setMovementModule {                      // making it responsive
+                            DragMovementModule(
+                                it.params,
+                                it.binding.rootContainer,       // this is the view that will listen to drags
+                                it.windowManager,
+                                it.binding.root,
+                                this@FloatingService
+                            )
+                        }
+                        .build()
+
+                while (true) {
+                    if (screenOn()) {
+                        // use percentage to determine whether to lay an egg
+                        val chance = Random().nextInt(10)
+                        if (chance < 3 || first) {
+                            first = false
+                            val goose_params = floatingGoose.getLocation()
+                            floatingEgg = FloatingEgg(this@FloatingService)
+                                .setWindowLayoutParams(goose_params!!.x, goose_params.y)
+                                .setMovementModule {
+                                    TouchDeleteModule(
+                                        it.params,
+                                        it.binding.rootContainer,
+                                        it.windowManager,
+                                        it.binding.root
+                                    )
+                                }
+                                .build()
+                            floatingEgg.windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
+                            delay(5000)
+                        } else {
+                            delay(5000)
+                        }
+
                     }
                 }
             }
-
-        }
         return binder
     }
 
     fun screenOn(): Boolean {
         val powerManager = getSystemService(POWER_SERVICE) as PowerManager
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT_WATCH) powerManager.isInteractive else powerManager.isScreenOn
+        return powerManager.isInteractive
     }
 
     override fun onDestroy() {
@@ -91,7 +88,6 @@ class FloatingService : Service() {
         super.onDestroy()
     }
 }
-
 
 
 //class ForegroundService : Service() {
