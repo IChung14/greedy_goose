@@ -26,8 +26,8 @@ class DragMovementModule(
     override fun run() {
         val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
         if (powerManager.isInteractive) {
-                val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(2000)-1000)
-                val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(2000)-1000)
+                val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(1500)-1000)
+                val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(1500)-1000)
 
                 val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
@@ -40,11 +40,6 @@ class DragMovementModule(
                     layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
                     windowManager!!.updateViewLayout(rootContainer, layoutParams)
                 }
-                movement.addListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationEnd(animation: Animator) {
-                        // done
-                    }
-                })
                 movement.duration = Random().nextInt(2000).toLong() + 2500
                 movement.start()
                 drag()
