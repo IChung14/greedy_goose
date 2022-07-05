@@ -12,7 +12,12 @@ import kotlinx.coroutines.launch
 import android.app.Service
 import android.content.Context.POWER_SERVICE
 import android.os.PowerManager
+import com.example.greedygoose.mod
 import java.util.*
+import android.animation.Animator
+
+import android.animation.AnimatorListenerAdapter
+import kotlin.math.abs
 
 
 class DragMovementModule(
@@ -49,16 +54,45 @@ class DragMovementModule(
         val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(1500)-1000)
 
         val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+        val startx = params!!.x
 
         // Do not allow dragging while the goose is moving
+        var updates = 0
+        var direction = ""
         movement.addUpdateListener { valueAnimator ->
             val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
             layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
             windowManager!!.updateViewLayout(rootContainer, layoutParams)
+            // For a smoother walking animation, only change the goose img every 5 animations
+            updates += 1
+            if (updates % 5 == 0) {
+                println()
+                if (layoutParams.x > startx) {
+                    direction = "RIGHT"
+                    mod.toggle_walk("RIGHT", "CALM")
+                } else {
+                    direction = "LEFT"
+                    mod.toggle_walk("LEFT", "CALM")
+                }
+            }
         }
+        movement.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                // After walking, make the goose sit sometimes
+                var chance = Random().nextInt(10)
+                if (chance > 5) {
+                    if (direction == "LEFT") {
+                        mod.set_action("SITTING_LEFT")
+                    } else {
+                        mod.set_action("SITTING_RIGHT")
+                    }
+                }
+            }
+        })
         movement.duration = Random().nextInt(2000).toLong() + 2500
         movement.start()
+
     }
 
     private fun drag() {
@@ -67,6 +101,7 @@ class DragMovementModule(
             private var initialY = 0
             private var initialTouchX = 0f
             private var initialTouchY = 0f
+            var updates = 0
 
             override fun onTouch(v: View, event: MotionEvent): Boolean {
 
@@ -82,14 +117,29 @@ class DragMovementModule(
                         //get the touch location
                         initialTouchX = event.rawX
                         initialTouchY = event.rawY
+
                         return true
                     }
                     MotionEvent.ACTION_MOVE -> {
                         //Calculate the X and Y coordinates of the view.
+                        var prevx = params!!.x
                         params!!.x = (initialX + (event.rawX - initialTouchX)).toInt()
                         params!!.y = (initialY + (event.rawY - initialTouchY)).toInt()
                         //Update the layout with new X & Y coordinate
                         windowManager!!.updateViewLayout(baseView, params)
+
+                        // For a smoother walking animation, only change the goose img every 5 animations
+                        updates += 1
+                        if (updates % 5 == 0) {
+                            if ( params!!.x > prevx && (abs(params!!.x.minus(prevx)) >= 100f)) {
+                                mod.toggle_walk("RIGHT", "ANGRY")
+                            } else if ( params!!.x < prevx && (abs(params!!.x.minus(prevx)) <= 100f))  {
+                                mod.toggle_walk("LEFT", "ANGRY")
+                            } else {
+                                // Make the goose face the right when swiping vertically
+                                mod.toggle_walk("RIGHT", "ANGRY")
+                            }
+                        }
                         return true
                     }
                 }
