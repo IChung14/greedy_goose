@@ -41,7 +41,7 @@ class DragMovementModule(
                 if (powerManager.isInteractive) {
                     randomWalk()
                 }
-                delay(10000)
+                delay(7000)
             }
         }
     }
@@ -103,7 +103,8 @@ class DragMovementModule(
             private var initialY = 0
             private var initialTouchX = 0f
             private var initialTouchY = 0f
-            var updates = 0
+            private var updates = 0
+            private var direction = "RIGHT"
 
             override fun onTouch(v: View, event: MotionEvent): Boolean {
 
@@ -122,6 +123,13 @@ class DragMovementModule(
 
                         return true
                     }
+                    MotionEvent.ACTION_UP -> {
+                        if (direction == "LEFT") {
+                            mod.set_action("SITTING_LEFT")
+                        } else {
+                            mod.set_action("SITTING_RIGHT")
+                        }
+                    }
                     MotionEvent.ACTION_MOVE -> {
                         //Calculate the X and Y coordinates of the view.
                         var prevx = params!!.x
@@ -134,17 +142,21 @@ class DragMovementModule(
                         updates += 1
                         if (updates % 5 == 0) {
                             if ( params!!.x > prevx && (abs(params!!.x.minus(prevx)) >= 100f)) {
+                                direction = "RIGHT"
                                 mod.toggle_walk("RIGHT", "ANGRY")
                             } else if ( params!!.x < prevx && (abs(params!!.x.minus(prevx)) <= 100f))  {
+                                direction = "LEFT"
                                 mod.toggle_walk("LEFT", "ANGRY")
                             } else {
                                 // Make the goose face the right when swiping vertically
+                                direction = "RIGHT"
                                 mod.toggle_walk("RIGHT", "ANGRY")
                             }
                         }
                         return true
                     }
                 }
+
                 return false
             }
         })
