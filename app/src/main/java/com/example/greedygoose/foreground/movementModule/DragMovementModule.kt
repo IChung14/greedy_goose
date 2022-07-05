@@ -135,6 +135,7 @@ class DragMovementModule(
 
                 // prevent touch if not draggable
                 if(!isDraggable) return false
+                curr_theme = mod.get_theme().toString()
 
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
