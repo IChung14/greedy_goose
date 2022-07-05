@@ -13,6 +13,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 import android.os.PowerManager
+import android.view.ViewGroup
 import android.view.WindowManager
 import com.example.greedygoose.foreground.movementModule.DragtoEatModule
 
@@ -39,17 +40,18 @@ class FloatingService : Service() {
     override fun onBind(intent: Intent): IBinder? {
         job = scope.launch {
             floatingGoose =
-                FloatingGoose(this@FloatingService)         // construct a floating object
+                FloatingGoose(this@FloatingService)
                     .setMovementModule {                      // making it responsive
                         DragMovementModule(
                             it.params,
                             it.binding.rootContainer,       // this is the view that will listen to drags
                             it.windowManager,
                             it.binding.root,
-                            this@FloatingService
+                            this@FloatingService,
                         )
                     }
                     .build()
+            floatingGoose.start_run()
 
             while (true) {
                 if (screenOn()) {
@@ -73,9 +75,9 @@ class FloatingService : Service() {
                         delay(5000)
                     } else if (chance > 7) {
                         floatingFood = FloatingEgg(this@FloatingService)
-                            .setWindowLayoutParams(
-                                Random().nextInt(2000) - 1000,
-                                Random().nextInt(2000) - 1000)
+//                            .setWindowLayoutParams(
+//                                Random().nextInt(2000) - 1000,
+//                                Random().nextInt(2000) - 1000)
                             .setMovementModule {
                                 DragtoEatModule(
                                     it.params,
@@ -87,6 +89,13 @@ class FloatingService : Service() {
                             }
                             .build()
                         floatingFood.windowModule.binding.gooseImg.setImageResource(R.drawable.bbt)
+//                        floatingFood.windowModule.binding.gooseImg.requestLayout();
+//                        floatingFood.windowModule.binding.gooseImg.getLayoutParams().height = 80;
+//                        floatingFood.windowModule.binding.gooseImg.getLayoutParams().width = 40;
+//                        val layoutParams: ViewGroup.LayoutParams = floatingFood.windowModule.binding.gooseImg.getLayoutParams()
+//                        layoutParams.width = 120
+//                        layoutParams.height = 140
+//                        floatingFood.windowModule.binding.gooseImg.setLayoutParams(layoutParams)
                         delay(5000)
                     } else {
                         delay(5000)

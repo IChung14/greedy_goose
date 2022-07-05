@@ -95,6 +95,7 @@ val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
 class model {
     private var egg_count = MutableLiveData<Int>(0)
     private var theme = MutableLiveData<String>("NONE")
+    private var walk = MutableLiveData<String>("WALKING_LEFT")
     private var entertainment = MutableLiveData<Boolean>(false)
     private var floatingLayout: FloatingLayout? = null
     var is_tie_unlocked = true
@@ -126,25 +127,42 @@ class model {
 
     fun set_theme(theme: String) {
         this.theme.value = theme
+        println("theme set")
     }
 
     fun get_theme(): String? {
         return this.theme.value
     }
 
-    fun toggle_theme() {
-        if (this.theme.value == "MATH") {
-            this.theme.value = "ENG"
+    fun toggle_walk() {
+        if (this.walk.value == "WALKING_LEFT") {
+            this.walk.value = "SITTING_LEFT"
         } else {
-            this.theme.value = "MATH"
+            this.walk.value = "WALKING_LEFT"
         }
+    }
+
+    fun toggle_theme() {
+        if (this.theme.value == "ENG") {
+            this.theme.value = "MATH"
+        } else {
+            this.theme.value = "ENG"
+        }
+    }
+
+
+    fun observe_walk(context: LifecycleOwner, ob: ImageView) {
+        this.walk.observe(context, Observer {
+            theme_map[this.theme.value]?.get(this.walk.value)
+                ?.let { it1 -> ob.setImageResource(it1) }
+        })
     }
 
     // Pass in a UI element that you want to be updated based on the egg_count
     // For now, only taking in a textview
-    fun observe_theme(context: LifecycleOwner, ob: ImageView, type: String) {
+    fun observe_theme(context: LifecycleOwner, ob: ImageView) {
         this.theme.observe(context, Observer {
-                theme_map[this.theme.value]?.get("ANGRY_LEFT")
+                theme_map[this.theme.value]?.get(this.walk.value)
                     ?.let { it1 -> ob.setImageResource(it1) }
         })
     }

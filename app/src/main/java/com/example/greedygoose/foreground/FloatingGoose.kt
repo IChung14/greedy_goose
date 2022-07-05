@@ -29,13 +29,16 @@ class FloatingGoose(context: Context) {
             movementModule = it(windowModule)
         }
         sendAction(ACTION_ON_CREATE, Bundle())
+        return this
+    }
+
+    fun start_run() {
         job = scope.launch{
             while(true) {
-                movementModule!!.run()
+                movementModule!!.run(windowModule)
                 delay(5000)
 
             }}
-        return this
     }
 
 

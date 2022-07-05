@@ -110,6 +110,7 @@ class SettingsPage : AppCompatActivity() {
         // displayed in our UI in real time
         mod.observe_egg(this, tv1)
         mod.observe_entertainment(this, this)
+
     }
 
     private fun updateSelectedItem() {

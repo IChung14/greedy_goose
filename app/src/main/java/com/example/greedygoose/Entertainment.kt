@@ -27,6 +27,7 @@ class Entertainment : AppCompatActivity() {
         }
         mod.observe_entertainment(this, this)
 
+
         val backButton = binding.backImageButton
         backButton.setOnClickListener {
             startActivity(Intent(this@Entertainment, MainActivity::class.java))
