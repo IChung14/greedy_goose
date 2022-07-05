@@ -38,18 +38,18 @@ class DragMovementModule(
         MainScope().launch{
             val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
             while(true) {
-                // Do not allow dragging while the goose is moving
                 if (powerManager.isInteractive) {
-                    isDraggable = false
                     randomWalk()
-                    isDraggable = true
                 }
-                delay(5000)
+                delay(10000)
             }
         }
     }
 
     private fun randomWalk(){
+        // Do not allow dragging while the goose is moving
+        isDraggable = false
+
         val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(1500)-1000)
         val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(1500)-1000)
 
@@ -88,6 +88,8 @@ class DragMovementModule(
                         mod.set_action("SITTING_RIGHT")
                     }
                 }
+                // Allow dragging again when the animation finishes
+                isDraggable = true
             }
         })
         movement.duration = Random().nextInt(2000).toLong() + 2500
