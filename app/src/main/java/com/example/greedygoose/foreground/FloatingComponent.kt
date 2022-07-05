@@ -16,9 +16,10 @@ import kotlinx.coroutines.launch
 /**
  * FloatingGoose is Semi
  */
-class FloatingComponent(context: Context) {
+class FloatingComponent(context: Context, type: String) {
     var receiver: ResultReceiver? = null
     var windowModule = FloatingWindowModule(context)
+    var img = type
     @DrawableRes private var imgRes: Int? = null
     private var movementModule: MovementModule? = null
     private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
@@ -30,14 +31,13 @@ class FloatingComponent(context: Context) {
         
         moduleHelper?.let {
             movementModule = it(windowModule)
-//            movementModule!!.run()
+            movementModule!!.run()
+            if (img == "GOOSE") {
+                movementModule!!.start_action(windowModule)
+            }
         }
         sendAction(ACTION_ON_CREATE, Bundle())
         return this
-    }
-
-    fun startRun() {
-        movementModule!!.run(windowModule)
     }
 
     fun setImageResource(@DrawableRes resId: Int): FloatingComponent{

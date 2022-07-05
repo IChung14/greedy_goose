@@ -48,7 +48,7 @@ class FloatingLayout(private val context: Context, imgName: Int, lifecycle: Life
 
     fun set_bind(life: LifecycleOwner) {
         mod.observe_theme(life, fService.floatingGoose.windowModule.binding.gooseImg)
-        mod.observe_action(life, fService.floatingGoose.windowModule.binding.gooseImg)
+//        mod.observe_action(life, fService.floatingGoose.windowModule.binding.gooseImg)
     }
 
     /**

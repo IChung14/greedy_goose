@@ -26,7 +26,7 @@ class FloatingService : Service() {
     lateinit var floatingFood: FloatingComponent
 
     override fun onBind(intent: Intent): IBinder {
-        floatingGoose = FloatingComponent(this@FloatingService)         // construct a floating object
+        floatingGoose = FloatingComponent(this@FloatingService, "GOOSE")         // construct a floating object
             .setMovementModule {                      // making it responsive
                 DragMovementModule(
                     it.params,
@@ -37,7 +37,6 @@ class FloatingService : Service() {
                 )
             }
             .build()
-        floatingGoose.startRun()
         layEggs()
         formFoods()
         return binder
@@ -49,7 +48,7 @@ class FloatingService : Service() {
             while(true) {
                 // use percentage to determine whether to lay an egg
                 if(chance < 3 && screenOn()){
-                    floatingEgg = FloatingComponent(this@FloatingService)
+                    floatingEgg = FloatingComponent(this@FloatingService, "EGG")
                         .setImageResource(R.drawable.egg_small)
                         .setWindowLayoutParams(floatingGoose.getLocation()!!)
                         .setMovementModule {
@@ -74,7 +73,7 @@ class FloatingService : Service() {
             var chance = 1
             while (true) {
                 if(chance > 7 && screenOn()) {
-                    floatingFood = FloatingComponent(this@FloatingService)
+                    floatingFood = FloatingComponent(this@FloatingService, "FOOD")
                         .setImageResource(R.drawable.bbt)
                         .setWindowLayoutParams(
                             Random().nextInt(2000) - 1000,

@@ -28,12 +28,19 @@ class DragToEatModule (
         }
     }
 
-    override fun run(binding: FloatingWindowModule?) {
+    override fun run() {
+        println("called eat ")
         rootContainer?.performClick()
         drag()
     }
 
+    override fun start_action(binding: FloatingWindowModule?) {
+        TODO("Not yet implemented")
+    }
+
     private fun drag(){
+        println("YES DRAG")
+
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
             private var initialX = 0
             private var initialY = 0

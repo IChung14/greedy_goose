@@ -20,6 +20,7 @@ import com.example.greedygoose.R
 
 import android.animation.AnimatorListenerAdapter
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
+import com.example.greedygoose.theme_map
 import kotlin.math.abs
 
 
@@ -32,16 +33,23 @@ class DragMovementModule(
 ): MovementModule {
 
     private var isDraggable = true
+    private var curr_theme = mod.get_theme().toString()
+    private var action = mod.get_action().toString()
 
-    override fun run(binding: FloatingWindowModule?) {
+    override fun run() {
+        println("started goose")
+    }
+
+    override fun start_action(binding: FloatingWindowModule?) {
         // set drag listener
-        drag()
+        drag(binding)
 
         // start random movements
         MainScope().launch{
             val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
             while(true) {
                 if (powerManager.isInteractive) {
+                    curr_theme = mod.get_theme().toString()
                     randomWalk(binding)
                 }
                 delay(7000)
@@ -52,7 +60,6 @@ class DragMovementModule(
     private fun randomWalk(window: FloatingWindowModule?){
         // Do not allow dragging while the goose is moving
         isDraggable = false
-        var action = "WALKING_RIGHT"
         val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(1500)-1000)
         val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(1500)-1000)
 
@@ -63,6 +70,7 @@ class DragMovementModule(
         var updates = 0
         var direction = ""
         movement.addUpdateListener { valueAnimator ->
+            curr_theme = mod.get_theme().toString()
             val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
             layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
@@ -73,26 +81,22 @@ class DragMovementModule(
                 println()
                 if (layoutParams.x > startx) {
                     direction = "RIGHT"
-
-                        if (action == "WALKING_RIGHT") {
-                            action = "WALKING_RIGHT2"
-                            window!!.binding.gooseImg.setImageResource(R.drawable.math_walking_right)
-                        } else {
-                            action = "WALKING_RIGHT"
-                            window!!.binding.gooseImg.setImageResource(R.drawable.math_walking_right2)
-                        }
-
+                    if (action == "WALKING_RIGHT") {
+                        action = "WALKING_RIGHT2"
+                    } else {
+                        action = "WALKING_RIGHT"
+                    }
+                    mod.set_action(action)
+                    window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
                 } else {
                     direction = "LEFT"
-//                    mod.toggle_walk("LEFT", "CALM")
                     if (action == "WALKING_LEFT") {
-                        action = "WALKING_LEFT"
-                        window!!.binding.gooseImg.setImageResource(R.drawable.math_walking_left)
+                        action = "WALKING_LEFT2"
                     } else {
                         action = "WALKING_LEFT"
-                        window!!.binding.gooseImg.setImageResource(R.drawable.math_walking_left)
                     }
-
+                    mod.set_action(action)
+                    window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
                 }
             }
         }
@@ -102,10 +106,12 @@ class DragMovementModule(
                 var chance = Random().nextInt(10)
                 if (chance > 5) {
                     if (direction == "LEFT") {
-                        mod.set_action("SITTING_LEFT")
+                        action = "SITTING_LEFT"
                     } else {
-                        mod.set_action("SITTING_RIGHT")
+                        action = "SITTING_RIGHT"
                     }
+                    mod.set_action(action)
+                    window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
                 }
                 // Allow dragging again when the animation finishes
                 isDraggable = true
@@ -116,7 +122,7 @@ class DragMovementModule(
 
     }
 
-    private fun drag() {
+    private fun drag(window: FloatingWindowModule?) {
         rootContainer?.setOnTouchListener(object : OnTouchListener {
             private var initialX = 0
             private var initialY = 0
@@ -143,11 +149,13 @@ class DragMovementModule(
                         return true
                     }
                     MotionEvent.ACTION_UP -> {
-                        if (direction == "LEFT") {
-                            mod.set_action("SITTING_LEFT")
+                        action = if (direction == "LEFT") {
+                            "SITTING_LEFT"
                         } else {
-                            mod.set_action("SITTING_RIGHT")
+                            "SITTING_RIGHT"
                         }
+                        mod.set_action(action)
+                        window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
                     }
                     MotionEvent.ACTION_MOVE -> {
                         //Calculate the X and Y coordinates of the view.
@@ -162,15 +170,29 @@ class DragMovementModule(
                         if (updates % 5 == 0) {
                             if ( params!!.x > prevx && (abs(params!!.x.minus(prevx)) >= 100f)) {
                                 direction = "RIGHT"
-                                mod.toggle_walk("RIGHT", "ANGRY")
+                                if (action == "ANGRY_RIGHT") {
+                                    action = "ANGRY_RIGHT2"
+                                } else {
+                                    action = "ANGRY_RIGHT"
+                                }
                             } else if ( params!!.x < prevx && (abs(params!!.x.minus(prevx)) <= 100f))  {
                                 direction = "LEFT"
-                                mod.toggle_walk("LEFT", "ANGRY")
+                                if (action == "ANGRY_LEFT") {
+                                    action = "ANGRY_LEFT2"
+                                } else {
+                                    action = "ANGRY_LEFT"
+                                }
                             } else {
                                 // Make the goose face the right when swiping vertically
                                 direction = "RIGHT"
-                                mod.toggle_walk("RIGHT", "ANGRY")
+                                if (action == "ANGRY_RIGHT") {
+                                    action = "ANGRY_RIGHT2"
+                                } else {
+                                    action = "ANGRY_RIGHT"
+                                }
                             }
+                            mod.set_action(action)
+                            window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
                         }
                         return true
                     }

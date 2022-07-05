@@ -137,6 +137,10 @@ class model {
         return this.theme.value
     }
 
+    fun get_action(): String? {
+        return this.action.value
+    }
+
     fun toggle_theme() {
         if (this.theme.value == "MATH") {
             this.theme.value = "ENG"

@@ -28,9 +28,17 @@ class TouchDeleteModule (
         }
     }
 
-    override fun run(binding: FloatingWindowModule?) {
+    override fun start_action(binding: FloatingWindowModule?) {
+        TODO("Not yet implemented")
+    }
+
+    override fun run() {
+        println("called egg ")
+
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent): Boolean {
+                println("YES TOUCH")
+
                 destroy()
                 mod.increase_egg_count(1)
                 return false
