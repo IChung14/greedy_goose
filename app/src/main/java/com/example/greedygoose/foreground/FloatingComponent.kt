@@ -45,6 +45,14 @@ class FloatingComponent(context: Context) {
         return this
     }
 
+    fun setWindowLayoutParams(x: Int, y: Int): FloatingComponent {
+        val layoutParams: WindowManager.LayoutParams = windowModule.defaultParam()
+        layoutParams.x = x
+        layoutParams.y = y
+        windowModule.params = layoutParams
+        return this
+    }
+
     fun getLocation(): WindowManager.LayoutParams? {
         return this.windowModule.params
     }

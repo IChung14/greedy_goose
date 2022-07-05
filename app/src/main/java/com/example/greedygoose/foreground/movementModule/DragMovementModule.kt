@@ -1,17 +1,17 @@
-package com.example.greedygoose.foreground
+package com.example.greedygoose.foreground.movementModule
 
 import android.view.*
 import android.view.View.OnTouchListener
-import com.example.greedygoose.foreground.movementModule.MovementModule
 import android.view.MotionEvent
 import android.view.WindowManager
 import android.animation.ValueAnimator
 import android.animation.PropertyValuesHolder
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import android.app.Service
+import android.content.Context.POWER_SERVICE
+import android.os.PowerManager
 import java.util.*
 
 
@@ -19,46 +19,44 @@ class DragMovementModule(
     private var params: WindowManager.LayoutParams?,
     private val rootContainer: View?,
     private var windowManager: WindowManager?,
-    private var baseView: View?
+    private var baseView: View?,
+    private var context: Service?
 ): MovementModule {
 
     private var isDraggable = true
 
-    // set drag listener
-    init {
-        drag()
-    }
-
     override fun run() {
+        // set drag listener
+        drag()
+
+        // start random movements
         MainScope().launch{
+            val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
             while(true) {
                 // Do not allow dragging while the goose is moving
-                isDraggable = false
-                randomWalk()
-                isDraggable = true
+                if (powerManager.isInteractive) {
+                    isDraggable = false
+                    randomWalk()
+                    isDraggable = true
+                }
                 delay(5000)
             }
         }
     }
 
-    private fun randomWalk() {
-        val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(2000)-1000)
-        val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(2000)-1000)
+    private fun randomWalk(){
+        val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(1500)-1000)
+        val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(1500)-1000)
 
         val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
-
+        // Do not allow dragging while the goose is moving
         movement.addUpdateListener { valueAnimator ->
             val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
             layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
             windowManager!!.updateViewLayout(rootContainer, layoutParams)
         }
-        movement.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                // done
-            }
-        })
         movement.duration = Random().nextInt(2000).toLong() + 2500
         movement.start()
     }
@@ -69,6 +67,7 @@ class DragMovementModule(
             private var initialY = 0
             private var initialTouchX = 0f
             private var initialTouchY = 0f
+
             override fun onTouch(v: View, event: MotionEvent): Boolean {
 
                 // prevent touch if not draggable

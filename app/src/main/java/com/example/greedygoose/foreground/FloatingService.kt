@@ -11,6 +11,9 @@ import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
+import android.os.PowerManager
+import com.example.greedygoose.foreground.movementModule.DragMovementModule
+import com.example.greedygoose.foreground.movementModule.DragToEatModule
 
 
 class FloatingService : Service() {
@@ -26,6 +29,7 @@ class FloatingService : Service() {
     // This FloatingGoose holds 1 floating entity
     lateinit var floatingGoose : FloatingComponent
     lateinit var floatingEgg : FloatingComponent
+    lateinit var floatingFood: FloatingComponent
 
     override fun onBind(intent: Intent): IBinder? {
         floatingGoose = FloatingComponent(this@FloatingService)         // construct a floating object
@@ -34,11 +38,13 @@ class FloatingService : Service() {
                     it.params,
                     it.binding.rootContainer,       // this is the view that will listen to drags
                     it.windowManager,
-                    it.binding.root
+                    it.binding.root,
+                    this
                 )
             }
             .build()
         layEggs()
+        formFoods()
         return binder
     }
 
@@ -47,7 +53,9 @@ class FloatingService : Service() {
         MainScope().launch{
             while(true) {
                 // use percentage to determine whether to lay an egg
-                if(chance < 3){
+//                if(chance < 3 && screenOn()){
+
+                if(chance < 3 && screenOn()){
                     floatingEgg = FloatingComponent(this@FloatingService)
                         .setImageResource(R.drawable.egg_small)
                         .setWindowLayoutParams(floatingGoose.getLocation()!!)
@@ -66,6 +74,40 @@ class FloatingService : Service() {
                 chance = Random().nextInt(10)
             }
         }
+    }
+
+    private fun formFoods(){
+        var chance = 1
+        MainScope().launch {
+            while (true) {
+                if(chance > 7 && screenOn()) {
+                    floatingFood = FloatingComponent(this@FloatingService)
+                        .setWindowLayoutParams(
+                            Random().nextInt(2000) - 1000,
+                            Random().nextInt(2000) - 1000
+                        )
+                        .setMovementModule {
+                            DragToEatModule(
+                                it.params,
+                                it.binding.rootContainer,
+                                it.windowManager,
+                                it.binding.root,
+                                floatingGoose
+                            )
+                        }
+                        .build()
+                    floatingFood.windowModule.binding.gooseImg.setImageResource(R.drawable.bbt)
+                }
+                delay(5000)
+
+                chance = Random().nextInt(10)
+            }
+        }
+    }
+
+    private fun screenOn(): Boolean {
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
+        return powerManager.isInteractive
     }
 
     override fun onDestroy() {

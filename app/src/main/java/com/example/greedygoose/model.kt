@@ -93,10 +93,16 @@ val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
 )
 
 class model {
-    private var egg_count = MutableLiveData<Int>(100)
+    private var egg_count = MutableLiveData<Int>(0)
     private var theme = MutableLiveData<String>("NONE")
     private var entertainment = MutableLiveData<Boolean>(false)
     private var floatingLayout: FloatingLayout? = null
+    var is_tie_unlocked = true
+    var is_goggle_unlocked = false
+    var is_hard_hat_unlocked = false
+    var is_tie_selected = false
+    var is_goggle_selected = false
+    var is_hard_hat_selected = false
 
     fun increase_egg_count(amt: Int) {
         this.egg_count.value = this.egg_count.value?.plus(amt)
@@ -104,7 +110,6 @@ class model {
 
     fun decrease_egg_count(amt: Int) {
         this.egg_count.value = this.egg_count.value?.minus(amt)
-
     }
 
     fun get_egg_count(): Int? {
@@ -123,8 +128,8 @@ class model {
         this.theme.value = theme
     }
 
-    fun get_theme(): MutableLiveData<String> {
-        return this.theme
+    fun get_theme(): String? {
+        return this.theme.value
     }
 
     fun toggle_theme() {

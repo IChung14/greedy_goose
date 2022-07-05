@@ -35,8 +35,6 @@ class TouchDeleteModule (
             override fun onTouch(v: View, event: MotionEvent): Boolean {
                 destroy()
                 mod.increase_egg_count(1)
-                // this tests that the inage changes in response to the theme
-                // mod.toggle_theme()
                 return false
             }
         })

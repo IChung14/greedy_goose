@@ -2,129 +2,26 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background = "@drawable/customization"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/customization"
     tools:context=".SettingsPage">
 
-    <ImageButton
-        android:id="@+id/customization_image_button2"
-        android:layout_width="86dp"
-        android:layout_height="85dp"
-        android:adjustViewBounds="true"
-        android:padding="5dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.684"
-        app:srcCompat="@drawable/eng_angry_right2" />
-
-    <CheckBox
-        android:id="@+id/customization_check_box1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        app:layout_constraintEnd_toEndOf="@+id/customization_image_button1"
-        app:layout_constraintHorizontal_bias="0.555"
-        app:layout_constraintStart_toStartOf="@+id/customization_image_button1"
-        app:layout_constraintTop_toBottomOf="@+id/customization_image_button1" />
-
-    <CheckBox
-        android:id="@+id/customization_check_box2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        app:layout_constraintEnd_toEndOf="@+id/customization_image_button2"
-        app:layout_constraintStart_toStartOf="@+id/customization_image_button2"
-        app:layout_constraintTop_toBottomOf="@+id/customization_image_button2" />
-
-    <ImageButton
-        android:id="@+id/customization_image_button3"
-        android:layout_width="86dp"
-        android:layout_height="85dp"
-        android:adjustViewBounds="true"
-        android:padding="5dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.901"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.684"
-        app:srcCompat="@drawable/sci_angry_right2" />
-
-    <CheckBox
-        android:id="@+id/customization_check_box3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="16dp"
-        android:minWidth="0dp"
-        android:minHeight="0dp"
-        app:layout_constraintEnd_toEndOf="@+id/customization_image_button3"
-        app:layout_constraintHorizontal_bias="0.481"
-        app:layout_constraintStart_toStartOf="@+id/customization_image_button3"
-        app:layout_constraintTop_toBottomOf="@+id/customization_image_button3" />
-
-    <ImageButton
-        android:id="@+id/customization_image_button1"
-        android:layout_width="86dp"
-        android:layout_height="85dp"
-        android:adjustViewBounds="true"
-        android:padding="5dp"
-        android:scaleType="fitCenter"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.089"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.684"
-        app:srcCompat="@drawable/math_angry_right2" />
-
-    <TextView
-        android:id="@+id/customization_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Customization"
-        android:textSize="24sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.113"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.533" />
 
     <TextView
         android:id="@+id/settings_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
+        android:fontFamily="@font/luckiestguy"
         android:outlineProvider="none"
         android:text="GOOSE BANK"
+        android:textColor="#E191CA"
         android:textSize="40sp"
-        android:textColor="#e83372"
-        android:fontFamily="@font/luckiestguy"
 
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/back_image_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="24dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.079"
-        app:layout_constraintStart_toStartOf="parent"
-        app:srcCompat="?attr/actionModeCloseDrawable" />
 
     <ImageView
         android:id="@+id/imageView4"
@@ -137,18 +34,109 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.199"
         app:srcCompat="@drawable/egg" />
-
     <TextView
         android:id="@+id/egg_count"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:text=""
         android:textSize="24sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.407" />/>
+        app:layout_constraintVertical_bias="0.407" />
+
+    <TextView
+        android:id="@+id/customization_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/luckiestguy"
+        android:text="Customization"
+        android:textColor="#E191CA"
+        android:textSize="24sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.113"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="0.533" />
+
+
+    <CheckBox
+        android:id="@+id/customization_option1"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/customization_option_selector1"
+        android:button="@null"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/customization_option2"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/customization_title"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <CheckBox
+        android:id="@+id/customization_option2"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/customization_option_selector2"
+        android:button="@null"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toStartOf="@+id/customization_option3"
+        app:layout_constraintStart_toEndOf="@+id/customization_option1"
+        app:layout_constraintTop_toBottomOf="@+id/customization_title"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <CheckBox
+        android:id="@+id/customization_option3"
+        android:layout_width="100dp"
+        android:layout_height="100dp"
+        android:adjustViewBounds="true"
+        android:background="@drawable/customization_option_selector3"
+        android:button="@null"
+        android:padding="5dp"
+        android:scaleType="fitCenter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/customization_option2"
+        app:layout_constraintTop_toBottomOf="@+id/customization_title"
+        app:layout_constraintVertical_bias="0.1" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="MATH"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/customization_option1"
+        app:layout_constraintEnd_toEndOf="@id/customization_option1"
+        app:layout_constraintTop_toBottomOf="@id/customization_option1"
+        android:layout_marginTop="8dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="SCIENCE"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/customization_option2"
+        app:layout_constraintEnd_toEndOf="@id/customization_option2"
+        app:layout_constraintTop_toBottomOf="@id/customization_option2"
+        android:layout_marginTop="8dp"
+        />
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ENGINEERING"
+        android:textSize="18sp"
+        app:layout_constraintStart_toStartOf="@+id/customization_option3"
+        app:layout_constraintEnd_toEndOf="@id/customization_option3"
+        app:layout_constraintTop_toBottomOf="@id/customization_option3"
+        android:layout_marginTop="8dp"
+        />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>
