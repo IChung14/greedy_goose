@@ -32,13 +32,12 @@ class MainActivity : AppCompatActivity() {
 
         val greedyGooseText = binding.textView
         val greedy = getColoredSpanned("Greedy Goose", "#e83372", "#E191CA")
-        greedyGooseText.setText(Html.fromHtml(greedy));
-        greedyGooseText.setTextSize(90F)
+        greedyGooseText.text = Html.fromHtml(greedy)
+        greedyGooseText.textSize = 90F
 
         val entertainmentButton = binding.entertainmentButton
         entertainmentButton.setOnClickListener {
             startActivity(Intent(this@MainActivity, Entertainment::class.java))
-            Handler().postDelayed({finish()}, 5000)
         }
 
         val settingsButton = binding.settingsButton
