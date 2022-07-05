@@ -4,6 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import com.example.greedygoose.foreground.FloatingComponent
+import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
 class DragToEatModule (
     private var params: WindowManager.LayoutParams?,
@@ -27,7 +28,7 @@ class DragToEatModule (
         }
     }
 
-    override fun run() {
+    override fun run(binding: FloatingWindowModule?) {
         rootContainer?.performClick()
         drag()
     }

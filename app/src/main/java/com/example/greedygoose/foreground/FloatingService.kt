@@ -37,6 +37,7 @@ class FloatingService : Service() {
                 )
             }
             .build()
+        floatingGoose.startRun()
         layEggs()
         formFoods()
         return binder

@@ -30,10 +30,14 @@ class FloatingComponent(context: Context) {
         
         moduleHelper?.let {
             movementModule = it(windowModule)
-            movementModule!!.run()
+//            movementModule!!.run()
         }
         sendAction(ACTION_ON_CREATE, Bundle())
         return this
+    }
+
+    fun startRun() {
+        movementModule!!.run(windowModule)
     }
 
     fun setImageResource(@DrawableRes resId: Int): FloatingComponent{
