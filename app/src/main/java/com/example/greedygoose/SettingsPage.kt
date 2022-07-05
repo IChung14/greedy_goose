@@ -28,14 +28,14 @@ class SettingsPage : AppCompatActivity() {
         }
         if (!mod.is_goggle_unlocked) {
             binding.customizationOption2.setBackgroundResource(R.drawable.grey_goggles)
-            binding.customizationOption2.text = "50"
+            binding.customizationOption2.text = "20"
             binding.customizationOption2.textAlignment = View.TEXT_ALIGNMENT_CENTER
             binding.customizationOption2.setTextColor(Color.WHITE)
             binding.customizationOption2.setTextSize(35F)
         }
         if (!mod.is_hard_hat_unlocked) {
             binding.customizationOption3.setBackgroundResource(R.drawable.grey_hardhat)
-            binding.customizationOption3.text = "55"
+            binding.customizationOption3.text = "25"
             binding.customizationOption3.textAlignment = View.TEXT_ALIGNMENT_CENTER
             binding.customizationOption3.setTextColor(Color.WHITE)
             binding.customizationOption3.setTextSize(35F)

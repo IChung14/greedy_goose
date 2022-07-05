@@ -15,8 +15,11 @@ import android.os.PowerManager
 import com.example.greedygoose.mod
 import java.util.*
 import android.animation.Animator
+import com.example.greedygoose.R
+
 
 import android.animation.AnimatorListenerAdapter
+import com.example.greedygoose.foreground.ui.FloatingWindowModule
 import kotlin.math.abs
 
 
@@ -30,7 +33,7 @@ class DragMovementModule(
 
     private var isDraggable = true
 
-    override fun run() {
+    override fun run(binding: FloatingWindowModule?) {
         // set drag listener
         drag()
 
@@ -39,17 +42,17 @@ class DragMovementModule(
             val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
             while(true) {
                 if (powerManager.isInteractive) {
-                    randomWalk()
+                    randomWalk(binding)
                 }
                 delay(7000)
             }
         }
     }
 
-    private fun randomWalk(){
+    private fun randomWalk(window: FloatingWindowModule?){
         // Do not allow dragging while the goose is moving
         isDraggable = false
-
+        var action = "WALKING_RIGHT"
         val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(1500)-1000)
         val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(1500)-1000)
 
@@ -70,10 +73,26 @@ class DragMovementModule(
                 println()
                 if (layoutParams.x > startx) {
                     direction = "RIGHT"
-                    mod.toggle_walk("RIGHT", "CALM")
+
+                        if (action == "WALKING_RIGHT") {
+                            action = "WALKING_RIGHT2"
+                            window!!.binding.gooseImg.setImageResource(R.drawable.math_walking_right)
+                        } else {
+                            action = "WALKING_RIGHT"
+                            window!!.binding.gooseImg.setImageResource(R.drawable.math_walking_right2)
+                        }
+
                 } else {
                     direction = "LEFT"
-                    mod.toggle_walk("LEFT", "CALM")
+//                    mod.toggle_walk("LEFT", "CALM")
+                    if (action == "WALKING_LEFT") {
+                        action = "WALKING_LEFT"
+                        window!!.binding.gooseImg.setImageResource(R.drawable.math_walking_left)
+                    } else {
+                        action = "WALKING_LEFT"
+                        window!!.binding.gooseImg.setImageResource(R.drawable.math_walking_left)
+                    }
+
                 }
             }
         }

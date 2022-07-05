@@ -4,9 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import com.example.greedygoose.*
-
-
-
+import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
 
 class TouchDeleteModule (
@@ -30,7 +28,7 @@ class TouchDeleteModule (
         }
     }
 
-    override fun run() {
+    override fun run(binding: FloatingWindowModule?) {
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent): Boolean {
                 destroy()
