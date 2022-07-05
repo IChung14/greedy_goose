@@ -26,7 +26,8 @@ class FloatingComponent(context: Context) {
     fun build(): FloatingComponent {
         // creating a floating view
         windowModule.create()
-        windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
+        imgRes?.let { windowModule.binding.gooseImg.setImageResource(it) }
+        
         moduleHelper?.let {
             movementModule = it(windowModule)
             movementModule!!.run()
