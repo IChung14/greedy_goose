@@ -48,6 +48,7 @@ class DragMovementModule(
         // start random movements
         MainScope().launch{
             val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
+            delay(2000)
             while(true) {
                 if (powerManager.isInteractive) {
                     curr_theme = mod.get_theme().toString()
