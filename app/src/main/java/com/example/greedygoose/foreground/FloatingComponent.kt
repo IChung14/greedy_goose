@@ -2,12 +2,14 @@ package com.example.greedygoose.foreground
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.os.ResultReceiver
 import android.view.WindowManager
 import androidx.annotation.DrawableRes
 import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
+import com.example.greedygoose.mod
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
@@ -69,6 +71,23 @@ class FloatingComponent(context: Context, type: String) {
 
     private fun sendAction(action: Int, bundle: Bundle) {
         if (receiver != null) receiver!!.send(action, bundle)
+    }
+
+    fun delete() {
+        Handler().postDelayed(Runnable {
+            //anything you want to start after 3s
+            destroy()
+            if (img == "FOOD") {
+                val num_eggs = mod.get_egg_count()
+                if (num_eggs != null) {
+                    if (num_eggs >= 5) {
+                        mod.decrease_egg_count(5)
+                    } else {
+                        mod.decrease_egg_count(num_eggs)
+                    }
+                }
+            }
+        }, 20000)
     }
 
     fun destroy() {

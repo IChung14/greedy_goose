@@ -60,6 +60,7 @@ class FloatingService : Service() {
                             )
                         }
                         .build()
+                    floatingEgg.delete()
                 }
                 delay(5000)
 
@@ -89,6 +90,7 @@ class FloatingService : Service() {
                             )
                         }
                         .build()
+                    floatingFood.delete()
                 }
                 delay(5000)
 
