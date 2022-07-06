@@ -10,7 +10,7 @@
         android:id="@+id/gooseImg"
         android:layout_width="180dp"
         android:layout_height="120dp"
-        android:src="@drawable/math_angry_right2"
+        android:src="@drawable/blank"
         android:scaleType="centerInside"
         android:adjustViewBounds="true"/>
 
