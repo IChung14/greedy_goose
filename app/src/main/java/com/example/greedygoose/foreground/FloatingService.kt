@@ -60,7 +60,7 @@ class FloatingService : Service() {
                             )
                         }
                         .build()
-                    floatingEgg.delete()
+                    floatingEgg.delete_egg()
                 }
                 delay(5000)
 
@@ -74,12 +74,11 @@ class FloatingService : Service() {
             var chance = 1
             while (true) {
                 if(chance > 7 && screenOn()) {
+                    var x = Random().nextInt(1000) - 500
+                    var y = Random().nextInt(1000) - 500
                     floatingFood = FloatingComponent(this@FloatingService, "FOOD")
                         .setImageResource(R.drawable.bbt)
-                        .setWindowLayoutParams(
-                            Random().nextInt(2000) - 1000,
-                            Random().nextInt(2000) - 1000
-                        )
+                        .setWindowLayoutParams(x, y)
                         .setMovementModule {
                             DragToEatModule(
                                 it.params,
@@ -89,8 +88,8 @@ class FloatingService : Service() {
                                 floatingGoose
                             )
                         }
-                        .build()
-                    floatingFood.delete()
+                    floatingFood.build()
+                    floatingFood.delete_food()
                 }
                 delay(5000)
 

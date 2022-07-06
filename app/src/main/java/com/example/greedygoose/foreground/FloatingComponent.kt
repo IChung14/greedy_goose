@@ -6,14 +6,10 @@ import android.os.Handler
 import android.os.ResultReceiver
 import android.view.WindowManager
 import androidx.annotation.DrawableRes
-import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 import com.example.greedygoose.mod
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+
 
 /**
  * FloatingGoose is Semi
@@ -22,6 +18,7 @@ class FloatingComponent(context: Context, type: String) {
     var receiver: ResultReceiver? = null
     var windowModule = FloatingWindowModule(context)
     var img = type
+    var is_alive = true
     @DrawableRes private var imgRes: Int? = null
     private var movementModule: MovementModule? = null
     private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
@@ -30,7 +27,7 @@ class FloatingComponent(context: Context, type: String) {
         // creating a floating view
         windowModule.create()
         imgRes?.let { windowModule.binding.gooseImg.setImageResource(it) }
-        
+
         moduleHelper?.let {
             movementModule = it(windowModule)
             movementModule!!.run()
@@ -73,11 +70,10 @@ class FloatingComponent(context: Context, type: String) {
         if (receiver != null) receiver!!.send(action, bundle)
     }
 
-    fun delete() {
+    fun delete_food() {
         Handler().postDelayed(Runnable {
-            //anything you want to start after 3s
-            destroy()
-            if (img == "FOOD") {
+            if (movementModule!!.is_alive) {
+                movementModule?.destroy()
                 val num_eggs = mod.get_egg_count()
                 if (num_eggs != null) {
                     if (num_eggs >= 5) {
@@ -87,14 +83,24 @@ class FloatingComponent(context: Context, type: String) {
                     }
                 }
             }
-        }, 20000)
+        }, 15000)
+    }
+
+    fun delete_egg() {
+        Handler().postDelayed(Runnable {
+            if (movementModule!!.is_alive) {
+                movementModule?.destroy()
+            }
+        }, 15000)
     }
 
     fun destroy() {
+        is_alive = false
         sendAction(ACTION_ON_CLOSE, Bundle())
-
         windowModule.destroy()
-        movementModule?.destroy()
+        if (movementModule != null) {
+            movementModule?.destroy()
+        }
         movementModule = null
     }
 

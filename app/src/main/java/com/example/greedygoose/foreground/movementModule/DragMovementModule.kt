@@ -36,10 +36,9 @@ class DragMovementModule(
     private var is_dragged = false
     private var curr_theme = mod.get_theme().toString()
     private var action = mod.get_action().toString()
+    override var is_alive = true
 
-    override fun run() {
-        println("started goose")
-    }
+    override fun run() {}
 
     override fun start_action(binding: FloatingWindowModule?) {
         // set drag listener
@@ -82,7 +81,6 @@ class DragMovementModule(
             // For a smoother walking animation, only change the goose img every 5 animations
             updates += 1
             if (updates % 5 == 0) {
-                println()
                 if (layoutParams.x > startx) {
                     direction = "RIGHT"
                     action = when (action) {
@@ -170,7 +168,6 @@ class DragMovementModule(
                         //get the touch location
                         initialTouchX = event.rawX
                         initialTouchY = event.rawY
-
                         return true
                     }
                     MotionEvent.ACTION_UP -> {
@@ -252,6 +249,7 @@ class DragMovementModule(
             params = null
             baseView = null
             windowManager = null
+            this.is_alive = false
         }
     }
 }

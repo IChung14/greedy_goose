@@ -109,7 +109,7 @@ val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
 )
 
 class model {
-    private var egg_count = MutableLiveData<Int>(0)
+    private var egg_count = MutableLiveData<Int>(100)
     private var theme = MutableLiveData<String>("NONE")
     private var action = MutableLiveData<String>("WALKING_LEFT")
     private var entertainment = MutableLiveData<Boolean>(false)
