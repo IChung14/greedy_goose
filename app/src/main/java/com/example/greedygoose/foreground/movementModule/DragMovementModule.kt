@@ -33,6 +33,7 @@ class DragMovementModule(
 ): MovementModule {
 
     private var isDraggable = true
+    private var is_dragged = false
     private var curr_theme = mod.get_theme().toString()
     private var action = mod.get_action().toString()
 
@@ -50,9 +51,11 @@ class DragMovementModule(
             while(true) {
                 if (powerManager.isInteractive) {
                     curr_theme = mod.get_theme().toString()
-                    randomWalk(binding)
+                    if (!is_dragged) {
+                        randomWalk(binding)
+                    }
                 }
-                delay(7000)
+                delay(5000)
             }
         }
     }
@@ -81,22 +84,34 @@ class DragMovementModule(
                 println()
                 if (layoutParams.x > startx) {
                     direction = "RIGHT"
-                    if (action == "WALKING_RIGHT") {
-                        action = "WALKING_RIGHT2"
-                    } else {
-                        action = "WALKING_RIGHT"
+                    action = when (action) {
+                        "WALKING_RIGHT" -> {
+                            "WALKING_RIGHT_MIDDLE"
+                        }
+                        "WALKING_RIGHT_MIDDLE" -> {
+                            "WALKING_RIGHT2"
+                        }
+                        else -> {
+                            "WALKING_RIGHT"
+                        }
                     }
                     mod.set_action(action)
-                    window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
+                    window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!![action]!!)
                 } else {
                     direction = "LEFT"
-                    if (action == "WALKING_LEFT") {
-                        action = "WALKING_LEFT2"
-                    } else {
-                        action = "WALKING_LEFT"
+                    action = when (action) {
+                        "WALKING_LEFT" -> {
+                            "WALKING_LEFT_MIDDLE"
+                        }
+                        "WALKING_LEFT_MIDDLE" -> {
+                            "WALKING_LEFT2"
+                        }
+                        else -> {
+                            "WALKING_LEFT"
+                        }
                     }
                     mod.set_action(action)
-                    window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
+                    window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!![action]!!)
                 }
             }
         }
@@ -105,14 +120,21 @@ class DragMovementModule(
                 // After walking, make the goose sit sometimes
                 var chance = Random().nextInt(10)
                 if (chance > 5) {
-                    if (direction == "LEFT") {
-                        action = "SITTING_LEFT"
+                    action = if (direction == "LEFT") {
+                        "SITTING_LEFT"
                     } else {
-                        action = "SITTING_RIGHT"
+                        "SITTING_RIGHT"
                     }
-                    mod.set_action(action)
-                    window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
+                } else {
+                    // If the goose is not sitting, make sure it doesn't stop on the image with only one leg
+                    action = if (direction == "LEFT") {
+                        "WALKING_LEFT"
+                    } else {
+                        "WALKING_RIGHT"
+                    }
                 }
+                mod.set_action(action)
+                window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
                 // Allow dragging again when the animation finishes
                 isDraggable = true
             }
@@ -139,6 +161,7 @@ class DragMovementModule(
 
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
+                        is_dragged = true
                         //remember the initial position.
                         initialX = params!!.x
                         initialY = params!!.y
@@ -150,6 +173,7 @@ class DragMovementModule(
                         return true
                     }
                     MotionEvent.ACTION_UP -> {
+                        is_dragged = false
                         action = if (direction == "LEFT") {
                             "SITTING_LEFT"
                         } else {
@@ -178,18 +202,30 @@ class DragMovementModule(
                                 }
                             } else if ( params!!.x < prevx && (abs(params!!.x.minus(prevx)) <= 100f))  {
                                 direction = "LEFT"
-                                if (action == "ANGRY_LEFT") {
-                                    action = "ANGRY_LEFT2"
-                                } else {
-                                    action = "ANGRY_LEFT"
+                                action = when (action) {
+                                    "ANGRY_LEFT" -> {
+                                        "ANGRY_LEFT_MIDDLE"
+                                    }
+                                    "ANGRY_LEFT_MIDDLE" -> {
+                                        "ANGRY_LEFT2"
+                                    }
+                                    else -> {
+                                        "ANGRY_LEFT"
+                                    }
                                 }
                             } else {
                                 // Make the goose face the right when swiping vertically
                                 direction = "RIGHT"
-                                if (action == "ANGRY_RIGHT") {
-                                    action = "ANGRY_RIGHT2"
-                                } else {
-                                    action = "ANGRY_RIGHT"
+                                action = when (action) {
+                                    "ANGRY_RIGHT" -> {
+                                        "ANGRY_RIGHT_MIDDLE"
+                                    }
+                                    "ANGRY_RIGHT_MIDDLE" -> {
+                                        "ANGRY_RIGHT2"
+                                    }
+                                    else -> {
+                                        "ANGRY_RIGHT"
+                                    }
                                 }
                             }
                             mod.set_action(action)

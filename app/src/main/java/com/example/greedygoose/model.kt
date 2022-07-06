@@ -29,7 +29,11 @@ val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
         "WALKING_RIGHT2" to R.drawable.eng_walking_right2,
         "WINDOW_LEFT" to R.drawable.eng_window_left,
         "WINDOW_RIGHT" to R.drawable.eng_window_right,
-    ),
+        "ANGRY_LEFT_MIDDLE" to R.drawable.eng_angry_leftmiddle,
+        "ANGRY_RIGHT_MIDDLE" to R.drawable.eng_angry_rightmiddle,
+        "WALKING_LEFT_MIDDLE" to R.drawable.eng_walking_leftmiddle,
+        "WALKING_RIGHT_MIDDLE" to R.drawable.eng_walking_rightmiddle,
+        ),
     "MATH" to hashMapOf(
         "ANGRY_LEFT" to R.drawable.math_angry_left,
         "ANGRY_LEFT2" to R.drawable.math_angry_left2,
@@ -49,6 +53,10 @@ val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
         "WALKING_RIGHT2" to R.drawable.math_walking_right2,
         "WINDOW_LEFT" to R.drawable.math_window_left,
         "WINDOW_RIGHT" to R.drawable.math_window_right,
+        "ANGRY_LEFT_MIDDLE" to R.drawable.math_angry_leftmiddle,
+        "ANGRY_RIGHT_MIDDLE" to R.drawable.math_angry_rightmiddle,
+        "WALKING_LEFT_MIDDLE" to R.drawable.math_walking_leftmiddle,
+        "WALKING_RIGHT_MIDDLE" to R.drawable.math_walking_rightmiddle,
     ),
     "SCI" to hashMapOf(
         "ANGRY_LEFT" to R.drawable.sci_angry_left,
@@ -69,6 +77,10 @@ val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
         "WALKING_RIGHT2" to R.drawable.sci_walking_right2,
         "WINDOW_LEFT" to R.drawable.sci_window_left,
         "WINDOW_RIGHT" to R.drawable.sci_window_right,
+        "ANGRY_LEFT_MIDDLE" to R.drawable.sci_angry_leftmiddle,
+        "ANGRY_RIGHT_MIDDLE" to R.drawable.sci_angry_rightmiddle,
+        "WALKING_LEFT_MIDDLE" to R.drawable.sci_walking_leftmiddle,
+        "WALKING_RIGHT_MIDDLE" to R.drawable.sci_walking_rightmiddle,
     ),
     "NONE" to hashMapOf(
         "ANGRY_LEFT" to R.drawable.none_angry_left,
@@ -89,6 +101,10 @@ val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
         "WALKING_RIGHT2" to R.drawable.none_walking_right2,
         "WINDOW_LEFT" to R.drawable.none_window_left,
         "WINDOW_RIGHT" to R.drawable.none_window_right,
+        "ANGRY_LEFT_MIDDLE" to R.drawable.none_angry_leftmiddle,
+        "ANGRY_RIGHT_MIDDLE" to R.drawable.none_angry_rightmiddle,
+        "WALKING_LEFT_MIDDLE" to R.drawable.none_walking_leftmiddle,
+        "WALKING_RIGHT_MIDDLE" to R.drawable.none_walking_rightmiddle,
     )
 )
 
