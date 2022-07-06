@@ -24,9 +24,10 @@ class Entertainment : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = EntertainmentBinding.inflate(layoutInflater)
 
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
         checkOverlayPermission()
         setContentView(binding.root)
-        binding.backImageButton.setOnClickListener { finish() }
 
         bindFloatingService()
     }

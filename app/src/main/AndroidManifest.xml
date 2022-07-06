@@ -29,7 +29,9 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".Entertainment" />
+        <activity
+            android:name=".Entertainment"
+            android:parentActivityName=".MainActivity" />
     </application>
 
 </manifest>
