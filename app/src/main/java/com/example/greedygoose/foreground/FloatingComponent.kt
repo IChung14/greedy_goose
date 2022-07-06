@@ -2,16 +2,14 @@ package com.example.greedygoose.foreground
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.os.ResultReceiver
 import android.view.WindowManager
 import androidx.annotation.DrawableRes
-import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.MainScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import com.example.greedygoose.mod
+
 
 /**
  * FloatingGoose is Semi
@@ -20,6 +18,7 @@ class FloatingComponent(context: Context, type: String) {
     var receiver: ResultReceiver? = null
     var windowModule = FloatingWindowModule(context)
     var img = type
+    var is_alive = true
     @DrawableRes private var imgRes: Int? = null
     private var movementModule: MovementModule? = null
     private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
@@ -28,7 +27,7 @@ class FloatingComponent(context: Context, type: String) {
         // creating a floating view
         windowModule.create()
         imgRes?.let { windowModule.binding.gooseImg.setImageResource(it) }
-        
+
         moduleHelper?.let {
             movementModule = it(windowModule)
             movementModule!!.run()
@@ -71,11 +70,37 @@ class FloatingComponent(context: Context, type: String) {
         if (receiver != null) receiver!!.send(action, bundle)
     }
 
-    fun destroy() {
-        sendAction(ACTION_ON_CLOSE, Bundle())
+    fun delete_food() {
+        Handler().postDelayed(Runnable {
+            if (movementModule!!.is_alive) {
+                movementModule?.destroy()
+                val num_eggs = mod.get_egg_count()
+                if (num_eggs != null) {
+                    if (num_eggs >= 5) {
+                        mod.decrease_egg_count(5)
+                    } else {
+                        mod.decrease_egg_count(num_eggs)
+                    }
+                }
+            }
+        }, 15000)
+    }
 
+    fun delete_egg() {
+        Handler().postDelayed(Runnable {
+            if (movementModule!!.is_alive) {
+                movementModule?.destroy()
+            }
+        }, 15000)
+    }
+
+    fun destroy() {
+        is_alive = false
+        sendAction(ACTION_ON_CLOSE, Bundle())
         windowModule.destroy()
-        movementModule?.destroy()
+        if (movementModule != null) {
+            movementModule?.destroy()
+        }
         movementModule = null
     }
 

@@ -13,6 +13,7 @@ class TouchDeleteModule (
     private var windowManager: WindowManager?,
     private var baseView: View?
     ): MovementModule {
+    override var is_alive = true
 
     override fun destroy() {
         try {
@@ -25,6 +26,7 @@ class TouchDeleteModule (
             params = null
             baseView = null
             windowManager = null
+            this.is_alive = false
         }
     }
 
@@ -33,12 +35,8 @@ class TouchDeleteModule (
     }
 
     override fun run() {
-        println("called egg ")
-
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent): Boolean {
-                println("YES TOUCH")
-
                 destroy()
                 mod.increase_egg_count(1)
                 return false
