@@ -1,11 +1,17 @@
 package com.example.greedygoose
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Context
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.text.format.DateUtils
+import android.view.Gravity
+import android.view.LayoutInflater
 import android.view.View
-
+import android.view.View.OnTouchListener
+import android.widget.Button
+import android.widget.LinearLayout
+import android.widget.PopupWindow
+import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.databinding.TimerPageBinding
 
 
@@ -16,6 +22,8 @@ class TimerPage : AppCompatActivity() {
     var isRunning: Boolean = false;
     var isPaused: Boolean = false;
     var elapsedTime = 0L
+
+    private var timerPopup:PopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -70,6 +78,34 @@ class TimerPage : AppCompatActivity() {
 
     }
 
+    private fun showPopupWindow() {
+        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val view = inflater.inflate(R.layout.popup_window, null)
+
+        val width = LinearLayout.LayoutParams.WRAP_CONTENT
+        val height = LinearLayout.LayoutParams.WRAP_CONTENT
+        timerPopup = PopupWindow(view, width, height, true)
+
+        timerPopup?.isOutsideTouchable = true
+        timerPopup?.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
+
+        val showButton = view.findViewById<Button>(R.id.window_close)
+        showButton.setOnClickListener {
+            dismissPopup()
+        }
+
+    }
+
+    private fun dismissPopup() {
+        timerPopup?.let {
+            if(it.isShowing){
+                it.dismiss()
+            }
+            timerPopup = null
+        }
+
+    }
+
     private fun pauseTimer() {
         binding.startBtn.text = "RESUME"
         timer.cancel()
@@ -85,6 +121,8 @@ class TimerPage : AppCompatActivity() {
     private fun startTimer(time_in_seconds: Long) {
         timer = object : CountDownTimer(time_in_seconds, 1000) {
             override fun onFinish() {
+                showPopupWindow()
+                resetTimer()
             }
 
             override fun onTick(p0: Long) {
@@ -99,7 +137,7 @@ class TimerPage : AppCompatActivity() {
         timer.start()
 
         isRunning = true
-        binding.startBtn.text = "START"
+        binding.startBtn.text = "PAUSE"
     }
 
     private fun resetTimer() {
