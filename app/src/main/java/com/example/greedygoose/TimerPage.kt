@@ -1,7 +1,6 @@
 package com.example.greedygoose
 
-import android.app.Activity
-import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
 import android.view.View
@@ -9,7 +8,7 @@ import android.view.View
 import com.example.greedygoose.databinding.TimerPageBinding
 
 
-class TimerPage : Activity() {
+class TimerPage : AppCompatActivity() {
 
     var milliSeconds = 60000L
 
@@ -23,6 +22,8 @@ class TimerPage : Activity() {
         super.onCreate(savedInstanceState)
         binding = TimerPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         binding.startBtn.setOnClickListener {
             if (isRunning) {
@@ -38,9 +39,6 @@ class TimerPage : Activity() {
             resetTimer()
         }
 
-        binding.backBtn.setOnClickListener {
-            startActivity(Intent(this@TimerPage, MainActivity::class.java))
-        }
     }
 
     private fun pauseTimer() {
