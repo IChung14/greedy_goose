@@ -33,7 +33,7 @@
                 android:id="@+id/window_close"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Remove" />
+                android:text="Dismiss" />
 
         </LinearLayout>
 
