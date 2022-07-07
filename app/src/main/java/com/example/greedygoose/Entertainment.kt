@@ -4,49 +4,53 @@ import android.app.*
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
-import android.view.View
 import com.example.greedygoose.databinding.EntertainmentBinding
-import com.example.greedygoose.foreground.FloatingLayout
-import com.example.greedygoose.foreground.FloatingListener
+import android.content.DialogInterface
+import android.app.AlertDialog;
+import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
+import androidx.appcompat.app.AppCompatActivity
 
 
-class Entertainment() : Activity() {
+//TODO: consider converting it into a fragment and get viewModel from mainActivity
+class Entertainment : AppCompatActivity() {
+
     private lateinit var binding: EntertainmentBinding
+
+    private var resultLauncher = registerForActivityResult(StartActivityForResult()) { _ ->
+        bindFloatingService()
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = EntertainmentBinding.inflate(layoutInflater)
-        setContentView(R.layout.entertainment)
 
-        startService()
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
+        checkOverlayPermission()
+        setContentView(binding.root)
+
+        bindFloatingService()
     }
 
-
-    // method for starting the service
-    private fun startService() {
-        // check if the user has already granted
-        // the Draw over other apps permission
-        checkOverlayPermission()
+    private fun bindFloatingService(){
         if (Settings.canDrawOverlays(this)) {
-            // start the service based on the android version
-            val floatingListener: FloatingListener = object : FloatingListener {
-                override fun onCreateListener(view: View?) {}
-                override fun onCloseListener() {}
-            }
-
-            val floatingLayout = FloatingLayout(this, R.layout.floating_layout)
-            floatingLayout.setFloatingListener(floatingListener)
-            floatingLayout.create()
+            mod.set_entertainment(true)
+            mod.observe_entertainment(this, this)
         }
     }
 
     // method to ask user to grant the Overlay permission
     private fun checkOverlayPermission() {
         if (!Settings.canDrawOverlays(this)) {
-            // send user to the device settings
-            val myIntent = Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION)
-            startActivity(myIntent)
+            // show a pop-up indicating they should set permissions for the app
+            val permissionAlert = AlertDialog.Builder(this)
+            permissionAlert.setMessage("For the application to run, please turn on permissions for Greedy Goose")
+            permissionAlert.setTitle("Permission Reminder")
+            permissionAlert.setPositiveButton("Ok") { _, _ ->
+                resultLauncher.launch(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
+            }
+            permissionAlert.setCancelable(true)
+            permissionAlert.create().show()
         }
     }
 }

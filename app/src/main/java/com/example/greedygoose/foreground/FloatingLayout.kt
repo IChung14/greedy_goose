@@ -1,40 +1,74 @@
 package com.example.greedygoose.foreground
 
+import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.os.Handler
-import android.os.Looper
-import androidx.annotation.LayoutRes
+import android.content.ServiceConnection
+import android.os.IBinder
+import androidx.lifecycle.LifecycleOwner
+import com.example.greedygoose.R
+import com.example.greedygoose.databinding.FloatingLayoutBinding
+import com.example.greedygoose.mod
 
-class FloatingLayout(private val context: Context, @param:LayoutRes private val layoutRes: Int) {
-    private var floatingListener: FloatingListener? = null
+/**
+ * FloatingLayout is owned by MainActivity
+ * This class is a communication layer between the MainActivity and FloatingService
+ */
+class FloatingLayout(private val context: Context, imgName: Int, lifecycle: LifecycleOwner) {
+
     var isShow = false
         private set
-    private var intent: Intent? = null
-        get() {
-            if (field == null) field = Intent(context, FloatingService::class.java)
-            return field
+
+    // you can access FloatingService via this variable
+    private lateinit var fService: FloatingService
+
+    /** Defines callbacks for service binding, passed to bindService()  */
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            val binder = service as FloatingService.FloatingServiceBinder
+            fService = binder.getService()
+
+            updateView { fRoot ->
+                fRoot.gooseImg.setImageResource(imgName)
+            }
+            set_bind(lifecycle)
         }
 
-    fun setFloatingListener(floatingListener: FloatingListener?) {
-        this.floatingListener = floatingListener
+        override fun onServiceDisconnected(arg0: ComponentName) {}
     }
 
-    fun create() {
+    /**
+     * Updates a View under FloatingService
+     */
+    fun updateView(viewModifier: (FloatingLayoutBinding)->Unit){
+        viewModifier(fService.floatingEgg.windowModule.binding)
+    }
+
+    fun set_bind(life: LifecycleOwner) {
+        mod.observe_theme(life, fService.floatingGoose.windowModule.binding.gooseImg)
+//        mod.observe_action(life, fService.floatingGoose.windowModule.binding.gooseImg)
+    }
+
+    /**
+     * Set a View under the context of FloatingService.
+     *
+     * layoutRes: you are only allowed to send layout id to indicate what object you want to create
+     */
+    fun setView() {
         isShow = true
-        val intent = intent!!
-        intent.putExtra(FloatingService.EXTRA_LAYOUT_RESOURCE, layoutRes)
-        if (floatingListener != null) intent.putExtra(
-            FloatingService.EXTRA_RECEIVER, FloatingResult(
-                Handler(Looper.getMainLooper()), floatingListener
-            )
-        )
-        context.startService(intent)
+        val intent = Intent(context, FloatingService::class.java)
+        context.bindService(intent, connection, Context.BIND_AUTO_CREATE)
     }
 
+    /**
+     * terminate foreground service
+     */
     fun destroy() {
         isShow = false
-        context.stopService(intent)
+        context.unbindService(connection)
+        context.stopService(Intent(context, FloatingService::class.java))
     }
 
 }

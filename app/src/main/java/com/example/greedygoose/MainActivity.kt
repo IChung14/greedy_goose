@@ -1,22 +1,17 @@
 package com.example.greedygoose
 
 import android.content.Intent
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Handler
-import android.provider.Settings
 import android.text.Html
-import android.widget.TextView
 import com.example.greedygoose.databinding.ActivityMainBinding
 
-import android.view.View
-import android.widget.Button
-
+var mod: model = model()
 
 class MainActivity : AppCompatActivity() {
-
     private lateinit var binding: ActivityMainBinding
+
     private fun getColoredSpanned(text: String, color1: String, color2: String): String? {
         var html = ""
         var color = color1
@@ -33,11 +28,12 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        mod.observe_entertainment(this, this)
 
         val greedyGooseText = binding.textView
         val greedy = getColoredSpanned("Greedy Goose", "#e83372", "#E191CA")
-        greedyGooseText.setText(Html.fromHtml(greedy));
-        greedyGooseText.setTextSize(90F)
+        greedyGooseText.text = Html.fromHtml(greedy)
+        greedyGooseText.textSize = 90F
 
         val entertainmentButton = binding.entertainmentButton
         entertainmentButton.setOnClickListener {
@@ -49,5 +45,9 @@ class MainActivity : AppCompatActivity() {
             startActivity(Intent(this@MainActivity, TimerPage::class.java))
         }
 
+        val settingsButton = binding.settingsButton
+        settingsButton.setOnClickListener {
+            startActivity(Intent(this@MainActivity, SettingsPage::class.java))
+        }
     }
 }

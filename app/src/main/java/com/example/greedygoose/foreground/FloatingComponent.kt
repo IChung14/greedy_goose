@@ -2,54 +2,106 @@ package com.example.greedygoose.foreground
 
 import android.content.Context
 import android.os.Bundle
+import android.os.Handler
 import android.os.ResultReceiver
-import android.view.View
+import android.view.WindowManager
+import androidx.annotation.DrawableRes
+import com.example.greedygoose.foreground.movementModule.MovementModule
+import com.example.greedygoose.foreground.ui.FloatingWindowModule
+import com.example.greedygoose.mod
 
-class FloatingComponent(private val layoutRes: Int, private val context: Context) {
-    private var receiver: ResultReceiver? = null
-    private var floatingWindowModule: FloatingWindowModule? = null
-    private var floatingViewMovementModule: FloatingViewMovementModule? = null
 
-    fun setUp() {
-        val ROOT_CONTAINER_ID = viewRootId
-        floatingWindowModule = FloatingWindowModule(context, layoutRes)
-        floatingWindowModule?.let {
-            it.create()
-            val floatingView: View = it.getView()
-            val rootContainer = floatingView.findViewById<View>(ROOT_CONTAINER_ID)
-            floatingViewMovementModule = FloatingViewMovementModule(
-                it.getParams(),
-                rootContainer,
-                it.windowManager,
-                floatingView
-            )
-            floatingViewMovementModule!!.run()
+/**
+ * FloatingGoose is Semi
+ */
+class FloatingComponent(context: Context, type: String) {
+    var receiver: ResultReceiver? = null
+    var windowModule = FloatingWindowModule(context)
+    var img = type
+    var is_alive = true
+    @DrawableRes private var imgRes: Int? = null
+    private var movementModule: MovementModule? = null
+    private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
+
+    fun build(): FloatingComponent {
+        // creating a floating view
+        windowModule.create()
+        imgRes?.let { windowModule.binding.gooseImg.setImageResource(it) }
+
+        moduleHelper?.let {
+            movementModule = it(windowModule)
+            movementModule!!.run()
+            if (img == "GOOSE") {
+                movementModule!!.start_action(windowModule)
+            }
         }
         sendAction(ACTION_ON_CREATE, Bundle())
+        return this
     }
 
-    fun setReceiver(receiver: ResultReceiver?) {
-        this.receiver = receiver
+    fun setImageResource(@DrawableRes resId: Int): FloatingComponent{
+        imgRes = resId
+        return this
     }
 
-    val viewRootId: Int
-        get() = context.resources.getIdentifier("root_container", "id", context.packageName)
+    fun setWindowLayoutParams(params: WindowManager.LayoutParams): FloatingComponent {
+        windowModule.params = params
+        return this
+    }
 
-    fun getFloatingWindowModule(): FloatingWindowModule? {
-        return floatingWindowModule
+    fun setWindowLayoutParams(x: Int, y: Int): FloatingComponent {
+        val layoutParams: WindowManager.LayoutParams = windowModule.defaultParam()
+        layoutParams.x = x
+        layoutParams.y = y
+        windowModule.params = layoutParams
+        return this
+    }
+
+    fun getLocation(): WindowManager.LayoutParams? {
+        return this.windowModule.params
+    }
+
+    fun setMovementModule(moduleHelper: (FloatingWindowModule)->MovementModule): FloatingComponent{
+        this.moduleHelper = moduleHelper
+        return this
     }
 
     private fun sendAction(action: Int, bundle: Bundle) {
         if (receiver != null) receiver!!.send(action, bundle)
     }
 
-    fun destroy() {
-        sendAction(ACTION_ON_CLOSE, Bundle())
+    fun delete_food() {
+        Handler().postDelayed(Runnable {
+            if (movementModule!!.is_alive) {
+                movementModule?.destroy()
+                val num_eggs = mod.get_egg_count()
+                if (num_eggs != null) {
+                    if (num_eggs >= 5) {
+                        mod.decrease_egg_count(5)
+                    } else {
+                        mod.decrease_egg_count(num_eggs)
+                    }
+                }
+            }
+        }, 15000)
+    }
 
-        floatingWindowModule?.destroy()
-        floatingWindowModule = null
-        floatingViewMovementModule?.destroy()
-        floatingViewMovementModule = null
+    fun delete_egg() {
+        Handler().postDelayed(Runnable {
+            if (movementModule!!.is_alive) {
+                movementModule?.destroy()
+            }
+        }, 15000)
+    }
+
+    fun destroy() {
+        is_alive = false
+        sendAction(ACTION_ON_CLOSE, Bundle())
+        windowModule.destroy()
+        if (movementModule != null) {
+            movementModule?.destroy()
+        }
+        movementModule = null
     }
 
     companion object {

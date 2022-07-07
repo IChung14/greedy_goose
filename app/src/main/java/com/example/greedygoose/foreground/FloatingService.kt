@@ -2,88 +2,115 @@ package com.example.greedygoose.foreground
 
 import android.app.Service
 import android.content.Intent
+import android.os.Binder
 import android.os.IBinder
-import android.os.ResultReceiver
-import android.view.View
+import com.example.greedygoose.R
+import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.*
+import android.os.PowerManager
+import com.example.greedygoose.foreground.movementModule.DragMovementModule
+import com.example.greedygoose.foreground.movementModule.DragToEatModule
+
 
 class FloatingService : Service() {
-    private var floatingComponent: FloatingComponent? = null
 
-    override fun onBind(intent: Intent): IBinder? {
-        return null
+    // Binder given to clients
+    private val binder = FloatingServiceBinder()
+
+    // This FloatingGoose holds 1 floating entity
+    lateinit var floatingGoose : FloatingComponent
+    lateinit var floatingEgg : FloatingComponent
+    lateinit var floatingFood: FloatingComponent
+
+    override fun onBind(intent: Intent): IBinder {
+        floatingGoose = FloatingComponent(this@FloatingService, "GOOSE")         // construct a floating object
+            .setMovementModule {                      // making it responsive
+                DragMovementModule(
+                    it.params,
+                    it.binding.rootContainer,       // this is the view that will listen to drags
+                    it.windowManager,
+                    it.binding.root,
+                    this
+                )
+            }
+            .build()
+        layEggs()
+        formFoods()
+        return binder
     }
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val layoutRes = intent.getIntExtra(EXTRA_LAYOUT_RESOURCE, -1)
-        val receiver: ResultReceiver? = intent.getParcelableExtra(EXTRA_RECEIVER)
-        floatingComponent = FloatingComponent(layoutRes, this)
-        floatingComponent?.let {
-            if (receiver != null) it.setReceiver(receiver)
-            it.setUp()
-            view = it.getFloatingWindowModule()?.getView()
+    private fun layEggs(){
+        MainScope().launch{
+            var chance = 1
+            while(true) {
+                // use percentage to determine whether to lay an egg
+                if(chance < 3 && screenOn()){
+                    floatingEgg = FloatingComponent(this@FloatingService, "EGG")
+                        .setImageResource(R.drawable.egg_small)
+                        .setWindowLayoutParams(floatingGoose.getLocation()!!)
+                        .setMovementModule {
+                            TouchDeleteModule(
+                                it.params,
+                                it.binding.rootContainer,
+                                it.windowManager,
+                                it.binding.root
+                            )
+                        }
+                        .build()
+                    floatingEgg.delete_egg()
+                }
+                delay(5000)
+
+                chance = Random().nextInt(10)
+            }
         }
-        return START_STICKY_COMPATIBILITY
+    }
+
+    private fun formFoods(){
+        MainScope().launch {
+            var chance = 1
+            while (true) {
+                if(chance > 7 && screenOn()) {
+                    var x = Random().nextInt(1000) - 500
+                    var y = Random().nextInt(1000) - 500
+                    floatingFood = FloatingComponent(this@FloatingService, "FOOD")
+                        .setImageResource(R.drawable.bbt)
+                        .setWindowLayoutParams(x, y)
+                        .setMovementModule {
+                            DragToEatModule(
+                                it.params,
+                                it.binding.rootContainer,
+                                it.windowManager,
+                                it.binding.root,
+                                floatingGoose
+                            )
+                        }
+                    floatingFood.build()
+                    floatingFood.delete_food()
+                }
+                delay(5000)
+
+                chance = Random().nextInt(10)
+            }
+        }
+    }
+
+    private fun screenOn(): Boolean {
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
+        return powerManager.isInteractive
     }
 
     override fun onDestroy() {
-        floatingComponent?.destroy()
+        floatingGoose.destroy()
+        floatingEgg.destroy()
         super.onDestroy()
     }
 
-    companion object {
-        const val EXTRA_LAYOUT_RESOURCE = "extra_layout_resource"
-        const val EXTRA_RECEIVER = "extra_receiver"
-
-        // TODO: Memory leak
-        var view: View? = null
+    inner class FloatingServiceBinder : Binder() {
+        // Return this instance of LocalService so clients can call public methods
+        fun getService(): FloatingService = this@FloatingService
     }
 }
-
-//class ForegroundService : Service() {
-//    override fun onBind(intent: Intent): IBinder? {
-//        throw UnsupportedOperationException("Not yet implemented")
-//    }
-//
-//    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-//        // create the custom or default notification
-//        // based on the android version
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startMyOwnForeground() else startForeground(
-//            1,
-//            Notification()
-//        )
-//
-//        // create an instance of Window class
-//        // and display the content on screen
-//        val window = Window(this)
-//        window.open()
-//
-//
-//        return super.onStartCommand(intent, flags, startId)
-//    }
-//
-//    // for android version >=O we need to create
-//    // custom notification stating
-//    // foreground service is running
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun startMyOwnForeground() {
-//        val NOTIFICATION_CHANNEL_ID = "example.permanence"
-//        val channelName = "Background Service"
-//        val chan = NotificationChannel(
-//            NOTIFICATION_CHANNEL_ID,
-//            channelName,
-//            NotificationManager.IMPORTANCE_MIN
-//        )
-//        val manager = (getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
-//        manager.createNotificationChannel(chan)
-//        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-//        val notification = notificationBuilder.setOngoing(true)
-//            .setContentTitle("Service running")
-//            .setContentText("Displaying over other apps") // this is important, otherwise the notification will show the way
-//            // you want i.e. it will show some default notification
-//            .setSmallIcon(R.drawable.ic_launcher_foreground)
-//            .setPriority(NotificationManager.IMPORTANCE_MIN)
-//            .setCategory(Notification.CATEGORY_SERVICE)
-//            .build()
-//        startForeground(2, notification)
-//    }
-//}

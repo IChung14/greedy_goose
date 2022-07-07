@@ -7,9 +7,12 @@
     android:layout_height="match_parent">
 
     <ImageView
-        android:id="@+id/imageView6"
+        android:id="@+id/gooseImg"
         android:layout_width="180dp"
         android:layout_height="120dp"
-        android:src="@drawable/tie_goose" />
+        android:src="@drawable/blank"
+        android:scaleType="centerInside"
+        android:adjustViewBounds="true"/>
+
 
 </LinearLayout>
