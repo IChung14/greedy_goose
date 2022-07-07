@@ -3,6 +3,7 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="../../../../../../layout/custom_preview.xml" value="0.1" />
         <entry key="..\:/Users/claud/Documents/UWaterloo/4B/CS 446/greedy_goose/app/src/main/res/layout/entertainment.xml" value="0.10733695652173914" />
         <entry key="..\:/workplace/GreedyGoose/app/src/main/res/layout/activity_main.xml" value="0.19010416666666666" />
         <entry key="..\:/workplace/GreedyGoose/app/src/main/res/layout/activity_settings_page.xml" value="0.22" />
@@ -18,7 +19,7 @@
         <entry key="app/src/main/res/layout/fragment_egg.xml" value="0.10677083333333333" />
         <entry key="app/src/main/res/layout/fragment_goose.xml" value="0.10677083333333333" />
         <entry key="app/src/main/res/layout/popup_window.xml" value="0.13020833333333334" />
-        <entry key="app/src/main/res/layout/timer_page.xml" value="0.17990875244140625" />
+        <entry key="app/src/main/res/layout/timer_page.xml" value="0.25" />
       </map>
     </option>
   </component>

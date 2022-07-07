@@ -3,14 +3,13 @@ package com.example.greedygoose
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.text.format.DateUtils
 import android.view.View
 
 import com.example.greedygoose.databinding.TimerPageBinding
 
 
 class TimerPage : AppCompatActivity() {
-
-    var milliSeconds = 60000L
 
     private lateinit var binding: TimerPageBinding
     lateinit var timer: CountDownTimer
@@ -26,11 +25,41 @@ class TimerPage : AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         binding.startBtn.setOnClickListener {
-            if (isRunning) {
+            if (isPaused) {
+                resumeTimer()
+            }
+            else if (isRunning) {
                 pauseTimer()
-            } else {
-                val time = binding.userInputTime.text.toString()
-                elapsedTime = time.toLong() * milliSeconds
+            }
+            else {
+                val hrs = binding.userInputHrs.text.toString()
+                val mins = binding.userInputMins.text.toString()
+                val secs = binding.userInputSecs.text.toString()
+
+                // TODO: handle cases for above 60
+                var elapsedHrs = 0L
+                var elapsedMins = 0L
+                var elapsedSecs = 0L
+
+                if (hrs.isNotEmpty()) {
+                    elapsedHrs = hrs.toLong() * DateUtils.HOUR_IN_MILLIS
+                }
+
+                if (mins.isNotEmpty()) {
+                    elapsedMins = mins.toLong() * DateUtils.MINUTE_IN_MILLIS
+                }
+
+                if (secs.isNotEmpty()) {
+                    elapsedSecs = secs.toLong() * DateUtils.SECOND_IN_MILLIS
+                }
+
+                elapsedTime = elapsedHrs + elapsedMins + elapsedSecs
+
+                if (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() || elapsedTime == 0L) {
+                    // TODO: Add snackbar to tell user to input a valid time
+                    return@setOnClickListener
+                }
+
                 startTimer(elapsedTime)
             }
         }
@@ -42,16 +71,15 @@ class TimerPage : AppCompatActivity() {
     }
 
     private fun pauseTimer() {
-        if (isPaused) {
-            binding.startBtn.text = "RESUME"
-            startTimer(elapsedTime)
-            isPaused = false
-        }
-        else {
-            binding.startBtn.text = "PAUSE"
-            timer.cancel()
-            isPaused = true
-        }
+        binding.startBtn.text = "RESUME"
+        timer.cancel()
+        isPaused = true
+    }
+
+    private fun resumeTimer() {
+        binding.startBtn.text = "PAUSE"
+        startTimer(elapsedTime)
+        isPaused = false
     }
 
     private fun startTimer(time_in_seconds: Long) {
@@ -64,27 +92,34 @@ class TimerPage : AppCompatActivity() {
                 updateTextUI()
             }
         }
-        binding.userInputTime.visibility = View.INVISIBLE
+        binding.userInputHrs.visibility = View.INVISIBLE
+        binding.userInputMins.visibility = View.INVISIBLE
+        binding.userInputSecs.visibility = View.INVISIBLE
         binding.timerText.visibility = View.VISIBLE
         timer.start()
 
         isRunning = true
-        binding.startBtn.text = "Pause"
+        binding.startBtn.text = "START"
     }
 
     private fun resetTimer() {
-        elapsedTime = milliSeconds
+        elapsedTime = DateUtils.MINUTE_IN_MILLIS
+        isPaused = false
         isRunning = false
+        binding.startBtn.text = "START"
         timer.cancel()
-        binding.userInputTime.visibility = View.VISIBLE
+        binding.userInputHrs.visibility = View.VISIBLE
+        binding.userInputMins.visibility = View.VISIBLE
+        binding.userInputSecs.visibility = View.VISIBLE
         binding.timerText.visibility = View.INVISIBLE
         updateTextUI()
     }
 
     private fun updateTextUI() {
-        val minute = (elapsedTime / 1000) / 60
-        val seconds = (elapsedTime / 1000) % 60
+        val hr = elapsedTime/1000/3600
+        val min = (elapsedTime/1000 - hr*3600) / 60
+        val sec = (elapsedTime/1000) % 60
 
-        binding.timerText.text = "$minute:$seconds"
+        binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
     }
 }
