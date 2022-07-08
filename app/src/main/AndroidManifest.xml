@@ -38,7 +38,7 @@
         <activity
             android:name=".Entertainment"
             android:parentActivityName=".MainActivity" />
-
+        <service android:name=".TimerService"/>
     </application>
 
 </manifest>

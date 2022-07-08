@@ -8,6 +8,18 @@
     tools:context=".TimerPage">
 
     <TextView
+        android:id="@+id/timeTV"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="10dp"
+        android:text="00:00:00"
+        android:textAlignment="center"
+        android:textColor="@color/black"
+        android:textSize="60sp"
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="390dp" />
+
+    <TextView
         android:id="@+id/timerLabel"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"

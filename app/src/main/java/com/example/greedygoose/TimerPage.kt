@@ -1,13 +1,14 @@
 package com.example.greedygoose
 
+import android.content.BroadcastReceiver
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import android.os.Bundle
-import android.os.CountDownTimer
 import android.text.format.DateUtils
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
-import android.view.View.OnTouchListener
 import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
@@ -18,11 +19,10 @@ import com.example.greedygoose.databinding.TimerPageBinding
 class TimerPage : AppCompatActivity() {
 
     private lateinit var binding: TimerPageBinding
-    lateinit var timer: CountDownTimer
-    var isRunning: Boolean = false;
-    var isPaused: Boolean = false;
-    var elapsedTime = 0L
-
+    private lateinit var serviceIntent: Intent
+    private var isRunning: Boolean = false;
+    private var isPaused: Boolean = false;
+    private var elapsedTime = 0L
     private var timerPopup:PopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -68,7 +68,7 @@ class TimerPage : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
-                startTimer(elapsedTime)
+                startTimer()
             }
         }
 
@@ -76,6 +76,8 @@ class TimerPage : AppCompatActivity() {
             resetTimer()
         }
 
+        serviceIntent = Intent(applicationContext, TimerService::class.java)
+        registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
     }
 
     private fun showPopupWindow() {
@@ -108,33 +110,23 @@ class TimerPage : AppCompatActivity() {
 
     private fun pauseTimer() {
         binding.startBtn.text = "RESUME"
-        timer.cancel()
+        stopService(serviceIntent)
         isPaused = true
     }
 
     private fun resumeTimer() {
         binding.startBtn.text = "PAUSE"
-        startTimer(elapsedTime)
+        startTimer()
         isPaused = false
     }
 
-    private fun startTimer(time_in_seconds: Long) {
-        timer = object : CountDownTimer(time_in_seconds, 1000) {
-            override fun onFinish() {
-                showPopupWindow()
-                resetTimer()
-            }
-
-            override fun onTick(p0: Long) {
-                elapsedTime = p0
-                updateTextUI()
-            }
-        }
+    private fun startTimer() {
         binding.userInputHrs.visibility = View.INVISIBLE
         binding.userInputMins.visibility = View.INVISIBLE
         binding.userInputSecs.visibility = View.INVISIBLE
         binding.timerText.visibility = View.VISIBLE
-        timer.start()
+        serviceIntent.putExtra(TimerService.TIME_EXTRA, elapsedTime)
+        startService(serviceIntent)
 
         isRunning = true
         binding.startBtn.text = "PAUSE"
@@ -145,7 +137,7 @@ class TimerPage : AppCompatActivity() {
         isPaused = false
         isRunning = false
         binding.startBtn.text = "START"
-        timer.cancel()
+        pauseTimer()
         binding.userInputHrs.visibility = View.VISIBLE
         binding.userInputMins.visibility = View.VISIBLE
         binding.userInputSecs.visibility = View.VISIBLE
@@ -153,11 +145,26 @@ class TimerPage : AppCompatActivity() {
         updateTextUI()
     }
 
+
+    private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent)
+        {
+            elapsedTime = intent.getLongExtra(TimerService.TIME_EXTRA, 0L)
+            updateTextUI()
+
+            if (elapsedTime == 0L) {
+                showPopupWindow()
+                resetTimer()
+            }
+        }
+    }
+
     private fun updateTextUI() {
         val hr = elapsedTime/1000/3600
         val min = (elapsedTime/1000 - hr*3600) / 60
         val sec = (elapsedTime/1000) % 60
 
-        binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
+//        binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
+        binding.timeTV.text = String.format("%02d:%02d:%02d", hr, min, sec)
     }
 }
