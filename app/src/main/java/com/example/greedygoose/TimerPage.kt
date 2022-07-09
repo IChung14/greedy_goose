@@ -1,5 +1,6 @@
 package com.example.greedygoose
 
+import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -23,6 +24,7 @@ class TimerPage : AppCompatActivity() {
     private var isRunning: Boolean = false;
     private var isPaused: Boolean = false;
     private var elapsedTime = 0L
+    private var setTime = 0L
     private var timerPopup:PopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -31,6 +33,13 @@ class TimerPage : AppCompatActivity() {
         setContentView(binding.root)
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
+        if (isMyServiceRunning(TimerService::class.java)) {
+            binding.userInputHrs.visibility = View.INVISIBLE
+            binding.userInputMins.visibility = View.INVISIBLE
+            binding.userInputSecs.visibility = View.INVISIBLE
+            binding.timerText.visibility = View.VISIBLE
+        }
 
         binding.startBtn.setOnClickListener {
             if (isPaused) {
@@ -62,6 +71,7 @@ class TimerPage : AppCompatActivity() {
                 }
 
                 elapsedTime = elapsedHrs + elapsedMins + elapsedSecs
+                setTime = elapsedTime
 
                 if (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() || elapsedTime == 0L) {
                     // TODO: Add snackbar to tell user to input a valid time
@@ -133,7 +143,7 @@ class TimerPage : AppCompatActivity() {
     }
 
     private fun resetTimer() {
-        elapsedTime = DateUtils.MINUTE_IN_MILLIS
+        elapsedTime = setTime
         isPaused = false
         isRunning = false
         binding.startBtn.text = "START"
@@ -164,7 +174,12 @@ class TimerPage : AppCompatActivity() {
         val min = (elapsedTime/1000 - hr*3600) / 60
         val sec = (elapsedTime/1000) % 60
 
-//        binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
-        binding.timeTV.text = String.format("%02d:%02d:%02d", hr, min, sec)
+        binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
+    }
+
+    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
+        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+        return manager.getRunningServices(Integer.MAX_VALUE)
+            .any { it.service.className == serviceClass.name }
     }
 }
