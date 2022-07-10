@@ -1,4 +1,4 @@
-package com.example.greedygoose
+package com.example.greedygoose.timer
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -13,7 +13,11 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
+import com.example.greedygoose.R
+import com.example.greedygoose.TimerState
 import com.example.greedygoose.databinding.TimerPageBinding
+import com.example.greedygoose.mod
+import com.example.greedygoose.timer.NotificationUtil
 
 
 class TimerPage : AppCompatActivity() {
@@ -86,34 +90,6 @@ class TimerPage : AppCompatActivity() {
         registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
     }
 
-    private fun showPopupWindow() {
-        val inflater = getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
-        val view = inflater.inflate(R.layout.popup_window, null)
-
-        val width = LinearLayout.LayoutParams.WRAP_CONTENT
-        val height = LinearLayout.LayoutParams.WRAP_CONTENT
-        timerPopup = PopupWindow(view, width, height, true)
-
-        timerPopup?.isOutsideTouchable = true
-        timerPopup?.showAtLocation(binding.root, Gravity.CENTER, 0, 0)
-
-        val showButton = view.findViewById<Button>(R.id.window_close)
-        showButton.setOnClickListener {
-            dismissPopup()
-        }
-
-    }
-
-    private fun dismissPopup() {
-        timerPopup?.let {
-            if(it.isShowing){
-                it.dismiss()
-            }
-            timerPopup = null
-        }
-
-    }
-
     private fun pauseTimer() {
         binding.startBtn.text = "RESUME"
         stopService(serviceIntent)
@@ -151,7 +127,7 @@ class TimerPage : AppCompatActivity() {
             updateTextUI()
 
             if (mod.get_elapsed_time() <= 0L) {
-                showPopupWindow()
+                NotificationUtil.showTimerExpired(this@TimerPage)
                 resetTimer()
             }
         }

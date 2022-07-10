@@ -1,4 +1,4 @@
-package com.example.greedygoose
+package com.example.greedygoose.timer
 
 import android.app.Service
 import android.content.Intent

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+
     <!-- add required permission -->
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
 
@@ -10,21 +11,24 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GreedyGoose">
+        <receiver
+            android:name=".timer.TimerNotificationActionReceiver"
+            android:enabled="true"
+            android:exported="false"></receiver>
+
         <activity
             android:name=".SettingsPage"
             android:exported="false"
-            android:parentActivityName=".MainActivity"/>
-        <!-- register the service -->
+            android:parentActivityName=".MainActivity" /> <!-- register the service -->
         <service
             android:name=".foreground.FloatingService"
             android:enabled="true"
             android:exported="true" />
 
         <activity
-            android:name=".TimerPage"
+            android:name=".timer.TimerPage"
             android:exported="false"
-            android:parentActivityName=".MainActivity"/>
-
+            android:parentActivityName=".MainActivity" />
         <activity
             android:name=".MainActivity"
             android:exported="true">
@@ -34,11 +38,11 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
             android:name=".Entertainment"
             android:parentActivityName=".MainActivity" />
-        <service android:name=".TimerService"/>
+
+        <service android:name=".timer.TimerService" />
     </application>
 
 </manifest>
