@@ -22,6 +22,8 @@ class TimerPage : AppCompatActivity() {
 
     private lateinit var binding: TimerPageBinding
     private lateinit var serviceIntent: Intent
+    private var RUNNING_NOTIF_ID = 0
+    private var EXPIRED_NOTIF_ID = 1
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -76,11 +78,13 @@ class TimerPage : AppCompatActivity() {
                 }
 
                 mod.set_r_notif_manager(NotificationUtil.showTimerRunning(this@TimerPage))
+                NotificationUtil.removeNotifiation(EXPIRED_NOTIF_ID)
                 startTimer()
             }
         }
 
         binding.resetBtn.setOnClickListener {
+            NotificationUtil.removeNotifiation(EXPIRED_NOTIF_ID)
             resetTimer()
         }
 
@@ -113,7 +117,7 @@ class TimerPage : AppCompatActivity() {
     private fun resetTimer() {
         binding.startBtn.text = "START"
         showUserInput()
-        NotificationUtil.removeNotifiation()
+        NotificationUtil.removeNotifiation(RUNNING_NOTIF_ID)
         stopService(serviceIntent)
         mod.set_elapsed_time(mod.get_set_time())
         mod.set_timer_state(TimerState.NOT_STARTED)
@@ -126,7 +130,7 @@ class TimerPage : AppCompatActivity() {
             updateTextUI()
 
             if (mod.get_elapsed_time() <= 0L) {
-                NotificationUtil.removeNotifiation()
+                NotificationUtil.removeNotifiation(RUNNING_NOTIF_ID)
                 NotificationUtil.showTimerExpired(this@TimerPage)
                 resetTimer()
             } else {

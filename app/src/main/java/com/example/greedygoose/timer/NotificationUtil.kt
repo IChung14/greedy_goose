@@ -53,8 +53,8 @@ class NotificationUtil {
             mod.get_r_notif_manager().notify(RUNNING_NOTIF_ID, notifBuilder.build());
         }
 
-        fun removeNotifiation() {
-            mod.get_r_notif_manager().cancel(RUNNING_NOTIF_ID);
+        fun removeNotifiation(notif_id: Int) {
+            mod.get_r_notif_manager().cancel(notif_id);
         }
 
         private fun getNotificationBuilder(context: Context, channelId: String, playSound: Boolean)
