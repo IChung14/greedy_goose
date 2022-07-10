@@ -1,6 +1,5 @@
 package com.example.greedygoose
 
-import android.app.ActivityManager
 import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
@@ -21,10 +20,6 @@ class TimerPage : AppCompatActivity() {
 
     private lateinit var binding: TimerPageBinding
     private lateinit var serviceIntent: Intent
-    private var isRunning: Boolean = false;
-    private var isPaused: Boolean = false;
-    private var elapsedTime = 0L
-    private var setTime = 0L
     private var timerPopup:PopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,21 +29,22 @@ class TimerPage : AppCompatActivity() {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        if (isMyServiceRunning(TimerService::class.java)) {
-            binding.userInputHrs.visibility = View.INVISIBLE
-            binding.userInputMins.visibility = View.INVISIBLE
-            binding.userInputSecs.visibility = View.INVISIBLE
-            binding.timerText.visibility = View.VISIBLE
+        if (mod.get_timer_state() == TimerState.PAUSED) {
+            showTimer()
+            binding.startBtn.text = "RESUME"
+        } else if (mod.get_timer_state() == TimerState.RUNNING) {
+            showTimer()
+            binding.startBtn.text = "PAUSE"
         }
 
         binding.startBtn.setOnClickListener {
-            if (isPaused) {
+            if (mod.get_timer_state() == TimerState.PAUSED) {
                 resumeTimer()
             }
-            else if (isRunning) {
+            else if (mod.get_timer_state() == TimerState.RUNNING) {
                 pauseTimer()
             }
-            else {
+            else if (mod.get_timer_state() == TimerState.NOT_STARTED) {
                 val hrs = binding.userInputHrs.text.toString()
                 val mins = binding.userInputMins.text.toString()
                 val secs = binding.userInputSecs.text.toString()
@@ -70,10 +66,10 @@ class TimerPage : AppCompatActivity() {
                     elapsedSecs = secs.toLong() * DateUtils.SECOND_IN_MILLIS
                 }
 
-                elapsedTime = elapsedHrs + elapsedMins + elapsedSecs
-                setTime = elapsedTime
+                mod.set_elapsed_time(elapsedHrs + elapsedMins + elapsedSecs)
+                mod.set_set_time(elapsedHrs + elapsedMins + elapsedSecs)
 
-                if (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() || elapsedTime == 0L) {
+                if (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() || mod.get_elapsed_time() == 0L) {
                     // TODO: Add snackbar to tell user to input a valid time
                     return@setOnClickListener
                 }
@@ -121,48 +117,40 @@ class TimerPage : AppCompatActivity() {
     private fun pauseTimer() {
         binding.startBtn.text = "RESUME"
         stopService(serviceIntent)
-        isPaused = true
+        mod.set_timer_state(TimerState.PAUSED)
     }
 
     private fun resumeTimer() {
         binding.startBtn.text = "PAUSE"
         startTimer()
-        isPaused = false
+        mod.set_timer_state(TimerState.RUNNING)
     }
 
     private fun startTimer() {
-        binding.userInputHrs.visibility = View.INVISIBLE
-        binding.userInputMins.visibility = View.INVISIBLE
-        binding.userInputSecs.visibility = View.INVISIBLE
-        binding.timerText.visibility = View.VISIBLE
-        serviceIntent.putExtra(TimerService.TIME_EXTRA, elapsedTime)
+        serviceIntent.putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
         startService(serviceIntent)
 
-        isRunning = true
+        mod.set_timer_state(TimerState.RUNNING)
         binding.startBtn.text = "PAUSE"
+        showTimer()
     }
 
     private fun resetTimer() {
-        elapsedTime = setTime
-        isPaused = false
-        isRunning = false
+        stopService(serviceIntent)
+        mod.set_elapsed_time(mod.get_set_time())
+        mod.set_timer_state(TimerState.NOT_STARTED)
         binding.startBtn.text = "START"
-        pauseTimer()
-        binding.userInputHrs.visibility = View.VISIBLE
-        binding.userInputMins.visibility = View.VISIBLE
-        binding.userInputSecs.visibility = View.VISIBLE
-        binding.timerText.visibility = View.INVISIBLE
-        updateTextUI()
+        showUserInput()
     }
 
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent)
         {
-            elapsedTime = intent.getLongExtra(TimerService.TIME_EXTRA, 0L)
+            mod.set_elapsed_time(intent.getLongExtra(TimerService.TIME_EXTRA, 0L))
             updateTextUI()
 
-            if (elapsedTime == 0L) {
+            if (mod.get_elapsed_time() <= 0L) {
                 showPopupWindow()
                 resetTimer()
             }
@@ -170,16 +158,25 @@ class TimerPage : AppCompatActivity() {
     }
 
     private fun updateTextUI() {
-        val hr = elapsedTime/1000/3600
-        val min = (elapsedTime/1000 - hr*3600) / 60
-        val sec = (elapsedTime/1000) % 60
+        val hr = mod.get_elapsed_time()/1000/3600
+        val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
+        val sec = (mod.get_elapsed_time()/1000) % 60
 
         binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
     }
 
-    private fun isMyServiceRunning(serviceClass: Class<*>): Boolean {
-        val manager = getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
-        return manager.getRunningServices(Integer.MAX_VALUE)
-            .any { it.service.className == serviceClass.name }
+    private fun showTimer() {
+        updateTextUI()
+        binding.userInputHrs.visibility = View.INVISIBLE
+        binding.userInputMins.visibility = View.INVISIBLE
+        binding.userInputSecs.visibility = View.INVISIBLE
+        binding.timerText.visibility = View.VISIBLE
+    }
+
+    private fun showUserInput() {
+        binding.userInputHrs.visibility = View.VISIBLE
+        binding.userInputMins.visibility = View.VISIBLE
+        binding.userInputSecs.visibility = View.VISIBLE
+        binding.timerText.visibility = View.INVISIBLE
     }
 }
