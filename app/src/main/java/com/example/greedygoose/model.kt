@@ -1,5 +1,6 @@
 package com.example.greedygoose
 
+import android.app.NotificationManager
 import android.content.Context
 import android.widget.ImageView
 import android.widget.TextView
@@ -127,6 +128,7 @@ class model {
     var timer_state = TimerState.NOT_STARTED
     var elapsed_time = 0L
     var set_time = 0L
+    lateinit var r_notif_manager: NotificationManager
 
     fun increase_egg_count(amt: Int) {
         this.egg_count.value = this.egg_count.value?.plus(amt)
@@ -255,5 +257,13 @@ class model {
 
     fun get_set_time(): Long {
         return this.set_time
+    }
+
+    fun set_r_notif_manager(r_notif_manager: NotificationManager) {
+        this.r_notif_manager = r_notif_manager
+    }
+
+    fun get_r_notif_manager(): NotificationManager {
+        return this.r_notif_manager
     }
 }

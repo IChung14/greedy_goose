@@ -6,25 +6,22 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.text.format.DateUtils
-import android.view.Gravity
-import android.view.LayoutInflater
 import android.view.View
-import android.widget.Button
-import android.widget.LinearLayout
-import android.widget.PopupWindow
 import androidx.appcompat.app.AppCompatActivity
-import com.example.greedygoose.R
 import com.example.greedygoose.TimerState
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
-import com.example.greedygoose.timer.NotificationUtil
 
+/*
+TODO:
+Problem: When user goes back to home page, the user input is empty and doesn't reflect the time they picked before
+ - Change set_time to hrs, mins, secs ints and update userInput textviews.
+*/
 
 class TimerPage : AppCompatActivity() {
 
     private lateinit var binding: TimerPageBinding
     private lateinit var serviceIntent: Intent
-    private var timerPopup:PopupWindow? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,6 +75,7 @@ class TimerPage : AppCompatActivity() {
                     return@setOnClickListener
                 }
 
+                mod.set_r_notif_manager(NotificationUtil.showTimerRunning(this@TimerPage))
                 startTimer()
             }
         }
@@ -92,6 +90,7 @@ class TimerPage : AppCompatActivity() {
 
     private fun pauseTimer() {
         binding.startBtn.text = "RESUME"
+        NotificationUtil.updateNotification(this@TimerPage, "Timer is paused")
         stopService(serviceIntent)
         mod.set_timer_state(TimerState.PAUSED)
     }
@@ -112,13 +111,13 @@ class TimerPage : AppCompatActivity() {
     }
 
     private fun resetTimer() {
+        binding.startBtn.text = "START"
+        showUserInput()
+        NotificationUtil.removeNotifiation()
         stopService(serviceIntent)
         mod.set_elapsed_time(mod.get_set_time())
         mod.set_timer_state(TimerState.NOT_STARTED)
-        binding.startBtn.text = "START"
-        showUserInput()
     }
-
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent)
@@ -127,8 +126,11 @@ class TimerPage : AppCompatActivity() {
             updateTextUI()
 
             if (mod.get_elapsed_time() <= 0L) {
+                NotificationUtil.removeNotifiation()
                 NotificationUtil.showTimerExpired(this@TimerPage)
                 resetTimer()
+            } else {
+                NotificationUtil.updateNotification(this@TimerPage, "Timer is running")
             }
         }
     }

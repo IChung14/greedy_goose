@@ -9,6 +9,7 @@ class TimerService : Service() {
     override fun onBind(p0: Intent?): IBinder? = null
 
     private val timer = Timer()
+
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val time = intent.getLongExtra(TIME_EXTRA, 0L)
         timer.scheduleAtFixedRate(TimeTask(time), 1000, 1000)

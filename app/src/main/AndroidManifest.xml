@@ -11,10 +11,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GreedyGoose">
-        <receiver
-            android:name=".timer.TimerNotificationActionReceiver"
-            android:enabled="true"
-            android:exported="false"></receiver>
 
         <activity
             android:name=".SettingsPage"
