@@ -90,6 +90,8 @@ class TimerPage : AppCompatActivity() {
 
         serviceIntent = Intent(applicationContext, TimerService::class.java)
         registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
+
+        mod.observe_entertainment(this, this)
     }
 
     private fun pauseTimer() {
