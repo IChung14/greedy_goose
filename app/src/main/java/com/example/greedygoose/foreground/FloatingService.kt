@@ -13,6 +13,7 @@ import java.util.*
 import android.os.PowerManager
 import com.example.greedygoose.foreground.movementModule.DragMovementModule
 import com.example.greedygoose.foreground.movementModule.DragToEatModule
+import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
 
 
 class FloatingService : Service() {
@@ -24,6 +25,7 @@ class FloatingService : Service() {
     lateinit var floatingGoose : FloatingComponent
     lateinit var floatingEgg : FloatingComponent
     lateinit var floatingFood: FloatingComponent
+    lateinit var floatingWindow: FloatingComponent
 
     override fun onBind(intent: Intent): IBinder {
         floatingGoose = FloatingComponent(this@FloatingService, "GOOSE")         // construct a floating object
@@ -39,6 +41,7 @@ class FloatingService : Service() {
             .build()
         layEggs()
         formFoods()
+        dragWindow()
         return binder
     }
 
@@ -73,6 +76,7 @@ class FloatingService : Service() {
         MainScope().launch {
             var chance = 1
             while (true) {
+                // use percentage to determine whether to create a food item
                 if(chance > 7 && screenOn()) {
                     var x = Random().nextInt(1000) - 500
                     var y = Random().nextInt(1000) - 500
@@ -90,6 +94,34 @@ class FloatingService : Service() {
                         }
                     floatingFood.build()
                     floatingFood.delete_food()
+                }
+                delay(5000)
+
+                chance = Random().nextInt(10)
+            }
+        }
+    }
+
+    private fun dragWindow(){
+        MainScope().launch{
+            var chance = 1
+            while(true) {
+                println(chance)
+                // use percentage to determine whether to drag a window out
+                if(chance >= 8 && screenOn()){
+                    floatingWindow = FloatingComponent(this@FloatingService, "WINDOW")
+                        .setImageResource(R.drawable.meme_1)
+                        .setWindowLayoutParams(floatingGoose.getLocation()!!)
+                        .setMovementModule {
+                            PopUpWindowModule(
+                                it.params,
+                                it.binding.rootContainer,
+                                it.windowManager,
+                                it.binding.root,
+                                floatingGoose
+                            )
+                        }
+                        .build()
                 }
                 delay(5000)
 
