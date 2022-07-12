@@ -6,6 +6,8 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.graphics.Color
+import android.media.RingtoneManager
+import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.greedygoose.R
@@ -19,7 +21,6 @@ class NotificationUtil {
         private const val EXPIRED_CHANNEL_NAME = "goose app timer EXPIRED"
         private const val RUNNING_NOTIF_ID = 0
         private const val EXPIRED_NOTIF_ID = 1
-        private var initialized = false
 
         fun showTimerRunning(context: Context): NotificationManager {
             val notifBuilder = getNotificationBuilder(context, RUNNING_CHANNEL_ID, false)
@@ -36,17 +37,23 @@ class NotificationUtil {
         fun showTimerExpired(context: Context) {
             val snoozeIntent = Intent(context, TimerBroadcastReceiver::class.java)
             snoozeIntent.action = TimerContants.ACTION_SNOOZE
+            val stopIntent = Intent(context, TimerBroadcastReceiver::class.java)
+            stopIntent.action = TimerContants.ACTION_STOP
+
             var flag = PendingIntent.FLAG_UPDATE_CURRENT
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 flag = PendingIntent.FLAG_IMMUTABLE or flag
             }
             val snoozePendingIntent = PendingIntent.getBroadcast(context,
                 0, snoozeIntent, flag)
+            val stopPendingIntent = PendingIntent.getBroadcast(context,
+                0, stopIntent, flag)
 
             val notifBuilder = getNotificationBuilder(context, EXPIRED_CHANNEL_ID, true)
             notifBuilder.setContentTitle("Time's up")
             notifBuilder.setPriority(NotificationCompat.PRIORITY_HIGH)
-            notifBuilder.addAction(R.drawable.eng_flying_left, "Snooze", snoozePendingIntent)
+            notifBuilder.addAction(R.drawable.eng_flying_left, "Snooze 5 min", snoozePendingIntent)
+            notifBuilder.addAction(R.drawable.eng_sitting_left, "Stop", stopPendingIntent)
 
             val notifManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notifManager.createNotificationChannel(EXPIRED_CHANNEL_ID, EXPIRED_CHANNEL_NAME, true)
@@ -67,11 +74,8 @@ class NotificationUtil {
             mod.get_r_notif_manager().notify(RUNNING_NOTIF_ID, notifBuilder.build());
         }
 
-        fun removeNotifiation(notif_id: Int) {
-            if(initialized){
-                mod.get_r_notif_manager().cancel(notif_id)
-                initialized = true
-            }
+        fun removeNotification(notif_id: Int) {
+            mod.get_r_notif_manager().cancel(notif_id)
         }
 
         private fun getNotificationBuilder(context: Context, channelId: String, playSound: Boolean)
@@ -80,7 +84,10 @@ class NotificationUtil {
                 .setSmallIcon(R.drawable.eng_angry_left)
                 .setAutoCancel(true)
                 .setDefaults(0)
-
+            if (playSound) {
+                val notificationSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
+                notifBuilder.setSound(notificationSound)
+            }
             return notifBuilder
         }
 

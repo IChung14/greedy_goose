@@ -12,8 +12,12 @@ class TimerBroadcastReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
             TimerContants.ACTION_SNOOZE -> {
+                NotificationUtil.removeNotification(1)
                 TimerPage.snoozeAlarm(context)
-                Toast.makeText(context, mod.get_set_time().toString(), Toast.LENGTH_LONG).show()
+            }
+            TimerConstants.ACTION_STOP -> {
+                NotificationUtil.removeNotification(1)
+                TimerPage.stopAlarm(context)
             }
         }
     }

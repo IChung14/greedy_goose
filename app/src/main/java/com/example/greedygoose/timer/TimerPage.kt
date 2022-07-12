@@ -33,24 +33,32 @@ class TimerPage : AppCompatActivity() {
         fun snoozeAlarm(context: Context) {
             mod.set_set_time(300000L)
             mod.set_elapsed_time(mod.get_set_time())
+            this.intent.putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
+            context.startService(this.intent)
 
+            mod.set_timer_state(TimerState.RUNNING)
+            binding.startBtn.text = "PAUSE"
+
+            val hr = mod.get_elapsed_time()/1000/3600
+            val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
+            val sec = (mod.get_elapsed_time()/1000) % 60
+            binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
+
+            binding.userInputHrs.visibility = View.INVISIBLE
+            binding.userInputMins.visibility = View.INVISIBLE
+            binding.userInputSecs.visibility = View.INVISIBLE
+            binding.timerText.visibility = View.VISIBLE
+        }
+        fun stopAlarm(context: Context) {
             binding.startBtn.text = "START"
             binding.userInputHrs.visibility = View.VISIBLE
             binding.userInputMins.visibility = View.VISIBLE
             binding.userInputSecs.visibility = View.VISIBLE
             binding.timerText.visibility = View.INVISIBLE
-
-            val hr = mod.get_elapsed_time()/1000/3600
-            val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
-            val sec = (mod.get_elapsed_time()/1000) % 60
-
-            binding.userInputHrs.setText(hr.toString())
-            binding.userInputMins.setText(min.toString())
-            binding.userInputSecs.setText(sec.toString())
-
-            NotificationUtil.removeNotifiation(1)
-            mod.set_timer_state(TimerState.RUNNING)
-            context.startService(this.intent)
+            NotificationUtil.removeNotification(0)
+            context.stopService(this.intent)
+            mod.set_elapsed_time(mod.get_set_time())
+            mod.set_timer_state(TimerState.NOT_STARTED)
         }
     }
 
@@ -112,14 +120,16 @@ class TimerPage : AppCompatActivity() {
                 }
 
                 mod.set_r_notif_manager(NotificationUtil.showTimerRunning(this@TimerPage))
-                NotificationUtil.removeNotifiation(EXPIRED_NOTIF_ID)
+                NotificationUtil.removeNotification(EXPIRED_NOTIF_ID)
                 startTimer()
             }
         }
 
         binding.resetBtn.setOnClickListener {
-            NotificationUtil.removeNotifiation(EXPIRED_NOTIF_ID)
-            resetTimer()
+            if (mod.get_timer_state() != TimerState.NOT_STARTED) {
+                NotificationUtil.removeNotification(EXPIRED_NOTIF_ID)
+                resetTimer()
+            }
         }
 
         serviceIntent = makeIntent(applicationContext, binding)
@@ -153,7 +163,7 @@ class TimerPage : AppCompatActivity() {
     private fun resetTimer() {
         binding.startBtn.text = "START"
         showUserInput()
-        NotificationUtil.removeNotifiation(RUNNING_NOTIF_ID)
+        NotificationUtil.removeNotification(RUNNING_NOTIF_ID)
         stopService(serviceIntent)
         mod.set_elapsed_time(mod.get_set_time())
         mod.set_timer_state(TimerState.NOT_STARTED)
@@ -166,9 +176,9 @@ class TimerPage : AppCompatActivity() {
             updateTextUI()
 
             if (mod.get_elapsed_time() <= 0L) {
-                NotificationUtil.removeNotifiation(RUNNING_NOTIF_ID)
+                NotificationUtil.removeNotification(RUNNING_NOTIF_ID)
                 NotificationUtil.showTimerExpired(this@TimerPage)
-                resetTimer()
+                stopService(serviceIntent)
             } else {
                 NotificationUtil.updateNotification(this@TimerPage, "Timer is running")
             }
