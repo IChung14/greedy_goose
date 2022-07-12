@@ -1,13 +1,17 @@
 package com.example.greedygoose.foreground.movementModule
 
+import android.R
+import android.animation.*
 import android.graphics.Point
 import android.view.Display
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import com.example.greedygoose.foreground.FloatingComponent
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
-import com.example.greedygoose.mod
+import java.util.*
+
 
 class PopUpWindowModule (
     private var params: WindowManager.LayoutParams?,
@@ -17,6 +21,14 @@ class PopUpWindowModule (
     private var floatingGoose: FloatingComponent
     ): MovementModule {
     override var is_alive = true
+    override var isDraggable = true
+    override var is_dragged = false
+
+    override fun randomWalk(binding: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
+    }
+
+    override fun walkOffScreen(window: FloatingWindowModule?) {
+    }
 
     override fun destroy() {
         try {
@@ -38,7 +50,30 @@ class PopUpWindowModule (
     }
 
     override fun start_action(binding: FloatingWindowModule?) {
-        TODO("Not yet implemented")
+        if (params?.y != null) {
+            is_dragged = true
+            var pvhX = PropertyValuesHolder.ofInt("x", -1080, 1080)
+            var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
+
+            val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+
+            movement.addUpdateListener { valueAnimator ->
+                val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
+                layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
+                layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
+                windowManager!!.updateViewLayout(rootContainer, layoutParams)
+            }
+
+//        windowManager!!.animate().translationX(0);
+            movement.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    is_dragged = false
+                }
+            })
+            movement.duration = 4000
+            movement.start()
+        }
+
     }
 
     private fun pullOut(){
@@ -62,7 +97,9 @@ class PopUpWindowModule (
         // delete the meme when touched
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
             override fun onTouch(v: View, event: MotionEvent): Boolean {
-                destroy()
+                if (!is_dragged) {
+                    destroy()
+                }
                 return false
             }
         })

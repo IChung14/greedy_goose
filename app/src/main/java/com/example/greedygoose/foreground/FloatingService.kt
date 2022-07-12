@@ -2,18 +2,21 @@ package com.example.greedygoose.foreground
 
 import android.app.Service
 import android.content.Intent
+import android.graphics.PixelFormat
 import android.os.Binder
 import android.os.IBinder
+import android.os.PowerManager
+import android.view.WindowManager
+import android.view.WindowManager.LayoutParams
 import com.example.greedygoose.R
+import com.example.greedygoose.foreground.movementModule.DragMovementModule
+import com.example.greedygoose.foreground.movementModule.DragToEatModule
+import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
 import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
-import android.os.PowerManager
-import com.example.greedygoose.foreground.movementModule.DragMovementModule
-import com.example.greedygoose.foreground.movementModule.DragToEatModule
-import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
 
 
 class FloatingService : Service() {
@@ -23,7 +26,7 @@ class FloatingService : Service() {
 
     // This FloatingGoose holds 1 floating entity
     lateinit var floatingGoose : FloatingComponent
-    lateinit var floatingEgg : FloatingComponent
+    var floatingEgg : FloatingComponent? = null
     lateinit var floatingFood: FloatingComponent
     lateinit var floatingWindow: FloatingComponent
 
@@ -47,7 +50,7 @@ class FloatingService : Service() {
 
     private fun layEggs(){
         MainScope().launch{
-            var chance = 1
+            var chance = 4
             while(true) {
                 // use percentage to determine whether to lay an egg
                 if(chance < 3 && screenOn()){
@@ -63,7 +66,7 @@ class FloatingService : Service() {
                             )
                         }
                         .build()
-                    floatingEgg.delete_egg()
+                    floatingEgg?.delete_egg()
                 }
                 delay(5000)
 
@@ -107,20 +110,47 @@ class FloatingService : Service() {
             var chance = 1
             while(true) {
                 // use percentage to determine whether to drag a window out
-                if(chance >= 8 && screenOn()){
-                    floatingWindow = FloatingComponent(this@FloatingService, "WINDOW")
-                        .setImageResource(R.drawable.meme_1)
-                        .setWindowLayoutParams(floatingGoose.getLocation()!!)
-                        .setMovementModule {
-                            PopUpWindowModule(
-                                it.params,
-                                it.binding.rootContainer,
-                                it.windowManager,
-                                it.binding.root,
-                                floatingGoose
+//                chance >= 4 &&
+                if(screenOn()){
+                    val goose_params = floatingGoose.getLocation()
+                    if (goose_params!!.x <= 50) {
+                        if (floatingGoose.movementModule!!.isDraggable) {
+                            floatingGoose.movementModule!!.is_dragged = true
+                            floatingGoose.movementModule!!.isDraggable = false
+//                            var windowParams = floatingGoose.getLocation()!!
+                            floatingGoose.movementModule!!.walkOffScreen(floatingGoose.windowModule)
+                            var windowParams: LayoutParams = LayoutParams(
+                                LayoutParams.WRAP_CONTENT,
+                                LayoutParams.WRAP_CONTENT,
+                                LayoutParams.TYPE_APPLICATION_OVERLAY,
+                                LayoutParams.FLAG_NOT_FOCUSABLE or LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                                PixelFormat.TRANSLUCENT
                             )
+
+                            windowParams.x = -1080
+                            windowParams.y = floatingGoose.getLocation()!!.y
+
+                            floatingWindow = FloatingComponent(this@FloatingService, "WINDOW")
+                                .setImageResource(R.drawable.meme_1)
+                                .setWindowLayoutParams(windowParams)
+                                .setMovementModule {
+                                    PopUpWindowModule(
+                                        windowParams,
+                                        it.binding.rootContainer,
+                                        it.windowManager,
+                                        it.binding.root,
+                                        floatingGoose
+                                    )
+                                }
+                                .build()
+                            delay(2700)
+
+                            floatingGoose.movementModule!!.randomWalk(floatingGoose.windowModule, true, floatingWindow.windowModule)
+                            delay(450)
+                            floatingWindow.movementModule!!.start_action()
                         }
-                        .build()
+                    }
+
                 }
                 delay(5000)
 
@@ -136,7 +166,7 @@ class FloatingService : Service() {
 
     override fun onDestroy() {
         floatingGoose.destroy()
-        floatingEgg.destroy()
+        floatingEgg!!.destroy()
         super.onDestroy()
     }
 
