@@ -163,4 +163,8 @@ class TimerPage : AppCompatActivity() {
         binding.userInputSecs.visibility = View.VISIBLE
         binding.timerText.visibility = View.INVISIBLE
     }
+
+    fun snoozeTimer() {
+        mod.set_elapsed_time(mod.get_elapsed_time() + 300000L)
+    }
 }

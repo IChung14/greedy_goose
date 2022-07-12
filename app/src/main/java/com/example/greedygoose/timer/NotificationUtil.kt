@@ -2,11 +2,15 @@ package com.example.greedygoose.timer
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.graphics.Color
+import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.greedygoose.R
 import com.example.greedygoose.mod
+
 
 class NotificationUtil {
     companion object {
@@ -31,9 +35,21 @@ class NotificationUtil {
         }
 
         fun showTimerExpired(context: Context) {
+            // adding action for broadcast
+            val broadcastIntent = Intent(context, MyBroadcastReceiver::class.java).apply {
+                putExtra("action_msg", "some message for toast")
+            }
+            var flag = PendingIntent.FLAG_UPDATE_CURRENT
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                flag = PendingIntent.FLAG_IMMUTABLE or flag
+            }
+            val broadcastPendingIntent: PendingIntent =
+                PendingIntent.getBroadcast(context, 0, broadcastIntent, flag)
+
             val notifBuilder = getNotificationBuilder(context, EXPIRED_CHANNEL_ID, true)
             notifBuilder.setContentTitle("Time's up")
             notifBuilder.setPriority(NotificationCompat.PRIORITY_HIGH)
+            notifBuilder.addAction(R.drawable.eng_flying_left, "Snooze", broadcastPendingIntent)
 
             val notifManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notifManager.createNotificationChannel(EXPIRED_CHANNEL_ID, EXPIRED_CHANNEL_NAME, true)
@@ -55,10 +71,11 @@ class NotificationUtil {
         }
 
         fun removeNotifiation(notif_id: Int) {
-            if(initialized){
-                mod.get_r_notif_manager().cancel(notif_id)
-                initialized = true
-            }
+            mod.get_r_notif_manager().cancel(notif_id)
+//            if(initialized){
+//                mod.get_r_notif_manager().cancel(notif_id)
+//                initialized = true
+//            }
         }
 
         private fun getNotificationBuilder(context: Context, channelId: String, playSound: Boolean)

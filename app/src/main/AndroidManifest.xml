@@ -12,6 +12,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.GreedyGoose">
 
+        <receiver
+            android:name=".timer.MyBroadcastReceiver"
+            android:enabled="true"
+            android:exported="false">
+        </receiver>
+
         <activity
             android:name=".SettingsPage"
             android:exported="false"
