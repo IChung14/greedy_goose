@@ -37,6 +37,12 @@ class DragMovementModule(
     override var isDraggable = true
     override var is_dragged = false
 
+    private var animator: ValueAnimator? = null
+        set(value) {
+            field?.cancel()
+            field = value
+        }
+
     override fun run() {}
 
     override fun start_action(binding: FloatingWindowModule?) {
@@ -68,17 +74,18 @@ class DragMovementModule(
         var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
 //        windowManager.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 //        windowManager.params
-        params!!.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        params!!.flags = params!!.flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 
 
 
-        val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+        animator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
         val startx = params!!.x
 
         // Do not allow dragging while the goose is moving
         var updates = 0
         var direction = ""
-        movement.addUpdateListener { valueAnimator ->
+
+        animator?.addUpdateListener { valueAnimator ->
             curr_theme = mod.get_theme().toString()
             val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
@@ -120,7 +127,7 @@ class DragMovementModule(
                 }
             }
         }
-        movement.addListener(object : AnimatorListenerAdapter() {
+        animator?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 // After walking, make the goose sit sometimes
                 var chance = Random().nextInt(10)
@@ -147,8 +154,8 @@ class DragMovementModule(
 
             }
         })
-        movement.duration = 2500
-        movement.start()
+        animator?.duration = 2500
+        animator?.start()
     }
 
     override fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
@@ -175,13 +182,15 @@ class DragMovementModule(
         var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, y)
 
 
-        val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+        animator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+
         val startx = params!!.x
 
         // Do not allow dragging while the goose is moving
         var updates = 0
         var direction = ""
-        movement.addUpdateListener { valueAnimator ->
+
+        animator?.addUpdateListener { valueAnimator ->
             curr_theme = mod.get_theme().toString()
             val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
@@ -192,7 +201,7 @@ class DragMovementModule(
             if (updates % 5 == 0) {
                 if ((layoutParams.x > startx) xor (is_meme == true)) {
 //                if (((layoutParams.x > startx) && (is_meme == false)) || ((layoutParams.x <= startx) && (is_meme == true))) {
-//                    println("HI?")
+                    println("HI? $action $is_meme")
                     direction = "RIGHT"
                     action = when (action) {
                         "WALKING_RIGHT" -> {
@@ -208,6 +217,7 @@ class DragMovementModule(
                     mod.set_action(action)
                     window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!![action]!!)
                 } else {
+                    println("Hello! $action $is_meme")
                     direction = "LEFT"
                     action = when (action) {
                         "WALKING_LEFT" -> {
@@ -225,7 +235,7 @@ class DragMovementModule(
                 }
             }
         }
-        movement.addListener(object : AnimatorListenerAdapter() {
+        animator?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 // After walking, make the goose sit sometimes
                 var chance = Random().nextInt(10)
@@ -250,12 +260,12 @@ class DragMovementModule(
                 is_dragged = false
             }
         })
-        movement.duration = Random().nextInt(2000).toLong() + 2500
+        animator?.duration = Random().nextInt(2000).toLong() + 2500
         if (is_meme == true) {
-            movement.duration = 4000
+            animator?.duration = 4000
 //            params!!.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
         }
-        movement.start()
+        animator?.start()
 
     }
 

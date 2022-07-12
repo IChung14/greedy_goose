@@ -7,6 +7,7 @@ import android.os.Binder
 import android.os.IBinder
 import android.os.PowerManager
 import android.view.WindowManager
+import android.view.WindowManager.LayoutParams
 import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.DragMovementModule
 import com.example.greedygoose.foreground.movementModule.DragToEatModule
@@ -119,17 +120,16 @@ class FloatingService : Service() {
                             floatingGoose.movementModule!!.isDraggable = false
 //                            var windowParams = floatingGoose.getLocation()!!
                             floatingGoose.movementModule!!.walkOffScreen(floatingGoose.windowModule)
-                            var windowParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
-                                WindowManager.LayoutParams.WRAP_CONTENT,
-                                WindowManager.LayoutParams.WRAP_CONTENT,
-                                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
-                                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                            var windowParams: LayoutParams = LayoutParams(
+                                LayoutParams.WRAP_CONTENT,
+                                LayoutParams.WRAP_CONTENT,
+                                LayoutParams.TYPE_APPLICATION_OVERLAY,
+                                LayoutParams.FLAG_NOT_FOCUSABLE or LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                                 PixelFormat.TRANSLUCENT
                             )
 
                             windowParams.x = -1080
                             windowParams.y = floatingGoose.getLocation()!!.y
-                            windowParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 
                             floatingWindow = FloatingComponent(this@FloatingService, "WINDOW")
                                 .setImageResource(R.drawable.meme_1)
