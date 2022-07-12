@@ -4,6 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import com.example.greedygoose.*
+import com.example.greedygoose.foreground.FloatingComponent
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
 
@@ -14,6 +15,11 @@ class TouchDeleteModule (
     private var baseView: View?
     ): MovementModule {
     override var is_alive = true
+    override var isDraggable = true
+    override var is_dragged = false
+
+    override fun randomWalk(binding: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
+    }
 
     override fun destroy() {
         try {

@@ -14,6 +14,12 @@ class DragToEatModule (
     private var floatingGoose: FloatingComponent
     ): MovementModule {
     override var is_alive = true
+    override var isDraggable = true
+    override var is_dragged = false
+
+    override fun randomWalk(binding: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
+    }
+
 
     override fun destroy() {
         try {
