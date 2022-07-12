@@ -66,7 +66,7 @@ class FloatingService : Service() {
                             )
                         }
                         .build()
-                    floatingEgg!!.delete_egg()
+                    floatingEgg?.delete_egg()
                 }
                 delay(5000)
 
