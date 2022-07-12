@@ -8,7 +8,7 @@ import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.greedygoose.TimerState
+import com.example.greedygoose.data.TimerState
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
 

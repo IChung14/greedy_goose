@@ -20,7 +20,7 @@ import com.example.greedygoose.R
 
 import android.animation.AnimatorListenerAdapter
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
-import com.example.greedygoose.theme_map
+import com.example.greedygoose.data.theme_map
 import kotlin.math.abs
 
 

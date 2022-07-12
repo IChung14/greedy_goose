@@ -1,4 +1,4 @@
-package com.example.greedygoose
+package com.example.greedygoose.data
 
 import android.app.NotificationManager
 import android.content.Context
@@ -7,8 +7,8 @@ import android.widget.TextView
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
+import com.example.greedygoose.R
 import com.example.greedygoose.foreground.FloatingLayout
-
 
 val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
     "ENG" to hashMapOf(
@@ -229,8 +229,8 @@ class model {
     fun observe_entertainment(life: LifecycleOwner, context: Context) {
         this.entertainment.observe(life, Observer {
             if (it == true) {
-                mod.floatingLayout = FloatingLayout(context, R.drawable.egg_small, life)
-                mod.floatingLayout!!.setView()
+                floatingLayout = FloatingLayout(context, R.drawable.egg_small, life)
+                floatingLayout!!.setView()
             }
         })
     }
