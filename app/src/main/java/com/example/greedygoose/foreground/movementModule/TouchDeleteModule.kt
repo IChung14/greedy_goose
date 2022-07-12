@@ -21,6 +21,9 @@ class TouchDeleteModule (
     override fun randomWalk(binding: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
     }
 
+    override fun walkOffScreen(window: FloatingWindowModule?) {
+    }
+
     override fun destroy() {
         try {
             if (windowManager != null) if (baseView != null) windowManager!!.removeViewImmediate(

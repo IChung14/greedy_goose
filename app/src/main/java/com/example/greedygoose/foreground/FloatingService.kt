@@ -117,8 +117,18 @@ class FloatingService : Service() {
                         if (floatingGoose.movementModule!!.isDraggable) {
                             floatingGoose.movementModule!!.is_dragged = true
                             floatingGoose.movementModule!!.isDraggable = false
-                            var windowParams = floatingGoose.getLocation()!!
+//                            var windowParams = floatingGoose.getLocation()!!
+                            floatingGoose.movementModule!!.walkOffScreen(floatingGoose.windowModule)
+                            var windowParams: WindowManager.LayoutParams = WindowManager.LayoutParams(
+                                WindowManager.LayoutParams.WRAP_CONTENT,
+                                WindowManager.LayoutParams.WRAP_CONTENT,
+                                WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY,
+                                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                                PixelFormat.TRANSLUCENT
+                            )
+
                             windowParams.x = -1080
+                            windowParams.y = floatingGoose.getLocation()!!.y
                             windowParams.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 
                             floatingWindow = FloatingComponent(this@FloatingService, "WINDOW")
@@ -134,6 +144,8 @@ class FloatingService : Service() {
                                     )
                                 }
                                 .build()
+                            delay(2700)
+
                             floatingGoose.movementModule!!.randomWalk(floatingGoose.windowModule, true, floatingWindow.windowModule)
                             delay(450)
                             floatingWindow.movementModule!!.start_action()

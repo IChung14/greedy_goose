@@ -11,4 +11,5 @@ interface MovementModule {
     fun start_action(binding: FloatingWindowModule? = null)
     fun destroy()
     fun randomWalk(binding: FloatingWindowModule? = null, is_meme: Boolean? = false, meme: FloatingWindowModule?)
+    fun walkOffScreen(window: FloatingWindowModule?)
 }

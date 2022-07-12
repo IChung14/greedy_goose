@@ -20,6 +20,9 @@ class DragToEatModule (
     override fun randomWalk(binding: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
     }
 
+    override fun walkOffScreen(window: FloatingWindowModule?) {
+    }
+
 
     override fun destroy() {
         try {
