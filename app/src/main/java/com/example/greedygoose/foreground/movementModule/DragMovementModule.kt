@@ -70,7 +70,6 @@ class DragMovementModule(
 //        windowManager.params
         params!!.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 
-                println("GOOSE ACTIVITY #1!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
 
 
         val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
@@ -91,14 +90,14 @@ class DragMovementModule(
                 if (layoutParams.x > startx) {
                     direction = "RIGHT"
                     action = when (action) {
-                        "ANGRY_RIGHT" -> {
-                            "ANGRY_RIGHT_MIDDLE"
+                        "WALKING_RIGHT" -> {
+                            "WALKING_RIGHT_MIDDLE"
                         }
-                        "ANGRY_RIGHT_MIDDLE" -> {
-                            "ANGRY_RIGHT2"
+                        "WALKING_RIGHT_MIDDLE" -> {
+                            "WALKING_RIGHT2"
                         }
                         else -> {
-                            "ANGRY_RIGHT"
+                            "WALKING_RIGHT"
                         }
                     }
                     mod.set_action(action)
@@ -106,14 +105,14 @@ class DragMovementModule(
                 } else {
                     direction = "LEFT"
                     action = when (action) {
-                        "ANGRY_LEFT" -> {
-                            "ANGRY_LEFT_MIDDLE"
+                        "WALKING_LEFT" -> {
+                            "WALKING_LEFT_MIDDLE"
                         }
-                        "ANGRY_LEFT_MIDDLE" -> {
-                            "ANGRY_LEFT2"
+                        "WALKING_LEFT_MIDDLE" -> {
+                            "WALKING_LEFT2"
                         }
                         else -> {
-                            "ANGRY_LEFT"
+                            "WALKING_LEFT"
                         }
                     }
                     mod.set_action(action)
@@ -146,12 +145,10 @@ class DragMovementModule(
                 isDraggable = true
                 is_dragged = false
 
-                println("WALK OFF SCREEN #############################################################")
             }
         })
         movement.duration = 2500
         movement.start()
-        println("walk off screen")
     }
 
     override fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
@@ -161,7 +158,6 @@ class DragMovementModule(
         if (is_meme == true) {
 //            walk_off_screen(window)
         }
-        println("RANDOM WALK CALLED @@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 
         val displayMetrics = DisplayMetrics()
         windowManager!!.defaultDisplay.getMetrics(displayMetrics)
@@ -194,7 +190,9 @@ class DragMovementModule(
             // For a smoother walking animation, only change the goose img every 5 animations
             updates += 1
             if (updates % 5 == 0) {
-                if (layoutParams.x > startx) {
+                if ((layoutParams.x > startx) xor (is_meme == true)) {
+//                if (((layoutParams.x > startx) && (is_meme == false)) || ((layoutParams.x <= startx) && (is_meme == true))) {
+//                    println("HI?")
                     direction = "RIGHT"
                     action = when (action) {
                         "WALKING_RIGHT" -> {
