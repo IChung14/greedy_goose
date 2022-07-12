@@ -20,6 +20,40 @@ Problem: When user goes back to home page, the user input is empty and doesn't r
 
 class TimerPage : AppCompatActivity() {
 
+    companion object {
+        private lateinit var intent: Intent
+        private lateinit var binding: TimerPageBinding
+
+        fun makeIntent(context: Context, binding: TimerPageBinding): Intent {
+            val serviceIntent = Intent(context, TimerService::class.java)
+            this.intent = serviceIntent
+            this.binding = binding
+            return this.intent
+        }
+        fun snoozeAlarm(context: Context) {
+            mod.set_set_time(300000L)
+            mod.set_elapsed_time(mod.get_set_time())
+
+            binding.startBtn.text = "START"
+            binding.userInputHrs.visibility = View.VISIBLE
+            binding.userInputMins.visibility = View.VISIBLE
+            binding.userInputSecs.visibility = View.VISIBLE
+            binding.timerText.visibility = View.INVISIBLE
+
+            val hr = mod.get_elapsed_time()/1000/3600
+            val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
+            val sec = (mod.get_elapsed_time()/1000) % 60
+
+            binding.userInputHrs.setText(hr.toString())
+            binding.userInputMins.setText(min.toString())
+            binding.userInputSecs.setText(sec.toString())
+
+            NotificationUtil.removeNotifiation(1)
+            mod.set_timer_state(TimerState.RUNNING)
+            context.startService(this.intent)
+        }
+    }
+
     private lateinit var binding: TimerPageBinding
     private lateinit var serviceIntent: Intent
     private var RUNNING_NOTIF_ID = 0
@@ -88,7 +122,7 @@ class TimerPage : AppCompatActivity() {
             resetTimer()
         }
 
-        serviceIntent = Intent(applicationContext, TimerService::class.java)
+        serviceIntent = makeIntent(applicationContext, binding)
         registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
 
         mod.observe_entertainment(this, this)
