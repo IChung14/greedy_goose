@@ -16,6 +16,7 @@ class NotificationUtil {
         private const val EXPIRED_CHANNEL_NAME = "goose app timer EXPIRED"
         private const val RUNNING_NOTIF_ID = 0
         private const val EXPIRED_NOTIF_ID = 1
+        private var initialized = false
 
         fun showTimerRunning(context: Context): NotificationManager {
             val notifBuilder = getNotificationBuilder(context, RUNNING_CHANNEL_ID, false)
@@ -54,7 +55,10 @@ class NotificationUtil {
         }
 
         fun removeNotifiation(notif_id: Int) {
-            mod.get_r_notif_manager().cancel(notif_id);
+            if(initialized){
+                mod.get_r_notif_manager().cancel(notif_id)
+                initialized = true
+            }
         }
 
         private fun getNotificationBuilder(context: Context, channelId: String, playSound: Boolean)

@@ -106,7 +106,6 @@ class FloatingService : Service() {
         MainScope().launch{
             var chance = 1
             while(true) {
-                println(chance)
                 // use percentage to determine whether to drag a window out
                 if(chance >= 8 && screenOn()){
                     floatingWindow = FloatingComponent(this@FloatingService, "WINDOW")
