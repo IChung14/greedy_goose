@@ -116,7 +116,7 @@ class DragMovementModule(
                         }
                     }
                     mod.set_action(action)
-                    window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!![action]!!)
+                    window?.binding?.gooseImg?.setImageResource(theme_map[curr_theme]!![action]!!)
                 }
             }
         }
@@ -139,7 +139,7 @@ class DragMovementModule(
                     }
                 }
                 mod.set_action(action)
-                window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
+                window?.binding?.gooseImg?.setImageResource(theme_map[curr_theme]!!.get(action)!!)
                 // Allow dragging again when the animation finishes
                 params!!.x = -1080
                 isDraggable = true

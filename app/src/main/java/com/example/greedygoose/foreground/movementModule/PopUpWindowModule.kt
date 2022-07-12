@@ -50,27 +50,30 @@ class PopUpWindowModule (
     }
 
     override fun start_action(binding: FloatingWindowModule?) {
-        is_dragged = true
-        var pvhX = PropertyValuesHolder.ofInt("x", -1080, 1080)
-        var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
+        if (params?.y != null) {
+            is_dragged = true
+            var pvhX = PropertyValuesHolder.ofInt("x", -1080, 1080)
+            var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
 
-        val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+            val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
-        movement.addUpdateListener { valueAnimator ->
-            val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
-            layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
-            layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
-            windowManager!!.updateViewLayout(rootContainer, layoutParams)
-        }
+            movement.addUpdateListener { valueAnimator ->
+                val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
+                layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
+                layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
+                windowManager!!.updateViewLayout(rootContainer, layoutParams)
+            }
 
 //        windowManager!!.animate().translationX(0);
-        movement.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                is_dragged = false
-            }
-        })
-        movement.duration = 4000
-        movement.start()
+            movement.addListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationEnd(animation: Animator) {
+                    is_dragged = false
+                }
+            })
+            movement.duration = 4000
+            movement.start()
+        }
+
     }
 
     private fun pullOut(){

@@ -136,7 +136,7 @@ class FloatingService : Service() {
                                 .setWindowLayoutParams(windowParams)
                                 .setMovementModule {
                                     PopUpWindowModule(
-                                        it.params,
+                                        windowParams,
                                         it.binding.rootContainer,
                                         it.windowManager,
                                         it.binding.root,
