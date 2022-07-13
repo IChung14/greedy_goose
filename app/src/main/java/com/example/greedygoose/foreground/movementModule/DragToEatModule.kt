@@ -17,13 +17,6 @@ class DragToEatModule (
     override var isDraggable = true
     override var is_dragged = false
 
-    override fun randomWalk(binding: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
-    }
-
-    override fun walkOffScreen(window: FloatingWindowModule?) {
-    }
-
-
     override fun destroy() {
         try {
             if (windowManager != null) if (baseView != null) windowManager!!.removeViewImmediate(
@@ -44,9 +37,7 @@ class DragToEatModule (
         drag()
     }
 
-    override fun start_action(binding: FloatingWindowModule?) {
-        TODO("Not yet implemented")
-    }
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean) {}
 
     private fun drag(){
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
@@ -91,4 +82,3 @@ class DragToEatModule (
         })
     }
 }
-

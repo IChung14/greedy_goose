@@ -8,8 +8,6 @@ interface MovementModule {
     var isDraggable: Boolean
     var is_dragged: Boolean
     fun run()
-    fun start_action(binding: FloatingWindowModule? = null)
+    fun start_action(binding: FloatingWindowModule? = null, round: Boolean = false)
     fun destroy()
-    fun randomWalk(binding: FloatingWindowModule? = null, is_meme: Boolean? = false, meme: FloatingWindowModule?)
-    fun walkOffScreen(window: FloatingWindowModule?)
 }
