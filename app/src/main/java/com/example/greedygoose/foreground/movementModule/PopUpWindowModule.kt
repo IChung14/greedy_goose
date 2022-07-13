@@ -46,8 +46,8 @@ class PopUpWindowModule(
     override fun start_action(binding: FloatingWindowModule?, round: Boolean) {
         is_dragged = true
         val pvhX =
-            if(!round) PropertyValuesHolder.ofInt("x", -1080, -200)
-            else PropertyValuesHolder.ofInt("x", -200, 1080)
+            if(!round) PropertyValuesHolder.ofInt("x", -1080, -150)
+            else PropertyValuesHolder.ofInt("x", -150, 1080)
         var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
 
         val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)

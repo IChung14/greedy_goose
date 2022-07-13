@@ -139,8 +139,8 @@ class FloatingService : Service() {
                             delay(2700)
 
                             (floatingGoose.movementModule!! as DragMovementModule)
-                                .randomWalk(floatingGoose.windowModule, true, floatingWindow.windowModule)
-                            delay(450)
+                                .randomWalk(floatingGoose.windowModule, true, false, floatingWindow.windowModule)
+                            delay(85)
                             floatingWindow.movementModule!!.start_action()
                         }
                     }

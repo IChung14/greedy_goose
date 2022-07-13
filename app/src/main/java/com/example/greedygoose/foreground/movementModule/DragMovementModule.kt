@@ -57,7 +57,7 @@ class DragMovementModule(
                 if (powerManager.isInteractive) {
                     curr_theme = mod.get_theme().toString()
                     if (!is_dragged) {
-                        randomWalk(binding, false, null)
+                        randomWalk(binding, false, false,null)
                     }
                 }
                 delay(7000)
@@ -156,7 +156,7 @@ class DragMovementModule(
         animator?.start()
     }
 
-    fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
+    fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, round: Boolean, meme: FloatingWindowModule?) {
         // Do not allow dragging while the goose is moving
         isDraggable = false
         is_dragged = true
@@ -168,7 +168,12 @@ class DragMovementModule(
         var x = min(Random().nextInt(1500)-1000, width/2 - 270)
         x = max(x, - 270)
         var y = Random().nextInt(1500)-1000
-        if (is_meme == true) {
+
+        if (is_meme == true && !round) {
+            x = 200
+            y = params!!.y
+        }
+        else if(is_meme == true && round){
             x = 1000
             y = params!!.y
         }
@@ -229,34 +234,41 @@ class DragMovementModule(
 
         animator?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                // After walking, make the goose sit sometimes
-                var chance = Random().nextInt(10)
-                action = if (chance > 5) {
-                    if (direction == "LEFT") {
-                        "SITTING_LEFT"
-                    } else {
-                        "SITTING_RIGHT"
+                if(!round){
+                    MainScope().launch {
+                        delay(3500)
+                        randomWalk(window, true, true, null)
                     }
                 } else {
-                    // If the goose is not sitting, make sure it doesn't stop on the image with only one leg
-                    if (direction == "LEFT") {
-                        "WALKING_LEFT"
+                    // After walking, make the goose sit sometimes
+                    var chance = Random().nextInt(10)
+                    action = if (chance > 5) {
+                        if (direction == "LEFT") {
+                            "SITTING_LEFT"
+                        } else {
+                            "SITTING_RIGHT"
+                        }
                     } else {
-                        "WALKING_RIGHT"
+                        // If the goose is not sitting, make sure it doesn't stop on the image with only one leg
+                        if (direction == "LEFT") {
+                            "WALKING_LEFT"
+                        } else {
+                            "WALKING_RIGHT"
+                        }
                     }
-                }
-                mod.set_action(action)
-                window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
+                    mod.set_action(action)
+                    window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
 
-                // Allow dragging again when the animation finishes
-                isDraggable = true
-                is_dragged = false
+                    // Allow dragging again when the animation finishes
+                    isDraggable = true
+                    is_dragged = false
+                }
             }
         })
 
         animator?.duration = Random().nextInt(2000).toLong() + 2500
         if (is_meme == true) {
-            animator?.duration = 4000
+            animator?.duration = 2000
         }
         animator?.start()
     }
