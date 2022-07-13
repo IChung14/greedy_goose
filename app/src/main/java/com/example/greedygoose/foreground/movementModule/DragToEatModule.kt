@@ -14,6 +14,8 @@ class DragToEatModule (
     private var floatingGoose: FloatingComponent
     ): MovementModule {
     override var is_alive = true
+    override var isDraggable = true
+    override var is_dragged = false
 
     override fun destroy() {
         try {
@@ -35,9 +37,7 @@ class DragToEatModule (
         drag()
     }
 
-    override fun start_action(binding: FloatingWindowModule?) {
-        TODO("Not yet implemented")
-    }
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: String) {}
 
     private fun drag(){
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
@@ -82,4 +82,3 @@ class DragToEatModule (
         })
     }
 }
-

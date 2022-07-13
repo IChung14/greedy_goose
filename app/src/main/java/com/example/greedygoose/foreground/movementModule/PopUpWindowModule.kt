@@ -1,22 +1,30 @@
 package com.example.greedygoose.foreground.movementModule
 
+import android.R
+import android.animation.*
 import android.graphics.Point
 import android.view.Display
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import android.widget.ImageView
 import com.example.greedygoose.foreground.FloatingComponent
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
-import com.example.greedygoose.mod
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+import java.util.*
 
-class PopUpWindowModule (
+
+class PopUpWindowModule(
     private var params: WindowManager.LayoutParams?,
     private val rootContainer: View?,
     private var windowManager: WindowManager?,
-    private var baseView: View?,
-    private var floatingGoose: FloatingComponent
-    ): MovementModule {
+    private var baseView: View?
+) : MovementModule {
     override var is_alive = true
+    override var isDraggable = true
+    override var is_dragged = false
 
     override fun destroy() {
         try {
@@ -33,39 +41,41 @@ class PopUpWindowModule (
         }
     }
 
-    override fun run() {
-        pullOut()
-    }
+    override fun run() {}
 
-    override fun start_action(binding: FloatingWindowModule?) {
-        TODO("Not yet implemented")
-    }
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: String) {
+        is_dragged = true
+        var pvhX =
+            if (!round) PropertyValuesHolder.ofInt("x", -1080, -150)
+            else PropertyValuesHolder.ofInt("x", -150, 1080)
+        if (dir == "RIGHT") {
+            pvhX =
+                if (!round) PropertyValuesHolder.ofInt("x", 1080, 150)
+                else PropertyValuesHolder.ofInt("x", 150, -1080)
+        }
+        var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
 
-    private fun pullOut(){
-        // only drag window onto screen if goose is at edge
-        val goose_params = floatingGoose.getLocation()
-        val mdisp: Display = windowManager!!.defaultDisplay
-        val mdispSize = Point()
-        mdisp.getSize(mdispSize)
-        val max = mdispSize.x - 40
+        val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
-        // drag in from left to right
-        if(goose_params!!.x < 40){
-
+        movement.addUpdateListener { valueAnimator ->
+            val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
+            layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
+            layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
+            windowManager!!.updateViewLayout(rootContainer, layoutParams)
         }
 
-        // drag in from right to left
-        else if (goose_params!!.x > max){
-
-        }
-
-        // delete the meme when touched
-        rootContainer?.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                destroy()
-                return false
+        movement.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                is_dragged = false
+                if (!round) {
+                    MainScope().launch {
+                        delay(3500)
+                        start_action(binding, true, dir)
+                    }
+                }
             }
         })
+        movement.duration = 2150
+        movement.start()
     }
 }
-

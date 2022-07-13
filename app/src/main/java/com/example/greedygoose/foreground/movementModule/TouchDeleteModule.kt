@@ -4,6 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import com.example.greedygoose.*
+import com.example.greedygoose.foreground.FloatingComponent
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
 
@@ -14,6 +15,8 @@ class TouchDeleteModule (
     private var baseView: View?
     ): MovementModule {
     override var is_alive = true
+    override var isDraggable = true
+    override var is_dragged = false
 
     override fun destroy() {
         try {
@@ -30,9 +33,7 @@ class TouchDeleteModule (
         }
     }
 
-    override fun start_action(binding: FloatingWindowModule?) {
-        TODO("Not yet implemented")
-    }
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: String) {}
 
     override fun run() {
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
@@ -42,6 +43,5 @@ class TouchDeleteModule (
                 return false
             }
         })
-        }
+    }
 }
-
