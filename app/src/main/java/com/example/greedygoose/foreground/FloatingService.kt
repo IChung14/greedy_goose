@@ -21,17 +21,15 @@ import java.util.*
 
 class FloatingService : Service() {
 
-    // Binder given to clients
-    private val binder = FloatingServiceBinder()
-
-    // This FloatingGoose holds 1 floating entity
+    private val binder = FloatingServiceBinder()        // Binder given to clients
     lateinit var floatingGoose : FloatingComponent
     var floatingEgg : FloatingComponent? = null
     lateinit var floatingFood: FloatingComponent
     lateinit var floatingWindow: FloatingComponent
 
     override fun onBind(intent: Intent): IBinder {
-        floatingGoose = FloatingComponent(this@FloatingService, "GOOSE")         // construct a floating object
+        // construct a floating object
+        floatingGoose = FloatingComponent(this@FloatingService, "GOOSE")
             .setMovementModule {                      // making it responsive
                 DragMovementModule(
                     it.params,
@@ -69,7 +67,6 @@ class FloatingService : Service() {
                     floatingEgg?.delete_egg()
                 }
                 delay(5000)
-
                 chance = Random().nextInt(10)
             }
         }
@@ -99,7 +96,6 @@ class FloatingService : Service() {
                     floatingFood.delete_food()
                 }
                 delay(5000)
-
                 chance = Random().nextInt(10)
             }
         }
@@ -110,15 +106,14 @@ class FloatingService : Service() {
             var chance = 1
             while(true) {
                 // use percentage to determine whether to drag a window out
-//                chance >= 4 &&
                 if(screenOn()){
                     val goose_params = floatingGoose.getLocation()
                     if (goose_params!!.x <= 50) {
                         if (floatingGoose.movementModule!!.isDraggable) {
                             floatingGoose.movementModule!!.is_dragged = true
                             floatingGoose.movementModule!!.isDraggable = false
-//                            var windowParams = floatingGoose.getLocation()!!
-                            floatingGoose.movementModule!!.walkOffScreen(floatingGoose.windowModule)
+                            (floatingGoose.movementModule!! as DragMovementModule)
+                                .walkOffScreen(floatingGoose.windowModule)
                             var windowParams: LayoutParams = LayoutParams(
                                 LayoutParams.WRAP_CONTENT,
                                 LayoutParams.WRAP_CONTENT,
@@ -126,7 +121,6 @@ class FloatingService : Service() {
                                 LayoutParams.FLAG_NOT_FOCUSABLE or LayoutParams.FLAG_LAYOUT_NO_LIMITS,
                                 PixelFormat.TRANSLUCENT
                             )
-
                             windowParams.x = -1080
                             windowParams.y = floatingGoose.getLocation()!!.y
 
@@ -138,14 +132,14 @@ class FloatingService : Service() {
                                         windowParams,
                                         it.binding.rootContainer,
                                         it.windowManager,
-                                        it.binding.root,
-                                        floatingGoose
+                                        it.binding.root
                                     )
                                 }
                                 .build()
                             delay(2700)
 
-                            floatingGoose.movementModule!!.randomWalk(floatingGoose.windowModule, true, floatingWindow.windowModule)
+                            (floatingGoose.movementModule!! as DragMovementModule)
+                                .randomWalk(floatingGoose.windowModule, true, floatingWindow.windowModule)
                             delay(450)
                             floatingWindow.movementModule!!.start_action()
                         }
@@ -153,7 +147,6 @@ class FloatingService : Service() {
 
                 }
                 delay(5000)
-
                 chance = Random().nextInt(10)
             }
         }

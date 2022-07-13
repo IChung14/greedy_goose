@@ -10,25 +10,21 @@ import android.view.WindowManager
 import android.widget.ImageView
 import com.example.greedygoose.foreground.FloatingComponent
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
 
 
-class PopUpWindowModule (
+class PopUpWindowModule(
     private var params: WindowManager.LayoutParams?,
     private val rootContainer: View?,
     private var windowManager: WindowManager?,
-    private var baseView: View?,
-    private var floatingGoose: FloatingComponent
-    ): MovementModule {
+    private var baseView: View?
+) : MovementModule {
     override var is_alive = true
     override var isDraggable = true
     override var is_dragged = false
-
-    override fun randomWalk(binding: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
-    }
-
-    override fun walkOffScreen(window: FloatingWindowModule?) {
-    }
 
     override fun destroy() {
         try {
@@ -45,64 +41,36 @@ class PopUpWindowModule (
         }
     }
 
-    override fun run() {
-        pullOut()
-    }
+    override fun run() {}
 
-    override fun start_action(binding: FloatingWindowModule?) {
-        if (params?.y != null) {
-            is_dragged = true
-            var pvhX = PropertyValuesHolder.ofInt("x", -1080, 1080)
-            var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean) {
+        is_dragged = true
+        val pvhX =
+            if(!round) PropertyValuesHolder.ofInt("x", -1080, -200)
+            else PropertyValuesHolder.ofInt("x", -200, 1080)
+        var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
 
-            val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+        val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
-            movement.addUpdateListener { valueAnimator ->
-                val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
-                layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
-                layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
-                windowManager!!.updateViewLayout(rootContainer, layoutParams)
-            }
+        movement.addUpdateListener { valueAnimator ->
+            val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
+            layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
+            layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
+            windowManager!!.updateViewLayout(rootContainer, layoutParams)
+        }
 
-//        windowManager!!.animate().translationX(0);
-            movement.addListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationEnd(animation: Animator) {
-                    is_dragged = false
+        movement.addListener(object : AnimatorListenerAdapter() {
+            override fun onAnimationEnd(animation: Animator) {
+                is_dragged = false
+                if(!round){
+                    MainScope().launch {
+                        delay(3500)
+                        start_action(binding, true)
+                    }
                 }
-            })
-            movement.duration = 4000
-            movement.start()
-        }
-
-    }
-
-    private fun pullOut(){
-        // only drag window onto screen if goose is at edge
-        val goose_params = floatingGoose.getLocation()
-        val mdisp: Display = windowManager!!.defaultDisplay
-        val mdispSize = Point()
-        mdisp.getSize(mdispSize)
-        val max = mdispSize.x - 40
-
-        // drag in from left to right
-        if(goose_params!!.x < 40){
-
-        }
-
-        // drag in from right to left
-        else if (goose_params!!.x > max){
-
-        }
-
-        // delete the meme when touched
-        rootContainer?.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                if (!is_dragged) {
-                    destroy()
-                }
-                return false
             }
         })
+        movement.duration = 2000
+        movement.start()
     }
 }
-

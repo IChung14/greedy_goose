@@ -45,7 +45,7 @@ class DragMovementModule(
 
     override fun run() {}
 
-    override fun start_action(binding: FloatingWindowModule?) {
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean) {
         // set drag listener
         drag(binding)
 
@@ -65,18 +65,14 @@ class DragMovementModule(
         }
     }
 
-    override fun walkOffScreen(window: FloatingWindowModule?) {
+    fun walkOffScreen(window: FloatingWindowModule?) {
         is_dragged = true
         isDraggable = false
 
         var y = Random().nextInt(1500)-1000
         var pvhX = PropertyValuesHolder.ofInt("x", params!!.x, -1080)
         var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
-//        windowManager.flags = WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-//        windowManager.params
         params!!.flags = params!!.flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
-
-
 
         animator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
         val startx = params!!.x
@@ -127,6 +123,7 @@ class DragMovementModule(
                 }
             }
         }
+
         animator?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 // After walking, make the goose sit sometimes
@@ -147,24 +144,22 @@ class DragMovementModule(
                 }
                 mod.set_action(action)
                 window?.binding?.gooseImg?.setImageResource(theme_map[curr_theme]!!.get(action)!!)
+
                 // Allow dragging again when the animation finishes
                 params!!.x = -1080
                 isDraggable = true
                 is_dragged = false
-
             }
         })
+
         animator?.duration = 2500
         animator?.start()
     }
 
-    override fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
+    fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, meme: FloatingWindowModule?) {
         // Do not allow dragging while the goose is moving
         isDraggable = false
         is_dragged = true
-        if (is_meme == true) {
-//            walk_off_screen(window)
-        }
 
         val displayMetrics = DisplayMetrics()
         windowManager!!.defaultDisplay.getMetrics(displayMetrics)
@@ -181,9 +176,7 @@ class DragMovementModule(
         var pvhX = PropertyValuesHolder.ofInt("x", params!!.x, x)
         var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, y)
 
-
         animator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
-
         val startx = params!!.x
 
         // Do not allow dragging while the goose is moving
@@ -196,12 +189,11 @@ class DragMovementModule(
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
             layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
             windowManager!!.updateViewLayout(rootContainer, layoutParams)
+
             // For a smoother walking animation, only change the goose img every 5 animations
             updates += 1
             if (updates % 5 == 0) {
                 if ((layoutParams.x > startx) xor (is_meme == true)) {
-//                if (((layoutParams.x > startx) && (is_meme == false)) || ((layoutParams.x <= startx) && (is_meme == true))) {
-                    println("HI? $action $is_meme")
                     direction = "RIGHT"
                     action = when (action) {
                         "WALKING_RIGHT" -> {
@@ -217,7 +209,6 @@ class DragMovementModule(
                     mod.set_action(action)
                     window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!![action]!!)
                 } else {
-                    println("Hello! $action $is_meme")
                     direction = "LEFT"
                     action = when (action) {
                         "WALKING_LEFT" -> {
@@ -235,6 +226,7 @@ class DragMovementModule(
                 }
             }
         }
+
         animator?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 // After walking, make the goose sit sometimes
@@ -255,18 +247,18 @@ class DragMovementModule(
                 }
                 mod.set_action(action)
                 window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
+
                 // Allow dragging again when the animation finishes
                 isDraggable = true
                 is_dragged = false
             }
         })
+
         animator?.duration = Random().nextInt(2000).toLong() + 2500
         if (is_meme == true) {
             animator?.duration = 4000
-//            params!!.flags = WindowManager.LayoutParams.FLAG_LAYOUT_IN_SCREEN
         }
         animator?.start()
-
     }
 
     private fun drag(window: FloatingWindowModule?) {
@@ -358,7 +350,6 @@ class DragMovementModule(
                         return true
                     }
                 }
-
                 return false
             }
         })
@@ -378,6 +369,4 @@ class DragMovementModule(
             this.is_alive = false
         }
     }
-
-
 }
