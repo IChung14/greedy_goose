@@ -30,35 +30,47 @@ class TimerPage : AppCompatActivity() {
             this.binding = binding
             return this.intent
         }
+
         fun snoozeAlarm(context: Context) {
             mod.set_set_time(300000L)
             mod.set_elapsed_time(mod.get_set_time())
             this.intent.putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
             context.startService(this.intent)
-
             mod.set_timer_state(TimerState.RUNNING)
             binding.startBtn.text = "PAUSE"
+            showTimer()
+        }
 
-            val hr = mod.get_elapsed_time()/1000/3600
-            val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
-            val sec = (mod.get_elapsed_time()/1000) % 60
-            binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
+        fun stopAlarm(context: Context) {
+            NotificationUtil.removeNotification(0)
+            binding.startBtn.text = "START"
+            showUserInput()
+            context.stopService(this.intent)
+            mod.set_elapsed_time(mod.get_set_time())
+            mod.set_timer_state(TimerState.NOT_STARTED)
+        }
 
+        fun showTimer() {
+            updateTextUI()
             binding.userInputHrs.visibility = View.INVISIBLE
             binding.userInputMins.visibility = View.INVISIBLE
             binding.userInputSecs.visibility = View.INVISIBLE
             binding.timerText.visibility = View.VISIBLE
         }
-        fun stopAlarm(context: Context) {
-            binding.startBtn.text = "START"
+
+        fun showUserInput() {
             binding.userInputHrs.visibility = View.VISIBLE
             binding.userInputMins.visibility = View.VISIBLE
             binding.userInputSecs.visibility = View.VISIBLE
             binding.timerText.visibility = View.INVISIBLE
-            NotificationUtil.removeNotification(0)
-            context.stopService(this.intent)
-            mod.set_elapsed_time(mod.get_set_time())
-            mod.set_timer_state(TimerState.NOT_STARTED)
+        }
+
+        fun updateTextUI() {
+            val hr = mod.get_elapsed_time()/1000/3600
+            val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
+            val sec = (mod.get_elapsed_time()/1000) % 60
+
+            binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
         }
     }
 
@@ -185,26 +197,5 @@ class TimerPage : AppCompatActivity() {
         }
     }
 
-    private fun updateTextUI() {
-        val hr = mod.get_elapsed_time()/1000/3600
-        val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
-        val sec = (mod.get_elapsed_time()/1000) % 60
 
-        binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
-    }
-
-    private fun showTimer() {
-        updateTextUI()
-        binding.userInputHrs.visibility = View.INVISIBLE
-        binding.userInputMins.visibility = View.INVISIBLE
-        binding.userInputSecs.visibility = View.INVISIBLE
-        binding.timerText.visibility = View.VISIBLE
-    }
-
-    private fun showUserInput() {
-        binding.userInputHrs.visibility = View.VISIBLE
-        binding.userInputMins.visibility = View.VISIBLE
-        binding.userInputSecs.visibility = View.VISIBLE
-        binding.timerText.visibility = View.INVISIBLE
-    }
 }

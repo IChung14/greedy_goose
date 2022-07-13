@@ -53,7 +53,7 @@ class NotificationUtil {
             notifBuilder.setContentTitle("Time's up")
             notifBuilder.setPriority(NotificationCompat.PRIORITY_HIGH)
             notifBuilder.addAction(R.drawable.eng_flying_left, "Snooze 5 min", snoozePendingIntent)
-            notifBuilder.addAction(R.drawable.eng_sitting_left, "Stop", stopPendingIntent)
+            notifBuilder.addAction(R.drawable.eng_flying_left, "Stop", stopPendingIntent)
 
             val notifManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notifManager.createNotificationChannel(EXPIRED_CHANNEL_ID, EXPIRED_CHANNEL_NAME, true)
@@ -81,7 +81,7 @@ class NotificationUtil {
         private fun getNotificationBuilder(context: Context, channelId: String, playSound: Boolean)
         :NotificationCompat.Builder {
             val notifBuilder = NotificationCompat.Builder(context, channelId)
-                .setSmallIcon(R.drawable.eng_angry_left)
+                .setSmallIcon(R.drawable.eng_sitting_left)
                 .setAutoCancel(true)
                 .setDefaults(0)
             if (playSound) {
