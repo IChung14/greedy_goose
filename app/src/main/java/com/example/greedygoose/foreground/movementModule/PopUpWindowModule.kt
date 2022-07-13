@@ -70,7 +70,7 @@ class PopUpWindowModule(
                 }
             }
         })
-        movement.duration = 2000
+        movement.duration = 2150
         movement.start()
     }
 }

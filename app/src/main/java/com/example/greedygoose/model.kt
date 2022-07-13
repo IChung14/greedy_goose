@@ -9,6 +9,9 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.greedygoose.foreground.FloatingLayout
 
+val memes: List<Int> = listOf(
+    R.drawable.meme_1, R.drawable.meme_2, R.drawable.meme_3, R.drawable.meme_4,
+    R.drawable.meme_5, R.drawable.meme_6, R.drawable.meme_7)
 
 val theme_map: HashMap<String, HashMap<String, Int>> = hashMapOf(
     "ENG" to hashMapOf(

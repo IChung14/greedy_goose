@@ -13,6 +13,7 @@ import com.example.greedygoose.foreground.movementModule.DragMovementModule
 import com.example.greedygoose.foreground.movementModule.DragToEatModule
 import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
 import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
+import com.example.greedygoose.memes
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -103,10 +104,11 @@ class FloatingService : Service() {
 
     private fun dragWindow(){
         MainScope().launch{
-            var chance = 1
             while(true) {
                 // use percentage to determine whether to drag a window out
-                if(screenOn()){
+                var chance = Random().nextInt(2)
+
+                if(screenOn() && chance == 1){
                     val goose_params = floatingGoose.getLocation()
                     if (goose_params!!.x <= 50) {
                         if (floatingGoose.movementModule!!.isDraggable) {
@@ -123,9 +125,11 @@ class FloatingService : Service() {
                             )
                             windowParams.x = -1080
                             windowParams.y = floatingGoose.getLocation()!!.y
+                            var memeChance = Random().nextInt(7)
+                            var meme = memes[memeChance]
 
                             floatingWindow = FloatingComponent(this@FloatingService, "WINDOW")
-                                .setImageResource(R.drawable.meme_1)
+                                .setImageResource(meme)
                                 .setWindowLayoutParams(windowParams)
                                 .setMovementModule {
                                     PopUpWindowModule(
@@ -144,10 +148,8 @@ class FloatingService : Service() {
                             floatingWindow.movementModule!!.start_action()
                         }
                     }
-
                 }
                 delay(5000)
-                chance = Random().nextInt(10)
             }
         }
     }

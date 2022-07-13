@@ -234,8 +234,14 @@ class DragMovementModule(
 
         animator?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                if(!round){
+                if(!round && is_meme == true){
                     MainScope().launch {
+                        if (direction == "LEFT") {
+                            mod.set_action("WINDOW_LEFT")
+                        } else {
+                            mod.set_action("WINDOW_RIGHT")
+                        }
+                        window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!![mod.get_action()]!!)
                         delay(3500)
                         randomWalk(window, true, true, null)
                     }
