@@ -28,7 +28,7 @@ class DragMovementModule(
     private var windowManager: WindowManager?,
     private var baseView: View?,
     private var context: Service?
-): MovementModule {
+) : MovementModule {
 
 
     private var curr_theme = mod.get_theme().toString()
@@ -45,19 +45,19 @@ class DragMovementModule(
 
     override fun run() {}
 
-    override fun start_action(binding: FloatingWindowModule?, round: Boolean) {
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: String) {
         // set drag listener
         drag(binding)
 
         // start random movements
-        MainScope().launch{
+        MainScope().launch {
             val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
             delay(2000)
-            while(true) {
+            while (true) {
                 if (powerManager.isInteractive) {
                     curr_theme = mod.get_theme().toString()
                     if (!is_dragged) {
-                        randomWalk(binding, false, false,null)
+                        randomWalk(binding, false, false, "RIGHT")
                     }
                 }
                 delay(7000)
@@ -65,12 +65,15 @@ class DragMovementModule(
         }
     }
 
-    fun walkOffScreen(window: FloatingWindowModule?) {
+    fun walkOffScreen(window: FloatingWindowModule?, dir: String) {
         is_dragged = true
         isDraggable = false
 
-        var y = Random().nextInt(1500)-1000
+        var y = Random().nextInt(1500) - 1000
         var pvhX = PropertyValuesHolder.ofInt("x", params!!.x, -1080)
+        if (dir == "RIGHT") {
+            pvhX = PropertyValuesHolder.ofInt("x", params!!.x, 1080)
+        }
         var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
         params!!.flags = params!!.flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
 
@@ -146,7 +149,6 @@ class DragMovementModule(
                 window?.binding?.gooseImg?.setImageResource(theme_map[curr_theme]!!.get(action)!!)
 
                 // Allow dragging again when the animation finishes
-                params!!.x = -1080
                 isDraggable = true
                 is_dragged = false
             }
@@ -156,7 +158,7 @@ class DragMovementModule(
         animator?.start()
     }
 
-    fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, round: Boolean, meme: FloatingWindowModule?) {
+    fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, round: Boolean, dir: String) {
         // Do not allow dragging while the goose is moving
         isDraggable = false
         is_dragged = true
@@ -165,17 +167,23 @@ class DragMovementModule(
         windowManager!!.defaultDisplay.getMetrics(displayMetrics)
         var width = displayMetrics.widthPixels
 
-        var x = min(Random().nextInt(1500)-1000, width/2 - 270)
-        x = max(x, - 270)
-        var y = Random().nextInt(1500)-1000
+        var x = min(Random().nextInt(1500) - 800, width / 2 - 270)
+        x = max(x, -270)
+        var y = Random().nextInt(1500) - 1000
 
         if (is_meme == true && !round) {
             x = 200
             y = params!!.y
-        }
-        else if(is_meme == true && round){
+            if (dir == "RIGHT") {
+                x = -200
+            }
+        } else if (is_meme == true && round) {
             x = 1000
             y = params!!.y
+            if (dir == "RIGHT") {
+
+                x = -1000
+            }
         }
 
         var pvhX = PropertyValuesHolder.ofInt("x", params!!.x, x)
@@ -234,7 +242,7 @@ class DragMovementModule(
 
         animator?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                if(!round && is_meme == true){
+                if (!round && is_meme == true) {
                     MainScope().launch {
                         if (direction == "LEFT") {
                             mod.set_action("WINDOW_LEFT")
@@ -243,7 +251,7 @@ class DragMovementModule(
                         }
                         window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!![mod.get_action()]!!)
                         delay(3500)
-                        randomWalk(window, true, true, null)
+                        randomWalk(window, true, true, dir)
                     }
                 } else {
                     // After walking, make the goose sit sometimes
@@ -291,7 +299,7 @@ class DragMovementModule(
             override fun onTouch(v: View, event: MotionEvent): Boolean {
 
                 // prevent touch if not draggable
-                if(!isDraggable) return false
+                if (!isDraggable) return false
                 curr_theme = mod.get_theme().toString()
 
                 when (event.action) {
@@ -314,7 +322,11 @@ class DragMovementModule(
                             "SITTING_RIGHT"
                         }
                         mod.set_action(action)
-                        window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
+                        window!!.binding.gooseImg.setImageResource(
+                            theme_map[curr_theme]!!.get(
+                                action
+                            )!!
+                        )
                     }
                     MotionEvent.ACTION_MOVE -> {
                         //Calculate the X and Y coordinates of the view.
@@ -327,14 +339,14 @@ class DragMovementModule(
                         // For a smoother walking animation, only change the goose img every 5 animations
                         updates += 1
                         if (updates % 5 == 0) {
-                            if ( params!!.x > prevx && (abs(params!!.x.minus(prevx)) >= 100f)) {
+                            if (params!!.x > prevx && (abs(params!!.x.minus(prevx)) >= 100f)) {
                                 direction = "RIGHT"
                                 if (action == "ANGRY_RIGHT") {
                                     action = "ANGRY_RIGHT2"
                                 } else {
                                     action = "ANGRY_RIGHT"
                                 }
-                            } else if ( params!!.x < prevx && (abs(params!!.x.minus(prevx)) <= 100f))  {
+                            } else if (params!!.x < prevx && (abs(params!!.x.minus(prevx)) <= 100f)) {
                                 direction = "LEFT"
                                 action = when (action) {
                                     "ANGRY_LEFT" -> {
@@ -363,7 +375,11 @@ class DragMovementModule(
                                 }
                             }
                             mod.set_action(action)
-                            window!!.binding.gooseImg.setImageResource(theme_map[curr_theme]!!.get(action)!!)
+                            window!!.binding.gooseImg.setImageResource(
+                                theme_map[curr_theme]!!.get(
+                                    action
+                                )!!
+                            )
                         }
                         return true
                     }
