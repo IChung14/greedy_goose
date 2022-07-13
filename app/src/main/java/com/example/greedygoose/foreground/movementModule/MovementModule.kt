@@ -8,6 +8,6 @@ interface MovementModule {
     var isDraggable: Boolean
     var is_dragged: Boolean
     fun run()
-    fun start_action(binding: FloatingWindowModule? = null, round: Boolean = false)
+    fun start_action(binding: FloatingWindowModule? = null, round: Boolean = false, dir: String = "")
     fun destroy()
 }

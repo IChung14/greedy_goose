@@ -33,7 +33,7 @@ class TouchDeleteModule (
         }
     }
 
-    override fun start_action(binding: FloatingWindowModule?, round: Boolean) {}
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: String) {}
 
     override fun run() {
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {

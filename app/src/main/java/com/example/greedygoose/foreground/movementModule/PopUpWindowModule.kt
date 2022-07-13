@@ -43,11 +43,16 @@ class PopUpWindowModule(
 
     override fun run() {}
 
-    override fun start_action(binding: FloatingWindowModule?, round: Boolean) {
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: String) {
         is_dragged = true
-        val pvhX =
-            if(!round) PropertyValuesHolder.ofInt("x", -1080, -150)
+        var pvhX =
+            if (!round) PropertyValuesHolder.ofInt("x", -1080, -150)
             else PropertyValuesHolder.ofInt("x", -150, 1080)
+        if (dir == "RIGHT") {
+            pvhX =
+                if (!round) PropertyValuesHolder.ofInt("x", 1080, 150)
+                else PropertyValuesHolder.ofInt("x", 150, -1080)
+        }
         var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
 
         val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
@@ -62,10 +67,10 @@ class PopUpWindowModule(
         movement.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 is_dragged = false
-                if(!round){
+                if (!round) {
                     MainScope().launch {
                         delay(3500)
-                        start_action(binding, true)
+                        start_action(binding, true, dir)
                     }
                 }
             }
