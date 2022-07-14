@@ -9,14 +9,18 @@ import com.example.greedygoose.databinding.ActivitySettingsPageBinding
 
 class SettingsPage : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsPageBinding
+    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsPageBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        val tv1 = binding.eggCount
-        tv1.text = mod.get_egg_count().toString()
+        viewModel = SettingsViewModel(context = this)
 
+        setContentView(binding.root)
+
+        viewModel.eggCount.observe(this){
+            binding.eggCount.text = it.toString()
+        }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         if (!mod.is_tie_unlocked) {
@@ -108,7 +112,6 @@ class SettingsPage : AppCompatActivity() {
 
         // We want to listen to any changes in the egg count, and update the number of eggs
         // displayed in our UI in real time
-        mod.observe_egg(this, tv1)
         mod.observe_entertainment(this, this)
     }
 

@@ -4,16 +4,25 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.preference.PreferenceManager
 
+const val DEFAULT_EGG_COUNT = 100
+
 class SPLDAccessModel(val context: Context) {
 
-    private val sharedPreference = PreferenceManager.getDefaultSharedPreferences(context)
+    private val sharedPreference =
+        PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
 
-    val EggCount: LiveData<Int>
-        get() = SharedPreferenceIntLiveData(sharedPreference, ModelKeys.EGG_COUNT.key, 0)
+    val eggCount: LiveData<Int> = SharedPreferenceIntLiveData(
+        sharedPreference,
+        ModelKeys.EGG_COUNT.key,
+        DEFAULT_EGG_COUNT
+    )
 
-    fun setEggCount(num: Int){
+    fun incrementEggCount(num: Int){
         with(sharedPreference.edit()){
-            putInt(ModelKeys.EGG_COUNT.key, num)
+            putInt(
+                ModelKeys.EGG_COUNT.key,
+                sharedPreference.getInt(ModelKeys.EGG_COUNT.key,DEFAULT_EGG_COUNT)+num
+            )
             apply()
         }
     }

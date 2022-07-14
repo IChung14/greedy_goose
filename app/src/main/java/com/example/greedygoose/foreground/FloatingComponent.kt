@@ -6,6 +6,7 @@ import android.os.Handler
 import android.os.ResultReceiver
 import android.view.WindowManager
 import androidx.annotation.DrawableRes
+import com.example.greedygoose.R
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 import com.example.greedygoose.mod
@@ -20,13 +21,15 @@ class FloatingComponent(context: Context, type: String) {
     var img = type
     var is_alive = true
     @DrawableRes private var imgRes: Int? = null
-    private var movementModule: MovementModule? = null
+    var movementModule: MovementModule? = null
     private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
 
     fun build(): FloatingComponent {
         // creating a floating view
         windowModule.create()
-        imgRes?.let { windowModule.binding.gooseImg.setImageResource(it) }
+        imgRes?.let {
+            windowModule.binding.gooseImg.setImageResource(it)
+        }
 
         moduleHelper?.let {
             movementModule = it(windowModule)

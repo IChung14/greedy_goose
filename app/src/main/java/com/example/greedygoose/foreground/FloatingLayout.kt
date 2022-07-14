@@ -43,7 +43,9 @@ class FloatingLayout(private val context: Context, imgName: Int, lifecycle: Life
      * Updates a View under FloatingService
      */
     fun updateView(viewModifier: (FloatingLayoutBinding)->Unit){
-        viewModifier(fService.floatingEgg.windowModule.binding)
+        if (fService.floatingEgg != null) {
+            viewModifier(fService.floatingEgg!!.windowModule.binding)
+        }
     }
 
     fun set_bind(life: LifecycleOwner) {
