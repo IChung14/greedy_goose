@@ -5,10 +5,10 @@ import android.graphics.PixelFormat
 import android.os.Binder
 import android.os.IBinder
 import android.os.PowerManager
-import android.view.WindowManager
 import android.view.WindowManager.LayoutParams
 import androidx.lifecycle.LifecycleService
 import com.example.greedygoose.R
+import com.example.greedygoose.data.Direction
 import com.example.greedygoose.foreground.movementModule.DragMovementModule
 import com.example.greedygoose.foreground.movementModule.DragToEatModule
 import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
@@ -173,13 +173,13 @@ class FloatingService : LifecycleService () {
                         if (gx <= 50) {
 
                             (floatingGoose.movementModule!! as DragMovementModule)
-                                .randomWalk(floatingGoose.windowModule, true, false, "LEFT")
-                            floatingWindow.movementModule!!.start_action(null, false, "LEFT")
+                                .randomWalk(floatingGoose.windowModule, true, false, Direction.LEFT)
+                            floatingWindow.movementModule!!.start_action(null, false, Direction.LEFT)
 
                         } else {
                             (floatingGoose.movementModule!! as DragMovementModule)
-                                .randomWalk(floatingGoose.windowModule, true, false, "RIGHT")
-                            floatingWindow.movementModule!!.start_action(null, false, "RIGHT")
+                                .randomWalk(floatingGoose.windowModule, true, false, Direction.RIGHT)
+                            floatingWindow.movementModule!!.start_action(null, false, Direction.RIGHT)
 
                         }
 

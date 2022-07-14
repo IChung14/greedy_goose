@@ -25,7 +25,7 @@ class HomeFragment : Fragment() {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater)
 
-        context?.let{ mod.observe_entertainment(this, it) }
+        context?.let{ mod.observeEntertainment(this, it) }
 
         val greedyGooseText = binding.textView
         val greedy = getColoredSpanned("Greedy Goose", "#e83372", "#E191CA")

@@ -1,11 +1,8 @@
 package com.example.greedygoose.foreground.movementModule
 
-import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
-import com.example.greedygoose.*
-import com.example.greedygoose.data.SPLDAccessModel
-import com.example.greedygoose.foreground.FloatingComponent
+import com.example.greedygoose.data.Direction
 import com.example.greedygoose.foreground.FloatingViewModel
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
@@ -36,7 +33,7 @@ class TouchDeleteModule (
         }
     }
 
-    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: String) {}
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: Direction) {}
 
     override fun run() {
         rootContainer?.setOnClickListener{

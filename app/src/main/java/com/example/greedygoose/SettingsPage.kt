@@ -4,6 +4,7 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.greedygoose.data.Theme
 import com.example.greedygoose.databinding.ActivitySettingsPageBinding
 
 
@@ -48,13 +49,13 @@ class SettingsPage : AppCompatActivity() {
             binding.customizationOption3.setTextSize(35F)
         }
 
-        if (mod.get_theme() === "SCI") {
+        if (mod.getTheme() === Theme.SCI) {
             binding.customizationOption2.setBackgroundResource(R.drawable.highlighted_goggles)
         }
-        else if (mod.get_theme() === "MATH") {
+        else if (mod.getTheme() === Theme.MATH) {
             binding.customizationOption1.setBackgroundResource(R.drawable.highlighted_tie)
         }
-        else if (mod.get_theme() === "ENG") {
+        else if (mod.getTheme() === Theme.ENG) {
             binding.customizationOption3.setBackgroundResource(R.drawable.highlighted_hardhat)
         }
 
@@ -63,7 +64,7 @@ class SettingsPage : AppCompatActivity() {
                 if (mod.is_tie_selected) {
                     mod.is_tie_selected = false
                     binding.customizationOption1.setBackgroundResource(R.drawable.pink_tie)
-                    mod.set_theme("NONE")
+                    mod.setTheme(Theme.NONE)
                 }
                 else {
                     mod.is_tie_selected = true
@@ -81,7 +82,7 @@ class SettingsPage : AppCompatActivity() {
                 if (mod.is_goggle_selected) {
                     mod.is_goggle_selected = false
                     binding.customizationOption2.setBackgroundResource(R.drawable.science_goggle)
-                    mod.set_theme("NONE")
+                    mod.setTheme(Theme.NONE)
                 }
                 else {
                     mod.is_tie_selected = false
@@ -99,7 +100,7 @@ class SettingsPage : AppCompatActivity() {
                 if (mod.is_hard_hat_selected) {
                     mod.is_hard_hat_selected = false
                     binding.customizationOption3.setBackgroundResource(R.drawable.yellow_hard_hat)
-                    mod.set_theme("NONE")
+                    mod.setTheme(Theme.NONE)
                 }
                 else {
                     mod.is_tie_selected = false
@@ -115,27 +116,27 @@ class SettingsPage : AppCompatActivity() {
 
         // We want to listen to any changes in the egg count, and update the number of eggs
         // displayed in our UI in real time
-        mod.observe_entertainment(this, this)
+        mod.observeEntertainment(this, this)
     }
 
     private fun updateSelectedItem() {
         if (mod.is_tie_selected) {
             binding.customizationOption1.setBackgroundResource(R.drawable.highlighted_tie)
-            mod.set_theme("MATH")
+            mod.setTheme(Theme.MATH)
         }
         else if (mod.is_tie_unlocked) {
             binding.customizationOption1.setBackgroundResource(R.drawable.pink_tie)
         }
         if (mod.is_goggle_selected) {
             binding.customizationOption2.setBackgroundResource(R.drawable.highlighted_goggles)
-            mod.set_theme("SCI")
+            mod.setTheme(Theme.SCI)
         }
         else if (mod.is_goggle_unlocked) {
             binding.customizationOption2.setBackgroundResource(R.drawable.science_goggle)
         }
         if (mod.is_hard_hat_selected) {
             binding.customizationOption3.setBackgroundResource(R.drawable.highlighted_hardhat)
-            mod.set_theme("ENG")
+            mod.setTheme(Theme.ENG)
         }
         else if (mod.is_hard_hat_unlocked) {
             binding.customizationOption3.setBackgroundResource(R.drawable.yellow_hard_hat)
