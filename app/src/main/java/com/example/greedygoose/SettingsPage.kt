@@ -11,6 +11,8 @@ class SettingsPage : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsPageBinding
     private lateinit var viewModel: SettingsViewModel
 
+    private var eggCount = 0
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsPageBinding.inflate(layoutInflater)
@@ -19,7 +21,8 @@ class SettingsPage : AppCompatActivity() {
         setContentView(binding.root)
 
         viewModel.eggCount.observe(this){
-            binding.eggCount.text = it.toString()
+            eggCount = it
+            binding.eggCount.text = eggCount.toString()
         }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
@@ -70,7 +73,7 @@ class SettingsPage : AppCompatActivity() {
                 }
             }
             else {
-                purchase_item("pink", binding.customizationOption1.text.toString().toInt())
+                purchaseItem("pink", binding.customizationOption1.text.toString().toInt())
             }
         }
         binding.customizationOption2.setOnClickListener {
@@ -88,7 +91,7 @@ class SettingsPage : AppCompatActivity() {
                 }
             }
             else {
-                purchase_item("blue", binding.customizationOption2.text.toString().toInt())
+                purchaseItem("blue", binding.customizationOption2.text.toString().toInt())
             }
         }
         binding.customizationOption3.setOnClickListener {
@@ -106,7 +109,7 @@ class SettingsPage : AppCompatActivity() {
                 }
             }
             else {
-                purchase_item("yellow", binding.customizationOption3.text.toString().toInt())
+                purchaseItem("yellow", binding.customizationOption3.text.toString().toInt())
             }
         }
 
@@ -169,7 +172,7 @@ class SettingsPage : AppCompatActivity() {
         binding.eggCount.text = mod.get_egg_count().toString()
     }
 
-    private fun purchase_item(item_name: String, item_price: Int) {
+    private fun purchaseItem(item_name: String, item_price: Int) {
         if(mod.get_egg_count()!! >= item_price){
             mod.decrease_egg_count(item_price)
             updateItem(item_name)
