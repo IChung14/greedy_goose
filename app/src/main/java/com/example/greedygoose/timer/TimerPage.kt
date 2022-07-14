@@ -91,27 +91,27 @@ class TimerPage : AppCompatActivity() {
         serviceIntent = Intent(applicationContext, TimerService::class.java)
         registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
 
-        mod.observe_entertainment(this, this)
+        mod.observeEntertainment(this, this)
     }
 
     private fun pauseTimer() {
         binding.startBtn.text = "RESUME"
         NotificationUtil.updateNotification(this@TimerPage, "Timer is paused")
         stopService(serviceIntent)
-        mod.set_timer_state(TimerState.PAUSED)
+        mod.setTimerState(TimerState.PAUSED)
     }
 
     private fun resumeTimer() {
         binding.startBtn.text = "PAUSE"
         startTimer()
-        mod.set_timer_state(TimerState.RUNNING)
+        mod.setTimerState(TimerState.RUNNING)
     }
 
     private fun startTimer() {
         serviceIntent.putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
         startService(serviceIntent)
 
-        mod.set_timer_state(TimerState.RUNNING)
+        mod.setTimerState(TimerState.RUNNING)
         binding.startBtn.text = "PAUSE"
         showTimer()
     }
@@ -122,7 +122,7 @@ class TimerPage : AppCompatActivity() {
         NotificationUtil.removeNotifiation(RUNNING_NOTIF_ID)
         stopService(serviceIntent)
         mod.set_elapsed_time(mod.get_set_time())
-        mod.set_timer_state(TimerState.NOT_STARTED)
+        mod.setTimerState(TimerState.NOT_STARTED)
     }
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {

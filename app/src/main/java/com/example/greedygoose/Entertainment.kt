@@ -34,8 +34,8 @@ class Entertainment : AppCompatActivity() {
 
     private fun bindFloatingService(){
         if (Settings.canDrawOverlays(this)) {
-            mod.set_entertainment(true)
-            mod.observe_entertainment(this, this)
+            mod.setEntertainment(true)
+            mod.observeEntertainment(this, this)
         }
     }
 

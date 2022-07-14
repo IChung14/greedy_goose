@@ -3,6 +3,7 @@ package com.example.greedygoose.foreground.movementModule
 import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
+import com.example.greedygoose.data.Direction
 import com.example.greedygoose.foreground.FloatingComponent
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
@@ -37,7 +38,7 @@ class DragToEatModule (
         drag()
     }
 
-    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: String) {}
+    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: Direction) {}
 
     private fun drag(){
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
