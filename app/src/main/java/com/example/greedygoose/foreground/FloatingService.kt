@@ -37,7 +37,10 @@ class FloatingService : LifecycleService () {
 
     override fun onBind(intent: Intent): IBinder {
         // construct a floating object
-        floatingGoose = FloatingComponent(this@FloatingService, "GOOSE")
+        floatingGoose = FloatingComponent(
+            this@FloatingService,
+            "GOOSE",
+            viewModel)
             .setMovementModule {                      // making it responsive
                 DragMovementModule(
                     it.params,
@@ -61,7 +64,8 @@ class FloatingService : LifecycleService () {
                 while (true) {
                     // use percentage to determine whether to lay an egg
                     if (chance < 3 && screenOn()) {
-                        floatingEgg = FloatingComponent(this@FloatingService, "EGG")
+                        floatingEgg = FloatingComponent(this@FloatingService, "EGG",
+                            viewModel)
                             .setImageResource(R.drawable.egg_small)
                             .setWindowLayoutParams(floatingGoose.getLocation()!!)
                             .setMovementModule {
@@ -91,7 +95,8 @@ class FloatingService : LifecycleService () {
                 if (chance > 7 && screenOn()) {
                     var x = Random().nextInt(1000) - 500
                     var y = Random().nextInt(1000) - 500
-                    floatingFood = FloatingComponent(this@FloatingService, "FOOD")
+                    floatingFood = FloatingComponent(this@FloatingService, "FOOD",
+                        viewModel)
                         .setImageResource(R.drawable.bbt)
                         .setWindowLayoutParams(x, y)
                         .setMovementModule {
@@ -150,7 +155,8 @@ class FloatingService : LifecycleService () {
                         var memeChance = Random().nextInt(7)
                         var meme = memes[memeChance]
 
-                        floatingWindow = FloatingComponent(this@FloatingService, "WINDOW")
+                        floatingWindow = FloatingComponent(this@FloatingService, "WINDOW",
+                            viewModel)
                             .setImageResource(meme)
                             .setWindowLayoutParams(windowParams)
                             .setMovementModule {

@@ -26,6 +26,16 @@ class SPLDAccessModel(val context: Context) {
             apply()
         }
     }
+
+    fun decrementEggCount(num: Int){
+        with(sharedPreference.edit()){
+            putInt(
+                ModelKeys.EGG_COUNT.key,
+                sharedPreference.getInt(ModelKeys.EGG_COUNT.key,DEFAULT_EGG_COUNT)-num
+            )
+            apply()
+        }
+    }
 }
 
 enum class ModelKeys(val key: String){
