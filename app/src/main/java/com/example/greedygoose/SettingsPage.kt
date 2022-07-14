@@ -169,12 +169,11 @@ class SettingsPage : AppCompatActivity() {
             binding.customizationOption3.text = ""
             updateSelectedItem()
         }
-        binding.eggCount.text = mod.get_egg_count().toString()
     }
 
     private fun purchaseItem(item_name: String, item_price: Int) {
-        if(mod.get_egg_count()!! >= item_price){
-            mod.decrease_egg_count(item_price)
+        if(eggCount >= item_price){
+            viewModel.decrementEggCount(item_price)
             updateItem(item_name)
         }
     }
