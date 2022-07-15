@@ -4,19 +4,24 @@ import android.graphics.Color
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import com.example.greedygoose.data.Theme
 import com.example.greedygoose.databinding.ActivitySettingsPageBinding
 
 
 class SettingsPage : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsPageBinding
+    private lateinit var viewModel: SettingsViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsPageBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        val tv1 = binding.eggCount
-        tv1.text = mod.get_egg_count().toString()
+        viewModel = SettingsViewModel(context = this)
 
+        setContentView(binding.root)
+
+        viewModel.eggCount.observe(this){
+            binding.eggCount.text = it.toString()
+        }
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         if (!mod.is_tie_unlocked) {
@@ -28,27 +33,24 @@ class SettingsPage : AppCompatActivity() {
         }
         if (!mod.is_goggle_unlocked) {
             binding.customizationOption2.setBackgroundResource(R.drawable.grey_goggles)
-            binding.customizationOption2.text = "50"
+            binding.customizationOption2.text = "25"
             binding.customizationOption2.textAlignment = View.TEXT_ALIGNMENT_CENTER
             binding.customizationOption2.setTextColor(Color.WHITE)
             binding.customizationOption2.setTextSize(35F)
         }
         if (!mod.is_hard_hat_unlocked) {
             binding.customizationOption3.setBackgroundResource(R.drawable.grey_hardhat)
-            binding.customizationOption3.text = "55"
+            binding.customizationOption3.text = "50"
             binding.customizationOption3.textAlignment = View.TEXT_ALIGNMENT_CENTER
             binding.customizationOption3.setTextColor(Color.WHITE)
             binding.customizationOption3.setTextSize(35F)
         }
 
-        if (mod.get_theme() === "SCI") {
-            binding.customizationOption2.setBackgroundResource(R.drawable.highlighted_goggles)
-        }
-        else if (mod.get_theme() === "MATH") {
-            binding.customizationOption1.setBackgroundResource(R.drawable.highlighted_tie)
-        }
-        else if (mod.get_theme() === "ENG") {
-            binding.customizationOption3.setBackgroundResource(R.drawable.highlighted_hardhat)
+        when(viewModel.theme.value){
+            Theme.SCI -> binding.customizationOption2.setBackgroundResource(R.drawable.highlighted_goggles)
+            Theme.ENG -> binding.customizationOption3.setBackgroundResource(R.drawable.highlighted_hardhat)
+            Theme.MATH -> binding.customizationOption1.setBackgroundResource(R.drawable.highlighted_tie)
+            Theme.NONE -> {}
         }
 
         binding.customizationOption1.setOnClickListener {
@@ -56,7 +58,7 @@ class SettingsPage : AppCompatActivity() {
                 if (mod.is_tie_selected) {
                     mod.is_tie_selected = false
                     binding.customizationOption1.setBackgroundResource(R.drawable.pink_tie)
-                    mod.set_theme("NONE")
+                    viewModel.setTheme(Theme.NONE)
                 }
                 else {
                     mod.is_tie_selected = true
@@ -66,7 +68,7 @@ class SettingsPage : AppCompatActivity() {
                 }
             }
             else {
-                purchase_item("pink", binding.customizationOption1.text.toString().toInt())
+                purchaseItem("pink", binding.customizationOption1.text.toString().toInt())
             }
         }
         binding.customizationOption2.setOnClickListener {
@@ -74,7 +76,7 @@ class SettingsPage : AppCompatActivity() {
                 if (mod.is_goggle_selected) {
                     mod.is_goggle_selected = false
                     binding.customizationOption2.setBackgroundResource(R.drawable.science_goggle)
-                    mod.set_theme("NONE")
+                    viewModel.setTheme(Theme.NONE)
                 }
                 else {
                     mod.is_tie_selected = false
@@ -84,7 +86,7 @@ class SettingsPage : AppCompatActivity() {
                 }
             }
             else {
-                purchase_item("blue", binding.customizationOption2.text.toString().toInt())
+                purchaseItem("blue", binding.customizationOption2.text.toString().toInt())
             }
         }
         binding.customizationOption3.setOnClickListener {
@@ -92,7 +94,7 @@ class SettingsPage : AppCompatActivity() {
                 if (mod.is_hard_hat_selected) {
                     mod.is_hard_hat_selected = false
                     binding.customizationOption3.setBackgroundResource(R.drawable.yellow_hard_hat)
-                    mod.set_theme("NONE")
+                    viewModel.setTheme(Theme.NONE)
                 }
                 else {
                     mod.is_tie_selected = false
@@ -102,36 +104,34 @@ class SettingsPage : AppCompatActivity() {
                 }
             }
             else {
-                purchase_item("yellow", binding.customizationOption3.text.toString().toInt())
+                purchaseItem("yellow", binding.customizationOption3.text.toString().toInt())
             }
         }
 
         // We want to listen to any changes in the egg count, and update the number of eggs
         // displayed in our UI in real time
-        mod.observe_egg(this, tv1)
-        mod.observe_entertainment(this, this)
+        mod.observeEntertainment(this, this)
     }
 
     private fun updateSelectedItem() {
         if (mod.is_tie_selected) {
             binding.customizationOption1.setBackgroundResource(R.drawable.highlighted_tie)
-            mod.set_theme("MATH")
-        }
-        else if (mod.is_tie_unlocked) {
+            viewModel.setTheme(Theme.MATH)
+        }else if (mod.is_tie_unlocked) {
             binding.customizationOption1.setBackgroundResource(R.drawable.pink_tie)
         }
+
         if (mod.is_goggle_selected) {
             binding.customizationOption2.setBackgroundResource(R.drawable.highlighted_goggles)
-            mod.set_theme("SCI")
-        }
-        else if (mod.is_goggle_unlocked) {
+            viewModel.setTheme(Theme.SCI)
+        }else if (mod.is_goggle_unlocked) {
             binding.customizationOption2.setBackgroundResource(R.drawable.science_goggle)
         }
+
         if (mod.is_hard_hat_selected) {
             binding.customizationOption3.setBackgroundResource(R.drawable.highlighted_hardhat)
-            mod.set_theme("ENG")
-        }
-        else if (mod.is_hard_hat_unlocked) {
+            viewModel.setTheme(Theme.ENG)
+        }else if (mod.is_hard_hat_unlocked) {
             binding.customizationOption3.setBackgroundResource(R.drawable.yellow_hard_hat)
         }
     }
@@ -163,12 +163,11 @@ class SettingsPage : AppCompatActivity() {
             binding.customizationOption3.text = ""
             updateSelectedItem()
         }
-        binding.eggCount.text = mod.get_egg_count().toString()
     }
 
-    private fun purchase_item(item_name: String, item_price: Int) {
-        if(mod.get_egg_count()!! >= item_price){
-            mod.decrease_egg_count(item_price)
+    private fun purchaseItem(item_name: String, item_price: Int) {
+        if(viewModel.eggCount.value >= item_price){
+            viewModel.decrementEggCount(item_price)
             updateItem(item_name)
         }
     }

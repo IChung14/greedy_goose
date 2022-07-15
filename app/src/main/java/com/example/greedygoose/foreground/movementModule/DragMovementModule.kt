@@ -1,58 +1,210 @@
-package com.example.greedygoose.foreground
+package com.example.greedygoose.foreground.movementModule
 
+
+import android.animation.*
+import android.app.Service
+import android.content.Context.POWER_SERVICE
+import android.os.PowerManager
+import android.util.DisplayMetrics
 import android.view.*
 import android.view.View.OnTouchListener
-import com.example.greedygoose.foreground.movementModule.MovementModule
-import android.view.MotionEvent
-import android.view.WindowManager
-import android.animation.ValueAnimator
-import android.animation.PropertyValuesHolder
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
+import com.example.greedygoose.foreground.ui.FloatingWindowModule
+import com.example.greedygoose.mod
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.util.*
+import android.animation.Animator
+
+
+import android.animation.AnimatorListenerAdapter
+import androidx.core.animation.doOnEnd
+import androidx.lifecycle.LifecycleService
+import com.example.greedygoose.data.Action
+import com.example.greedygoose.data.Direction
+import com.example.greedygoose.data.themeMap
+import com.example.greedygoose.foreground.FloatingViewModel
+import kotlin.math.abs
+import kotlin.math.max
+import kotlin.math.min
 
 
 class DragMovementModule(
     private var params: WindowManager.LayoutParams?,
     private val rootContainer: View?,
     private var windowManager: WindowManager?,
-    private var baseView: View?
-): MovementModule {
+    private var baseView: View?,
+    private var context: Service?,
+    private val viewModel: FloatingViewModel
+) : MovementModule {
+    override var is_alive = true
+    override var isDraggable = true
+    override var is_dragged = false
 
-    override fun run() {
-        val pvhX = PropertyValuesHolder.ofInt("x", params!!.x, Random().nextInt(2000)-1000)
-        val pvhY = PropertyValuesHolder.ofInt("y", params!!.y, Random().nextInt(2000)-1000)
+    private var animator: ValueAnimator? = null
+        set(value) {
+            field?.cancel()
+            field = value
+        }
 
-        val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+    override fun run() {}
+
+    override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {
+        // set drag listener
+        drag()
+
+        viewModel.action.observe(context as LifecycleService){
+            themeMap[viewModel.theme.value]?.get(viewModel.action.value)?.let { imgSrc ->
+                floatingWindowModule?.binding?.gooseImg?.setImageResource(imgSrc)
+            }
+        }
+
+        // start random movements
+        MainScope().launch {
+            val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
+            delay(2000)
+            while (true) {
+                if (powerManager.isInteractive) {
+                    if (!is_dragged) {
+                        randomWalk(floatingWindowModule,
+                            is_meme = false,
+                            round = false,
+                            dir = Direction.RIGHT
+                        )
+                    }
+                }
+                delay(7000)
+            }
+        }
+    }
+
+    fun walkOffScreen(dir: String) {
+        is_dragged = true
+        isDraggable = false
+
+        var pvhX = PropertyValuesHolder.ofInt("x", params!!.x, -1080)
+        if (dir == "RIGHT") pvhX = PropertyValuesHolder.ofInt("x", params!!.x, 1080)
+        var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
+        params!!.flags = params!!.flags or WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+
+        animator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+        val startx = params!!.x
 
         // Do not allow dragging while the goose is moving
-        rootContainer?.setOnTouchListener(null)
+        var updates = 0
+        var direction = Direction.RIGHT
 
-        movement.addUpdateListener { valueAnimator ->
+        animator?.addUpdateListener { valueAnimator ->
+            val layoutParams = rootContainer!!.layoutParams as WindowManager.LayoutParams
+            layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)
+            layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)
+            windowManager!!.updateViewLayout(rootContainer, layoutParams)
+
+            // For a smoother walking animation, only change the goose img every 5 animations
+            updates += 1
+            if (updates % 5 == 0) {
+                if (layoutParams.x > startx) {
+                    direction = Direction.RIGHT
+                    gooseWalkSetter(isAngry = false, isRight = true)
+                } else {
+                    direction = Direction.LEFT
+                    gooseWalkSetter(isAngry = false, isRight = false)
+                }
+            }
+        }
+
+        animator?.doOnEnd { gooseSit(direction) }
+
+        animator?.duration = 2500
+        animator?.start()
+    }
+
+    fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, round: Boolean, dir: Direction) {
+        // Do not allow dragging while the goose is moving
+        isDraggable = false
+        is_dragged = true
+
+        val displayMetrics = DisplayMetrics()
+        windowManager!!.defaultDisplay.getMetrics(displayMetrics)
+        var width = displayMetrics.widthPixels
+
+        var x = min(Random().nextInt(1500) - 800, width / 2 - 270)
+        x = max(x, -270)
+        var y = Random().nextInt(1500) - 1000
+
+        if (is_meme == true && !round) {
+            x = if (dir == Direction.RIGHT) -200 else 200
+            y = params!!.y
+        } else if (is_meme == true && round) {
+            x = if (dir == Direction.RIGHT) -1000 else 1000
+            y = params!!.y
+        }
+
+        var pvhX = PropertyValuesHolder.ofInt("x", params!!.x, x)
+        var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, y)
+
+        animator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+        val startx = params!!.x
+
+        // Do not allow dragging while the goose is moving
+        var updates = 0
+        var direction = Direction.RIGHT
+
+        animator?.addUpdateListener { valueAnimator ->
             val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
             layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
             windowManager!!.updateViewLayout(rootContainer, layoutParams)
-        }
-        movement.addListener(object : AnimatorListenerAdapter() {
-            override fun onAnimationEnd(animation: Animator) {
-                // done
+
+            // For a smoother walking animation, only change the goose img every 5 animations
+            updates += 1
+            if (updates % 5 == 0) {
+                if ((layoutParams.x > startx) xor (is_meme == true)) {
+                    direction = Direction.RIGHT
+                    gooseWalkSetter(isAngry = false, isRight = true)
+                } else {
+                    direction = Direction.LEFT
+                    gooseWalkSetter(isAngry = false, isRight = false)
+                }
             }
-        })
-        movement.duration = Random().nextInt(2000).toLong() + 2500
-        movement.start()
-        drag()
+        }
+
+        animator?.doOnEnd {
+            if (!round && is_meme == true) {
+                MainScope().launch {
+                    viewModel.action.value =
+                        if (direction == Direction.LEFT) Action.WINDOW_LEFT
+                        else Action.WINDOW_RIGHT
+                    delay(3500)
+                    randomWalk(window, is_meme = true, round = true, dir = dir)
+                }
+            } else gooseSit(direction)
+        }
+
+        animator?.duration = Random().nextInt(2000).toLong() + 2500
+        if (is_meme == true) {
+            animator?.duration = 2000
+        }
+        animator?.start()
     }
 
-    fun drag() {
+    private fun drag() {
         rootContainer?.setOnTouchListener(object : OnTouchListener {
             private var initialX = 0
             private var initialY = 0
             private var initialTouchX = 0f
             private var initialTouchY = 0f
+            private var updates = 0
+            private var direction = Direction.RIGHT
+
             override fun onTouch(v: View, event: MotionEvent): Boolean {
+
+                // prevent touch if not draggable
+                if (!isDraggable) return false
+
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
+                        is_dragged = true
                         //remember the initial position.
                         initialX = params!!.x
                         initialY = params!!.y
@@ -62,18 +214,91 @@ class DragMovementModule(
                         initialTouchY = event.rawY
                         return true
                     }
+                    MotionEvent.ACTION_UP -> {
+                        is_dragged = false
+                        viewModel.action.value =
+                            if (direction == Direction.LEFT) Action.SITTING_LEFT
+                            else Action.SITTING_RIGHT
+                    }
                     MotionEvent.ACTION_MOVE -> {
                         //Calculate the X and Y coordinates of the view.
+                        var prevx = params!!.x
                         params!!.x = (initialX + (event.rawX - initialTouchX)).toInt()
                         params!!.y = (initialY + (event.rawY - initialTouchY)).toInt()
                         //Update the layout with new X & Y coordinate
                         windowManager!!.updateViewLayout(baseView, params)
+
+                        // For a smoother walking animation, only change the goose img every 5 animations
+                        updates += 1
+                        if (updates % 5 == 0) {
+                            if (params!!.x > prevx && (abs(params!!.x.minus(prevx)) >= 100f)) {
+                                direction = Direction.RIGHT
+                                viewModel.action.value =
+                                    if (viewModel.action.value == Action.ANGRY_RIGHT) Action.ANGRY_RIGHT2
+                                    else Action.ANGRY_RIGHT
+                            } else if (params!!.x < prevx && (abs(params!!.x.minus(prevx)) <= 100f)) {
+                                direction = Direction.LEFT
+                                gooseWalkSetter(isAngry = true, isRight = false)
+                            } else {
+                                // Make the goose face the right when swiping vertically
+                                direction = Direction.RIGHT
+                                gooseWalkSetter(isAngry = true, isRight = true)
+                            }
+                        }
                         return true
                     }
                 }
                 return false
             }
         })
+    }
+
+    private fun gooseSit(direction: Direction){
+        // After walking, make the goose sit sometimes
+        viewModel.action.value = if (Random().nextInt(10) > 5) {
+            if (direction == Direction.LEFT) Action.SITTING_LEFT
+            else Action.SITTING_RIGHT
+        } else {
+            // If the goose is not sitting, make sure it doesn't stop on the image with only one leg
+            if (direction == Direction.LEFT) Action.WALKING_LEFT
+            else Action.WALKING_RIGHT
+        }
+
+        // Allow dragging again when the animation finishes
+        isDraggable = true
+        is_dragged = false
+    }
+
+    private fun gooseWalkSetter(isAngry: Boolean, isRight: Boolean){
+        viewModel.action.value = if(isAngry){
+            if(isRight){
+                when (viewModel.action.value) {
+                    Action.ANGRY_RIGHT -> Action.ANGRY_RIGHT_MIDDLE
+                    Action.ANGRY_RIGHT_MIDDLE -> Action.ANGRY_RIGHT2
+                    else -> Action.ANGRY_RIGHT
+                }
+            }else{
+                when (viewModel.action.value) {
+                    Action.ANGRY_LEFT -> Action.ANGRY_LEFT_MIDDLE
+                    Action.ANGRY_LEFT_MIDDLE -> Action.ANGRY_LEFT2
+                    else -> Action.ANGRY_LEFT
+                }
+            }
+        }else{
+            if(isRight){
+                when (viewModel.action.value) {
+                    Action.WALKING_RIGHT -> Action.WALKING_RIGHT_MIDDLE
+                    Action.WALKING_RIGHT_MIDDLE -> Action.WALKING_RIGHT2
+                    else -> Action.WALKING_RIGHT
+                }
+            }else{
+                when (viewModel.action.value) {
+                    Action.WALKING_LEFT -> Action.WALKING_LEFT_MIDDLE
+                    Action.WALKING_LEFT_MIDDLE -> Action.WALKING_LEFT2
+                    else -> Action.WALKING_LEFT
+                }
+            }
+        }
     }
 
     override fun destroy() {
@@ -87,6 +312,7 @@ class DragMovementModule(
             params = null
             baseView = null
             windowManager = null
+            this.is_alive = false
         }
     }
 }

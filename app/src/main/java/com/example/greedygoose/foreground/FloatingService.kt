@@ -1,129 +1,219 @@
 package com.example.greedygoose.foreground
 
-import android.app.Service
 import android.content.Intent
+import android.graphics.PixelFormat
 import android.os.Binder
 import android.os.IBinder
+import android.os.PowerManager
+import android.view.WindowManager.LayoutParams
+import androidx.lifecycle.LifecycleService
 import com.example.greedygoose.R
+import com.example.greedygoose.data.Direction
+import com.example.greedygoose.foreground.movementModule.DragMovementModule
+import com.example.greedygoose.foreground.movementModule.DragToEatModule
+import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
 import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
-import kotlinx.coroutines.Job
+import com.example.greedygoose.data.memes
+import com.example.greedygoose.data.themeMap
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
 
-class FloatingService : Service() {
+class FloatingService : LifecycleService () {
 
-    // Binder given to clients
-    private val binder = FloatingServiceBinder()
+    private val binder = FloatingServiceBinder()        // Binder given to clients
+    private lateinit var viewModel: FloatingViewModel
+
+    lateinit var floatingGoose: FloatingComponent
+    var floatingEgg: FloatingComponent? = null
+    lateinit var floatingFood: FloatingComponent
+    lateinit var floatingWindow: FloatingComponent
+
+    override fun onCreate() {
+        super.onCreate()
+        viewModel = FloatingViewModel(applicationContext)
+    }
+
+    override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
+        // construct a floating object
+        floatingGoose = FloatingComponent(
+            this@FloatingService,
+            "GOOSE",
+            viewModel)
+            .setMovementModule {                      // making it responsive
+                DragMovementModule(
+                    it.params,
+                    it.binding.rootContainer,       // this is the view that will listen to drags
+                    it.windowManager,
+                    it.binding.root,
+                    this,
+                    viewModel
+                )
+            }
+            .build()
+        viewModel.theme.observe(this){
+            themeMap[it]?.get(viewModel.action.value)?.let { actionImgSrc ->
+                floatingGoose.windowModule.binding.gooseImg.setImageResource(actionImgSrc)
+            }
+        }
+
+        layEggs()
+        formFoods()
+        dragWindow()
+        return binder
+    }
+
+    private fun layEggs() {
+        MainScope().launch {
+            if (floatingGoose.movementModule!!.isDraggable) {
+                var chance = 4
+                while (true) {
+                    // use percentage to determine whether to lay an egg
+                    if (chance < 3 && screenOn()) {
+                        floatingEgg = FloatingComponent(this@FloatingService, "EGG",
+                            viewModel)
+                            .setImageResource(R.drawable.egg_small)
+                            .setWindowLayoutParams(floatingGoose.getLocation()!!)
+                            .setMovementModule {
+                                TouchDeleteModule(
+                                    it.params,
+                                    it.binding.rootContainer,
+                                    it.windowManager,
+                                    it.binding.root,
+                                    viewModel
+                                )
+                            }
+                            .build()
+                        floatingEgg?.delete_egg()
+                    }
+                    delay(5000)
+                    chance = Random().nextInt(10)
+                }
+            }
+        }
+    }
+
+    private fun formFoods() {
+        MainScope().launch {
+            var chance = 1
+            while (true) {
+                // use percentage to determine whether to create a food item
+                if (chance > 7 && screenOn()) {
+                    var x = Random().nextInt(1000) - 500
+                    var y = Random().nextInt(1000) - 500
+                    floatingFood = FloatingComponent(this@FloatingService, "FOOD",
+                        viewModel)
+                        .setImageResource(R.drawable.bbt)
+                        .setWindowLayoutParams(x, y)
+                        .setMovementModule {
+                            DragToEatModule(
+                                it.params,
+                                it.binding.rootContainer,
+                                it.windowManager,
+                                it.binding.root,
+                                floatingGoose
+                            )
+                        }
+                    floatingFood.build()
+                    floatingFood.delete_food()
+                }
+                delay(5000)
+                chance = Random().nextInt(10)
+            }
+        }
+    }
+
+    private fun dragWindow() {
+        MainScope().launch {
+            while (true) {
+                // use percentage to determine whether to drag a window out
+                var chance = Random().nextInt(10)
+                if (screenOn() && chance > 6 && floatingGoose.movementModule!!.isDraggable) {
+                    val goose_params = floatingGoose.getLocation()
+                    var gx = goose_params!!.x
+                    if (gx > 250 || gx <= 50) {
+                        floatingGoose.movementModule!!.is_dragged = true
+                        floatingGoose.movementModule!!.isDraggable = false
+
+                        if (gx > 250) {
+                            (floatingGoose.movementModule!! as DragMovementModule)
+                                .walkOffScreen("RIGHT")
+                        } else {
+                            (floatingGoose.movementModule!! as DragMovementModule)
+                                .walkOffScreen("LEFT")
+                        }
+
+
+                        var windowParams: LayoutParams = LayoutParams(
+                            LayoutParams.WRAP_CONTENT,
+                            LayoutParams.WRAP_CONTENT,
+                            LayoutParams.TYPE_APPLICATION_OVERLAY,
+                            LayoutParams.FLAG_NOT_FOCUSABLE or LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+                            PixelFormat.TRANSLUCENT
+                        )
+
+                        if (gx <= 50) {
+                            windowParams.x = -1080
+                        } else {
+                            windowParams.x = 1080
+                        }
+                        windowParams.y = floatingGoose.getLocation()!!.y
+                        var memeChance = Random().nextInt(7)
+                        var meme = memes[memeChance]
+
+                        floatingWindow = FloatingComponent(this@FloatingService, "WINDOW",
+                            viewModel)
+                            .setImageResource(meme)
+                            .setWindowLayoutParams(windowParams)
+                            .setMovementModule {
+                                PopUpWindowModule(
+                                    windowParams,
+                                    it.binding.rootContainer,
+                                    it.windowManager,
+                                    it.binding.root
+                                )
+                            }
+                            .build()
+                        delay(2700)
+
+                        if (gx <= 50) {
+
+                            (floatingGoose.movementModule!! as DragMovementModule)
+                                .randomWalk(floatingGoose.windowModule, true, false, Direction.LEFT)
+                            floatingWindow.movementModule!!.startAction(null, false, Direction.LEFT)
+
+                        } else {
+                            (floatingGoose.movementModule!! as DragMovementModule)
+                                .randomWalk(floatingGoose.windowModule, true, false, Direction.RIGHT)
+                            floatingWindow.movementModule!!.startAction(null, false, Direction.RIGHT)
+
+                        }
+
+
+                        delay(85)
+                    }
+                }
+                delay(5000)
+            }
+        }
+    }
+
+    private fun screenOn(): Boolean {
+        val powerManager = getSystemService(POWER_SERVICE) as PowerManager
+        return powerManager.isInteractive
+    }
+
+    override fun onDestroy() {
+        floatingGoose.destroy()
+        floatingEgg!!.destroy()
+        super.onDestroy()
+    }
 
     inner class FloatingServiceBinder : Binder() {
         // Return this instance of LocalService so clients can call public methods
         fun getService(): FloatingService = this@FloatingService
     }
-
-    // This FloatingGoose holds 1 floating entity
-    lateinit var floatingGoose : FloatingGoose
-    lateinit var floatingEgg : FloatingEgg
-
-    var job: Job? = null
-    val scope = MainScope()
-    var first = true
-
-    override fun onBind(intent: Intent): IBinder? {
-        job = scope.launch{
-            floatingGoose = FloatingGoose(this@FloatingService)         // construct a floating object
-                .setMovementModule {                      // making it responsive
-                    DragMovementModule(
-                        it.params,
-                        it.binding.rootContainer,       // this is the view that will listen to drags
-                        it.windowManager,
-                        it.binding.root
-                    )
-                }
-                .build()
-            while(true) {
-                // use percentage to determine whether to lay an egg
-                val chance = Random().nextInt(10)
-                if(chance < 3 || first){
-                    first = false
-                    val goose_params = floatingGoose.getLocation()
-                    floatingEgg = FloatingEgg(this@FloatingService)
-                        .setWindowLayoutParams(goose_params!!.x, goose_params.y)
-                        .setMovementModule {
-                            TouchDeleteModule(
-                                it.params,
-                                it.binding.rootContainer,
-                                it.windowManager,
-                                it.binding.root
-                            )
-                        }
-                        .build()
-                    floatingEgg.windowModule.binding.gooseImg.setImageResource(R.drawable.egg_small)
-                    delay(5000)
-                }
-                else {
-                    delay(5000)
-                }
-            }}
-        return binder
-    }
-
-    override fun onDestroy() {
-        floatingGoose.destroy()
-        floatingEgg.destroy()
-        super.onDestroy()
-    }
 }
-
-
-
-//class ForegroundService : Service() {
-//    override fun onBind(intent: Intent): IBinder? {
-//        throw UnsupportedOperationException("Not yet implemented")
-//    }
-//
-//    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-//        // create the custom or default notification
-//        // based on the android version
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) startMyOwnForeground() else startForeground(
-//            1,
-//            Notification()
-//        )
-//
-//        // create an instance of Window class
-//        // and display the content on screen
-//        val window = Window(this)
-//        window.open()
-//
-//
-//        return super.onStartCommand(intent, flags, startId)
-//    }
-//
-//    // for android version >=O we need to create
-//    // custom notification stating
-//    // foreground service is running
-//    @RequiresApi(Build.VERSION_CODES.O)
-//    private fun startMyOwnForeground() {
-//        val NOTIFICATION_CHANNEL_ID = "example.permanence"
-//        val channelName = "Background Service"
-//        val chan = NotificationChannel(
-//            NOTIFICATION_CHANNEL_ID,
-//            channelName,
-//            NotificationManager.IMPORTANCE_MIN
-//        )
-//        val manager = (getSystemService(NOTIFICATION_SERVICE) as NotificationManager)
-//        manager.createNotificationChannel(chan)
-//        val notificationBuilder = NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID)
-//        val notification = notificationBuilder.setOngoing(true)
-//            .setContentTitle("Service running")
-//            .setContentText("Displaying over other apps") // this is important, otherwise the notification will show the way
-//            // you want i.e. it will show some default notification
-//            .setSmallIcon(R.drawable.ic_launcher_foreground)
-//            .setPriority(NotificationManager.IMPORTANCE_MIN)
-//            .setCategory(Notification.CATEGORY_SERVICE)
-//            .build()
-//        startForeground(2, notification)
-//    }
-//}

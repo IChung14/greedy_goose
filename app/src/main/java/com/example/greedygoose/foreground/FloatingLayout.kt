@@ -7,6 +7,7 @@ import android.content.ServiceConnection
 import android.os.IBinder
 import androidx.lifecycle.LifecycleOwner
 import com.example.greedygoose.R
+import com.example.greedygoose.data.themeMap
 import com.example.greedygoose.databinding.FloatingLayoutBinding
 import com.example.greedygoose.mod
 
@@ -14,7 +15,11 @@ import com.example.greedygoose.mod
  * FloatingLayout is owned by MainActivity
  * This class is a communication layer between the MainActivity and FloatingService
  */
-class FloatingLayout(private val context: Context, imgName: Int, lifecycle: LifecycleOwner) {
+class FloatingLayout(
+    private val context: Context,
+    imgName: Int,
+    lifecycle: LifecycleOwner
+) {
 
     var isShow = false
         private set
@@ -33,7 +38,6 @@ class FloatingLayout(private val context: Context, imgName: Int, lifecycle: Life
             updateView { fRoot ->
                 fRoot.gooseImg.setImageResource(imgName)
             }
-            set_bind(lifecycle)
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {}
@@ -43,11 +47,9 @@ class FloatingLayout(private val context: Context, imgName: Int, lifecycle: Life
      * Updates a View under FloatingService
      */
     fun updateView(viewModifier: (FloatingLayoutBinding)->Unit){
-        viewModifier(fService.floatingEgg.windowModule.binding)
-    }
-
-    fun set_bind(life: LifecycleOwner) {
-        mod.observe_theme(life, fService.floatingGoose.windowModule.binding.gooseImg, "angry")
+        if (fService.floatingEgg != null) {
+            viewModifier(fService.floatingEgg!!.windowModule.binding)
+        }
     }
 
     /**
