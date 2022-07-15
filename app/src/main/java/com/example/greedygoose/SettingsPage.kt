@@ -55,62 +55,32 @@ class SettingsPage : AppCompatActivity() {
 
         binding.customizationOption1.setOnClickListener {
             if (mod.is_tie_unlocked) {
-                if (mod.is_tie_selected) {
-                    mod.is_tie_selected = false
+                if (viewModel.theme.value == Theme.MATH) {
                     binding.customizationOption1.setBackgroundResource(R.drawable.pink_tie)
                     viewModel.setTheme(Theme.NONE)
-                }
-                else {
-                    mod.is_tie_selected = true
-                    mod.is_goggle_selected = false
-                    mod.is_hard_hat_selected = false
-                    checkGoose()
-                }
-            }
-            else {
-                purchaseItem("pink", binding.customizationOption1.text.toString().toInt())
-            }
+                } else checkGoose()
+            } else purchaseItem("pink", binding.customizationOption1.text.toString().toInt())
         }
         binding.customizationOption2.setOnClickListener {
             if (mod.is_goggle_unlocked) {
-                if (mod.is_goggle_selected) {
-                    mod.is_goggle_selected = false
+                if (viewModel.theme.value == Theme.SCI) {
                     binding.customizationOption2.setBackgroundResource(R.drawable.science_goggle)
                     viewModel.setTheme(Theme.NONE)
-                }
-                else {
-                    mod.is_tie_selected = false
-                    mod.is_goggle_selected = true
-                    mod.is_hard_hat_selected = false
-                    checkGoose()
-                }
-            }
-            else {
-                purchaseItem("blue", binding.customizationOption2.text.toString().toInt())
-            }
+                } else checkGoose()
+            } else purchaseItem("blue", binding.customizationOption2.text.toString().toInt())
         }
         binding.customizationOption3.setOnClickListener {
             if (mod.is_hard_hat_unlocked) {
-                if (mod.is_hard_hat_selected) {
-                    mod.is_hard_hat_selected = false
+                if (viewModel.theme.value == Theme.ENG) {
                     binding.customizationOption3.setBackgroundResource(R.drawable.yellow_hard_hat)
                     viewModel.setTheme(Theme.NONE)
-                }
-                else {
-                    mod.is_tie_selected = false
-                    mod.is_goggle_selected = false
-                    mod.is_hard_hat_selected = true
-                    checkGoose()
-                }
-            }
-            else {
-                purchaseItem("yellow", binding.customizationOption3.text.toString().toInt())
-            }
+                } else checkGoose()
+            } else purchaseItem("yellow", binding.customizationOption3.text.toString().toInt())
         }
 
         // We want to listen to any changes in the egg count, and update the number of eggs
         // displayed in our UI in real time
-        mod.observeEntertainment(this, this)
+//        mod.observeEntertainment(this, this)
     }
 
     private fun updateSelectedItem() {

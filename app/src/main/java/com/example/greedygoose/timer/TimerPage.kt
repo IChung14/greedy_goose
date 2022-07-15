@@ -10,6 +10,7 @@ import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.data.TimerState
 import com.example.greedygoose.databinding.TimerPageBinding
+import com.example.greedygoose.foreground.FloatingService
 import com.example.greedygoose.mod
 
 /*
@@ -91,7 +92,10 @@ class TimerPage : AppCompatActivity() {
         serviceIntent = Intent(applicationContext, TimerService::class.java)
         registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
 
-        mod.observeEntertainment(this, this)
+        val intent = Intent(this, FloatingService::class.java)
+        intent.putExtra("angry", true)
+        this.startService(intent)
+//        mod.observeEntertainment(this, this)
     }
 
     private fun pauseTimer() {

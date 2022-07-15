@@ -9,15 +9,12 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.view.View.OnTouchListener
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
-import com.example.greedygoose.mod
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
-import android.animation.Animator
 
 
-import android.animation.AnimatorListenerAdapter
 import androidx.core.animation.doOnEnd
 import androidx.lifecycle.LifecycleService
 import com.example.greedygoose.data.Action
@@ -105,15 +102,21 @@ class DragMovementModule(
             if (updates % 5 == 0) {
                 if (layoutParams.x > startx) {
                     direction = Direction.RIGHT
-                    gooseWalkSetter(isAngry = false, isRight = true)
+                    gooseWalkImageSetter(isAngry = false, isRight = true)
                 } else {
                     direction = Direction.LEFT
-                    gooseWalkSetter(isAngry = false, isRight = false)
+                    gooseWalkImageSetter(isAngry = false, isRight = false)
                 }
             }
         }
 
-        animator?.doOnEnd { gooseSit(direction) }
+        animator?.doOnEnd {
+            gooseSit(direction)
+
+            // Allow dragging again when the animation finishes
+            isDraggable = true
+            is_dragged = false
+        }
 
         animator?.duration = 2500
         animator?.start()
@@ -161,10 +164,10 @@ class DragMovementModule(
             if (updates % 5 == 0) {
                 if ((layoutParams.x > startx) xor (is_meme == true)) {
                     direction = Direction.RIGHT
-                    gooseWalkSetter(isAngry = false, isRight = true)
+                    gooseWalkImageSetter(isAngry = false, isRight = true)
                 } else {
                     direction = Direction.LEFT
-                    gooseWalkSetter(isAngry = false, isRight = false)
+                    gooseWalkImageSetter(isAngry = false, isRight = false)
                 }
             }
         }
@@ -178,7 +181,13 @@ class DragMovementModule(
                     delay(3500)
                     randomWalk(window, is_meme = true, round = true, dir = dir)
                 }
-            } else gooseSit(direction)
+            } else {
+                gooseSit(direction)
+
+                // Allow dragging again when the animation finishes
+                isDraggable = true
+                is_dragged = false
+            }
         }
 
         animator?.duration = Random().nextInt(2000).toLong() + 2500
@@ -238,11 +247,11 @@ class DragMovementModule(
                                     else Action.ANGRY_RIGHT
                             } else if (params!!.x < prevx && (abs(params!!.x.minus(prevx)) <= 100f)) {
                                 direction = Direction.LEFT
-                                gooseWalkSetter(isAngry = true, isRight = false)
+                                gooseWalkImageSetter(isAngry = true, isRight = false)
                             } else {
                                 // Make the goose face the right when swiping vertically
                                 direction = Direction.RIGHT
-                                gooseWalkSetter(isAngry = true, isRight = true)
+                                gooseWalkImageSetter(isAngry = true, isRight = true)
                             }
                         }
                         return true
@@ -263,13 +272,9 @@ class DragMovementModule(
             if (direction == Direction.LEFT) Action.WALKING_LEFT
             else Action.WALKING_RIGHT
         }
-
-        // Allow dragging again when the animation finishes
-        isDraggable = true
-        is_dragged = false
     }
 
-    private fun gooseWalkSetter(isAngry: Boolean, isRight: Boolean){
+    private fun gooseWalkImageSetter(isAngry: Boolean, isRight: Boolean){
         viewModel.action.value = if(isAngry){
             if(isRight){
                 when (viewModel.action.value) {

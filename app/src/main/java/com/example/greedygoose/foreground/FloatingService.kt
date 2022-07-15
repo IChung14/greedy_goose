@@ -23,21 +23,22 @@ import java.util.*
 
 class FloatingService : LifecycleService () {
 
-    private val binder = FloatingServiceBinder()        // Binder given to clients
     private lateinit var viewModel: FloatingViewModel
 
     lateinit var floatingGoose: FloatingComponent
     var floatingEgg: FloatingComponent? = null
     lateinit var floatingFood: FloatingComponent
     lateinit var floatingWindow: FloatingComponent
+    var isAngry = false
 
     override fun onCreate() {
         super.onCreate()
         viewModel = FloatingViewModel(applicationContext)
     }
 
-    override fun onBind(intent: Intent): IBinder {
-        super.onBind(intent)
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        isAngry = intent?.getBooleanExtra("angry", false) == true
+
         // construct a floating object
         floatingGoose = FloatingComponent(
             this@FloatingService,
@@ -63,7 +64,8 @@ class FloatingService : LifecycleService () {
         layEggs()
         formFoods()
         dragWindow()
-        return binder
+
+        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun layEggs() {
@@ -210,10 +212,5 @@ class FloatingService : LifecycleService () {
         floatingGoose.destroy()
         floatingEgg!!.destroy()
         super.onDestroy()
-    }
-
-    inner class FloatingServiceBinder : Binder() {
-        // Return this instance of LocalService so clients can call public methods
-        fun getService(): FloatingService = this@FloatingService
     }
 }
