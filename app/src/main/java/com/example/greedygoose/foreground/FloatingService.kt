@@ -183,12 +183,12 @@ class FloatingService : LifecycleService () {
 
                             (floatingGoose.movementModule!! as DragMovementModule)
                                 .randomWalk(floatingGoose.windowModule, true, false, Direction.LEFT)
-                            floatingWindow.movementModule!!.start_action(null, false, Direction.LEFT)
+                            floatingWindow.movementModule!!.startAction(null, false, Direction.LEFT)
 
                         } else {
                             (floatingGoose.movementModule!! as DragMovementModule)
                                 .randomWalk(floatingGoose.windowModule, true, false, Direction.RIGHT)
-                            floatingWindow.movementModule!!.start_action(null, false, Direction.RIGHT)
+                            floatingWindow.movementModule!!.startAction(null, false, Direction.RIGHT)
 
                         }
 

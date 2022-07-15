@@ -44,7 +44,7 @@ class FloatingComponent(context: LifecycleService, type: String, private val vie
             movementModule = it(windowModule)
             movementModule!!.run()
             if (img == "GOOSE") {
-                movementModule!!.start_action(windowModule)
+                movementModule!!.startAction(windowModule)
             }
         }
         sendAction(ACTION_ON_CREATE, Bundle())
