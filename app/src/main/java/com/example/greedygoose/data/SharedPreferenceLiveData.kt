@@ -7,6 +7,12 @@ abstract class SharedPreferenceLiveData<T>(val sharedPrefs: SharedPreferences,
                                            val key: String,
                                            val defValue: T) : LiveData<T>() {
 
+    override fun getValue(): T {
+        val newVal = getValueFromPreferences(key, defValue)
+        value = newVal
+        return newVal
+    }
+
     private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
         if (key == this.key) {
             value = getValueFromPreferences(key, defValue)
@@ -57,6 +63,12 @@ class SharedPreferenceStringSetLiveData(sharedPrefs: SharedPreferences, key: Str
     override fun getValueFromPreferences(key: String, defValue: Set<String>): Set<String> = sharedPrefs.getStringSet(key, defValue) ?: emptySet()
 }
 
+class SharedPreferenceThemeLiveData(sharedPrefs: SharedPreferences, key: String, defValue: Theme) :
+    SharedPreferenceLiveData<Theme>(sharedPrefs, key, defValue) {
+    override fun getValueFromPreferences(key: String, defValue: Theme): Theme =
+        Theme.values()[sharedPrefs.getInt(key, defValue.ordinal)]
+}
+
 fun SharedPreferences.intLiveData(key: String, defValue: Int): SharedPreferenceLiveData<Int> {
     return SharedPreferenceIntLiveData(this, key, defValue)
 }
@@ -79,4 +91,8 @@ fun SharedPreferences.longLiveData(key: String, defValue: Long): SharedPreferenc
 
 fun SharedPreferences.stringSetLiveData(key: String, defValue: Set<String>): SharedPreferenceLiveData<Set<String>> {
     return SharedPreferenceStringSetLiveData(this, key, defValue)
+}
+
+fun SharedPreferences.themeLiveData(key: String, defValue: Theme): SharedPreferenceLiveData<Theme> {
+    return SharedPreferenceThemeLiveData(this, key, defValue)
 }

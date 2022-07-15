@@ -8,6 +8,7 @@ import android.view.WindowManager
 import androidx.annotation.DrawableRes
 import androidx.lifecycle.LifecycleService
 import com.example.greedygoose.R
+import com.example.greedygoose.data.themeMap
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 import com.example.greedygoose.mod
@@ -16,7 +17,7 @@ import com.example.greedygoose.mod
 /**
  * FloatingGoose is Semi
  */
-class FloatingComponent(context: Context, type: String, private val viewModel: FloatingViewModel) {
+class FloatingComponent(context: LifecycleService, type: String, private val viewModel: FloatingViewModel) {
     var receiver: ResultReceiver? = null
     var windowModule = FloatingWindowModule(context)
     var img = type
@@ -27,7 +28,7 @@ class FloatingComponent(context: Context, type: String, private val viewModel: F
     private var eggCount = 0
 
     init {
-        viewModel.eggCount.observe(context as LifecycleService){
+        viewModel.eggCount.observe(context){
             eggCount = it
         }
     }

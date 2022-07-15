@@ -37,7 +37,7 @@ class PopUpWindowModule(
 
     override fun run() {}
 
-    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: Direction) {
+    override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {
         is_dragged = true
         var pvhX =
             if (!round) PropertyValuesHolder.ofInt("x", -1080, -150)
@@ -64,7 +64,7 @@ class PopUpWindowModule(
                 if (!round) {
                     MainScope().launch {
                         delay(3500)
-                        start_action(binding, true, dir)
+                        startAction(floatingWindowModule, true, dir)
                     }
                 }
             }

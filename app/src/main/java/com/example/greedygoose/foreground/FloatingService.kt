@@ -14,6 +14,7 @@ import com.example.greedygoose.foreground.movementModule.DragToEatModule
 import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
 import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
 import com.example.greedygoose.data.memes
+import com.example.greedygoose.data.themeMap
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,6 +37,7 @@ class FloatingService : LifecycleService () {
     }
 
     override fun onBind(intent: Intent): IBinder {
+        super.onBind(intent)
         // construct a floating object
         floatingGoose = FloatingComponent(
             this@FloatingService,
@@ -47,10 +49,17 @@ class FloatingService : LifecycleService () {
                     it.binding.rootContainer,       // this is the view that will listen to drags
                     it.windowManager,
                     it.binding.root,
-                    this
+                    this,
+                    viewModel
                 )
             }
             .build()
+        viewModel.theme.observe(this){
+            themeMap[it]?.get(viewModel.action.value)?.let { actionImgSrc ->
+                floatingGoose.windowModule.binding.gooseImg.setImageResource(actionImgSrc)
+            }
+        }
+
         layEggs()
         formFoods()
         dragWindow()
@@ -131,10 +140,10 @@ class FloatingService : LifecycleService () {
 
                         if (gx > 250) {
                             (floatingGoose.movementModule!! as DragMovementModule)
-                                .walkOffScreen(floatingGoose.windowModule, "RIGHT")
+                                .walkOffScreen("RIGHT")
                         } else {
                             (floatingGoose.movementModule!! as DragMovementModule)
-                                .walkOffScreen(floatingGoose.windowModule, "LEFT")
+                                .walkOffScreen("LEFT")
                         }
 
 

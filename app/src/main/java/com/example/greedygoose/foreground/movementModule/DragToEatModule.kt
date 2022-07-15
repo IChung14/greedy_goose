@@ -38,7 +38,7 @@ class DragToEatModule (
         drag()
     }
 
-    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: Direction) {}
+    override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {}
 
     private fun drag(){
         rootContainer?.setOnTouchListener(object : View.OnTouchListener {
