@@ -4,9 +4,6 @@ import android.app.NotificationManager
 
 
 class model {
-    var is_tie_selected = false
-    var is_goggle_selected = false
-    var is_hard_hat_selected = false
     var timer_state = TimerState.NOT_STARTED
     var elapsed_time = 0L
     var set_time = 0L

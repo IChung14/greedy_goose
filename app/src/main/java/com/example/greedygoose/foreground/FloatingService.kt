@@ -31,6 +31,8 @@ class FloatingService : LifecycleService () {
     lateinit var floatingWindow: FloatingComponent
     var isAngry = false
 
+    var isRunning = false
+
     override fun onCreate() {
         super.onCreate()
         viewModel = FloatingViewModel(applicationContext)
@@ -38,6 +40,19 @@ class FloatingService : LifecycleService () {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         isAngry = intent?.getBooleanExtra("angry", false) == true
+
+        // avoid running multiple geese
+        if(!isRunning){
+            if(!isAngry){
+                // run entertainment goose sequence
+                entertainmentGoose()
+            }
+        }
+
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun entertainmentGoose(){
 
         // construct a floating object
         floatingGoose = FloatingComponent(
@@ -64,8 +79,6 @@ class FloatingService : LifecycleService () {
         layEggs()
         formFoods()
         dragWindow()
-
-        return super.onStartCommand(intent, flags, startId)
     }
 
     private fun layEggs() {
