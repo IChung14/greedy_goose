@@ -199,3 +199,22 @@ class TimerPage : AppCompatActivity() {
 
 
 }
+
+/*
+TimerContext
+    - getState
+    - setState
+
+State
+    - showUI
+    - resetTimer
+
+Not Started
+    - startTimer
+
+Running
+    - stopTimer
+
+Paused
+    - resumeTimer
+*/
