@@ -39,14 +39,19 @@ class FloatingService : LifecycleService () {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val wasAngry = isAngry
         isAngry = intent?.getBooleanExtra("angry", false) == true
 
         // avoid running multiple geese
         if(!isRunning){
             if(!isAngry){
-                // run entertainment goose sequence
+                // run entertainment goose protocol
                 entertainmentGoose()
+            }else{
+                TODO("EXECUTE ANGRY GOOSE PROTOCOL!")
             }
+        }else if(isAngry && !wasAngry){
+            TODO("MAKE EXISTING GOOSE ANGRY!")
         }
 
         return super.onStartCommand(intent, flags, startId)

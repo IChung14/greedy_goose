@@ -91,11 +91,6 @@ class TimerPage : AppCompatActivity() {
 
         serviceIntent = Intent(applicationContext, TimerService::class.java)
         registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
-
-        val intent = Intent(this, FloatingService::class.java)
-        intent.putExtra("angry", true)
-        this.startService(intent)
-//        mod.observeEntertainment(this, this)
     }
 
     private fun pauseTimer() {
@@ -139,6 +134,11 @@ class TimerPage : AppCompatActivity() {
                 NotificationUtil.removeNotifiation(RUNNING_NOTIF_ID)
                 NotificationUtil.showTimerExpired(this@TimerPage)
                 resetTimer()
+
+                // instantiate goose with angry flag on
+                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
+                floatingIntent.putExtra("angry", true)
+                this@TimerPage.startService(floatingIntent)
             } else {
                 NotificationUtil.updateNotification(this@TimerPage, "Timer is running")
             }
