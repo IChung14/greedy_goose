@@ -36,7 +36,7 @@ class TimerPage : AppCompatActivity() {
             mod.set_elapsed_time(mod.get_set_time())
             this.intent.putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
             context.startService(this.intent)
-            mod.set_timer_state(TimerState.RUNNING)
+//            mod.set_timer_state(TimerState.RUNNING)
             binding.startBtn.text = "PAUSE"
             showTimer()
         }
@@ -47,7 +47,7 @@ class TimerPage : AppCompatActivity() {
             showUserInput()
             context.stopService(this.intent)
             mod.set_elapsed_time(mod.get_set_time())
-            mod.set_timer_state(TimerState.NOT_STARTED)
+//            mod.set_timer_state(TimerState.NOT_STARTED)
         }
 
         fun showTimer() {
@@ -76,8 +76,7 @@ class TimerPage : AppCompatActivity() {
 
     private lateinit var binding: TimerPageBinding
     private lateinit var serviceIntent: Intent
-    private var RUNNING_NOTIF_ID = 0
-    private var EXPIRED_NOTIF_ID = 1
+    private var timerContext = TimerContext()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -132,14 +131,14 @@ class TimerPage : AppCompatActivity() {
                 }
 
                 mod.set_r_notif_manager(NotificationUtil.showTimerRunning(this@TimerPage))
-                NotificationUtil.removeNotification(EXPIRED_NOTIF_ID)
+                NotificationUtil.removeNotification(TimerConstants.EXPIRED_NOTIF_ID)
                 startTimer()
             }
         }
 
         binding.resetBtn.setOnClickListener {
             if (mod.get_timer_state() != TimerState.NOT_STARTED) {
-                NotificationUtil.removeNotification(EXPIRED_NOTIF_ID)
+                NotificationUtil.removeNotification(TimerConstants.EXPIRED_NOTIF_ID)
                 resetTimer()
             }
         }
@@ -154,20 +153,20 @@ class TimerPage : AppCompatActivity() {
         binding.startBtn.text = "RESUME"
         NotificationUtil.updateNotification(this@TimerPage, "Timer is paused")
         stopService(serviceIntent)
-        mod.set_timer_state(TimerState.PAUSED)
+//        mod.set_timer_state(TimerState.PAUSED)
     }
 
     private fun resumeTimer() {
         binding.startBtn.text = "PAUSE"
         startTimer()
-        mod.set_timer_state(TimerState.RUNNING)
+//        mod.set_timer_state(TimerState.RUNNING)
     }
 
     private fun startTimer() {
         serviceIntent.putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
         startService(serviceIntent)
 
-        mod.set_timer_state(TimerState.RUNNING)
+//        mod.set_timer_state(TimerState.RUNNING)
         binding.startBtn.text = "PAUSE"
         showTimer()
     }
@@ -175,10 +174,10 @@ class TimerPage : AppCompatActivity() {
     private fun resetTimer() {
         binding.startBtn.text = "START"
         showUserInput()
-        NotificationUtil.removeNotification(RUNNING_NOTIF_ID)
+        NotificationUtil.removeNotification(TimerConstants.RUNNING_NOTIF_ID)
         stopService(serviceIntent)
         mod.set_elapsed_time(mod.get_set_time())
-        mod.set_timer_state(TimerState.NOT_STARTED)
+//        mod.set_timer_state(TimerState.NOT_STARTED)
     }
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
@@ -188,7 +187,7 @@ class TimerPage : AppCompatActivity() {
             updateTextUI()
 
             if (mod.get_elapsed_time() <= 0L) {
-                NotificationUtil.removeNotification(RUNNING_NOTIF_ID)
+                NotificationUtil.removeNotification(TimerConstants.RUNNING_NOTIF_ID)
                 NotificationUtil.showTimerExpired(this@TimerPage)
                 stopService(serviceIntent)
             } else {
