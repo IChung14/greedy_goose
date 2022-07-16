@@ -8,9 +8,7 @@ abstract class SharedPreferenceLiveData<T>(val sharedPrefs: SharedPreferences,
                                            val defValue: T) : LiveData<T>() {
 
     override fun getValue(): T {
-        val newVal = getValueFromPreferences(key, defValue)
-        value = newVal
-        return newVal
+        return getValueFromPreferences(key, defValue)
     }
 
     private val preferenceChangeListener = SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->

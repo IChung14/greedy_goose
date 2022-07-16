@@ -28,7 +28,7 @@ class SPLDAccessModel(val context: Context) {
         }
     }
 
-    val purchased = mapOf<Theme, LiveData<Boolean>>(
+    val purchased = mapOf(
         Theme.MATH to sharedPreference.booleanLiveData(Theme.MATH.key, false),
         Theme.SCI to sharedPreference.booleanLiveData(Theme.SCI.key, false),
         Theme.ENG to sharedPreference.booleanLiveData(Theme.ENG.key, false)

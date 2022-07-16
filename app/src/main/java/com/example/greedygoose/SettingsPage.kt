@@ -23,6 +23,7 @@ class SettingsPage : AppCompatActivity() {
         viewModel.eggCount.observe(this){
             binding.eggCount.text = it.toString()
         }
+
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         setAccessoryWidget(binding.customizationOption1, Theme.MATH, 50)
@@ -32,12 +33,24 @@ class SettingsPage : AppCompatActivity() {
 
     // initialize accessory widget
     private fun setAccessoryWidget(view: CheckBox, theme: Theme, price: Int){
-        val src = viewModel.getThemeSrc(
-            theme,
-            viewModel.theme.value == theme,
-            viewModel.purchased[theme]?.value == true
-        )
-        view.setBackgroundResource(src)
+        // make each view observe the theme and purchased changes
+        viewModel.theme.observe(this){
+            updateWidgetSrc(view, theme, price)
+        }
+        viewModel.purchased[theme]?.observe(this){
+            updateWidgetSrc(view, theme, price)
+        }
+
+        view.setOnClickListener {
+            if (viewModel.purchased[theme]?.value == true || viewModel.setPurchased(theme, price)) {
+                // if purchased, toggle selected accessory usage
+                toggleAccessoryUsage(view, theme)
+            }
+        }
+    }
+
+    private fun updateWidgetSrc(view: CheckBox, theme: Theme, price: Int){
+        view.setBackgroundResource(viewModel.getThemeSrc(theme))
 
         if(viewModel.purchased[theme]?.value != true){
             // display gray icon if not purchased
@@ -45,16 +58,8 @@ class SettingsPage : AppCompatActivity() {
             view.textAlignment = View.TEXT_ALIGNMENT_CENTER
             view.setTextColor(Color.WHITE)
             view.textSize = 35F
-        }
-
-        view.setOnClickListener {
-            if (viewModel.purchased[theme]?.value == true) {
-                // if purchased, toggle selected accessory usage
-                toggleAccessoryUsage(view, theme)
-            } else if(viewModel.setPurchased(theme, price)) {
-                // if not purchased, purchase the item, and set if successful
-                toggleAccessoryUsage(view, theme)
-            }
+        }else{
+            view.text = ""
         }
     }
 
@@ -62,11 +67,9 @@ class SettingsPage : AppCompatActivity() {
     private fun toggleAccessoryUsage(view: CheckBox, theme: Theme) {
         // checks if this performance is select or unselect
         val isSelected = viewModel.theme.value != theme
-        val src = viewModel.getThemeSrc(theme, isSelected)
-
-        initAllAccessories()
-        view.setBackgroundResource(src)
-        view.text = ""
+//        val src = viewModel.getThemeSrc(theme, isSelected)
+//
+//        view.setBackgroundResource(src)
 
         viewModel.setTheme(if(isSelected) theme else Theme.NONE)
     }
