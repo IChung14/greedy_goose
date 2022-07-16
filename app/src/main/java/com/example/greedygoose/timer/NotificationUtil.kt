@@ -19,8 +19,6 @@ class NotificationUtil {
         private const val RUNNING_CHANNEL_NAME = "goose app timer running"
         private const val EXPIRED_CHANNEL_ID = "expired"
         private const val EXPIRED_CHANNEL_NAME = "goose app timer EXPIRED"
-        private const val RUNNING_NOTIF_ID = 0
-        private const val EXPIRED_NOTIF_ID = 1
 
         fun showTimerRunning(context: Context): NotificationManager {
             val notifBuilder = getNotificationBuilder(context, RUNNING_CHANNEL_ID, false)
@@ -29,7 +27,7 @@ class NotificationUtil {
             val notifManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notifManager.createNotificationChannel(RUNNING_CHANNEL_ID, RUNNING_CHANNEL_NAME, false)
 
-            notifManager.notify(RUNNING_NOTIF_ID, notifBuilder.build())
+            notifManager.notify(TimerConstants.RUNNING_NOTIF_ID, notifBuilder.build())
 
             return notifManager
         }
@@ -58,7 +56,7 @@ class NotificationUtil {
             val notifManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notifManager.createNotificationChannel(EXPIRED_CHANNEL_ID, EXPIRED_CHANNEL_NAME, true)
 
-            notifManager.notify(EXPIRED_NOTIF_ID, notifBuilder.build())
+            notifManager.notify(TimerConstants.EXPIRED_NOTIF_ID, notifBuilder.build())
         }
 
         fun updateNotification(context: Context, content_title: String) {
@@ -71,7 +69,7 @@ class NotificationUtil {
             notifBuilder.setContentText(String.format("%02d:%02d:%02d", hr, min, sec))
             notifBuilder.setSmallIcon(R.drawable.eng_sitting_left)
 
-            mod.get_r_notif_manager().notify(RUNNING_NOTIF_ID, notifBuilder.build());
+            mod.get_r_notif_manager().notify(TimerConstants.RUNNING_NOTIF_ID, notifBuilder.build());
         }
 
         fun removeNotification(notif_id: Int) {
