@@ -76,7 +76,6 @@ class TimerPage : AppCompatActivity() {
 
     private lateinit var binding: TimerPageBinding
     private lateinit var serviceIntent: Intent
-    private var timerContext = TimerContext()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -85,22 +84,22 @@ class TimerPage : AppCompatActivity() {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        if (mod.get_timer_state() == TimerState.PAUSED) {
+        if (mod.timerStateContext.getState() == PausedState::javaClass) {
             showTimer()
             binding.startBtn.text = "RESUME"
-        } else if (mod.get_timer_state() == TimerState.RUNNING) {
+        } else if (mod.timerStateContext.getState() == RunningState::javaClass) {
             showTimer()
             binding.startBtn.text = "PAUSE"
         }
 
         binding.startBtn.setOnClickListener {
-            if (mod.get_timer_state() == TimerState.PAUSED) {
+            if (mod.timerStateContext.getState() == PausedState::javaClass) {
                 resumeTimer()
             }
-            else if (mod.get_timer_state() == TimerState.RUNNING) {
+            else if (mod.timerStateContext.getState() == RunningState::javaClass) {
                 pauseTimer()
             }
-            else if (mod.get_timer_state() == TimerState.NOT_STARTED) {
+            else if (mod.timerStateContext.getState() == NotStartedState::javaClass) {
                 val hrs = binding.userInputHrs.text.toString()
                 val mins = binding.userInputMins.text.toString()
                 val secs = binding.userInputSecs.text.toString()
@@ -137,7 +136,7 @@ class TimerPage : AppCompatActivity() {
         }
 
         binding.resetBtn.setOnClickListener {
-            if (mod.get_timer_state() != TimerState.NOT_STARTED) {
+            if (mod.timerStateContext.getState() != NotStartedState::javaClass) {
                 NotificationUtil.removeNotification(TimerConstants.EXPIRED_NOTIF_ID)
                 resetTimer()
             }

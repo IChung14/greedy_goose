@@ -9,6 +9,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import com.example.greedygoose.foreground.FloatingLayout
 import com.example.greedygoose.timer.TimerContext
+import com.example.greedygoose.timer.TimerStateContext
 
 val memes: List<Int> = listOf(
     R.drawable.meme_1, R.drawable.meme_2, R.drawable.meme_3, R.drawable.meme_4,
@@ -129,7 +130,7 @@ class model {
     var is_tie_selected = false
     var is_goggle_selected = false
     var is_hard_hat_selected = false
-    var timerContext = TimerContext()
+    var timerStateContext = TimerStateContext()
     var elapsed_time = 0L
     var set_time = 0L
     lateinit var r_notif_manager: NotificationManager
