@@ -1,6 +1,6 @@
 package com.example.greedygoose.timer
 
 interface TimerState {
-    fun showUI(context: TimerContext)
-    fun resetTimer(context: TimerContext)
+    fun showUI(context: TimerStateContext)
+    fun resetTimer(context: TimerStateContext)
 }

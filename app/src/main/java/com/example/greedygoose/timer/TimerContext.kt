@@ -1,6 +1,6 @@
 package com.example.greedygoose.timer
 
-class TimerContext {
+class TimerStateContext {
    private var state: TimerState? = null
    fun setState(state: TimerState?) {
       this.state = state
