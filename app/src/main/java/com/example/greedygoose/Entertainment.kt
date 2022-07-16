@@ -16,7 +16,7 @@ class Entertainment : AppCompatActivity() {
     private lateinit var binding: EntertainmentBinding
 
     private var resultLauncher =
-        registerForActivityResult(StartActivityForResult()) { bindFloatingService() }
+        registerForActivityResult(StartActivityForResult()) { startFloatingService() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,16 +27,13 @@ class Entertainment : AppCompatActivity() {
         checkOverlayPermission()
         setContentView(binding.root)
 
-        bindFloatingService()
+        startFloatingService()
     }
 
-    private fun bindFloatingService(){
+    private fun startFloatingService(){
         if (Settings.canDrawOverlays(this)) {
-
             val intent = Intent(this, FloatingService::class.java)
             this.startService(intent)
-//            mod.setEntertainment(true)
-//            mod.observeEntertainment(this, this)
         }
     }
 

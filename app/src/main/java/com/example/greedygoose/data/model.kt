@@ -4,11 +4,6 @@ import android.app.NotificationManager
 
 
 class model {
-
-    var is_tie_unlocked = true
-    var is_goggle_unlocked = true
-    var is_hard_hat_unlocked = true
-
     var is_tie_selected = false
     var is_goggle_selected = false
     var is_hard_hat_selected = false
