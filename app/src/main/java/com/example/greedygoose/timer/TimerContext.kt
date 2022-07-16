@@ -6,7 +6,7 @@ class TimerContext {
       this.state = state
    }
 
-   fun getState(): State? {
+   fun getState(): TimerState? {
       return state
    }
 }
