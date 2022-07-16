@@ -36,9 +36,9 @@ class NotificationUtil {
 
         fun showTimerExpired(context: Context) {
             val snoozeIntent = Intent(context, TimerBroadcastReceiver::class.java)
-            snoozeIntent.action = TimerContants.ACTION_SNOOZE
+            snoozeIntent.action = TimerConstants.ACTION_SNOOZE
             val stopIntent = Intent(context, TimerBroadcastReceiver::class.java)
-            stopIntent.action = TimerContants.ACTION_STOP
+            stopIntent.action = TimerConstants.ACTION_STOP
 
             var flag = PendingIntent.FLAG_UPDATE_CURRENT
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {

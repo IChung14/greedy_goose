@@ -11,7 +11,7 @@ class TimerBroadcastReceiver : BroadcastReceiver() {
 
     override fun onReceive(context: Context, intent: Intent) {
         when (intent.action) {
-            TimerContants.ACTION_SNOOZE -> {
+            TimerConstants.ACTION_SNOOZE -> {
                 NotificationUtil.removeNotification(1)
                 TimerPage.snoozeAlarm(context)
             }
