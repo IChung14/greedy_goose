@@ -6,7 +6,9 @@ import android.os.Handler
 import android.os.ResultReceiver
 import android.view.WindowManager
 import androidx.annotation.DrawableRes
+import androidx.lifecycle.LifecycleService
 import com.example.greedygoose.R
+import com.example.greedygoose.data.themeMap
 import com.example.greedygoose.foreground.movementModule.MovementModule
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 import com.example.greedygoose.mod
@@ -15,7 +17,7 @@ import com.example.greedygoose.mod
 /**
  * FloatingGoose is Semi
  */
-class FloatingComponent(context: Context, type: String) {
+class FloatingComponent(context: LifecycleService, type: String, private val viewModel: FloatingViewModel) {
     var receiver: ResultReceiver? = null
     var windowModule = FloatingWindowModule(context)
     var img = type
@@ -23,6 +25,13 @@ class FloatingComponent(context: Context, type: String) {
     @DrawableRes private var imgRes: Int? = null
     var movementModule: MovementModule? = null
     private var moduleHelper: ((FloatingWindowModule)->MovementModule)? = null
+    private var eggCount = 0
+
+    init {
+        viewModel.eggCount.observe(context){
+            eggCount = it
+        }
+    }
 
     fun build(): FloatingComponent {
         // creating a floating view
@@ -35,7 +44,7 @@ class FloatingComponent(context: Context, type: String) {
             movementModule = it(windowModule)
             movementModule!!.run()
             if (img == "GOOSE") {
-                movementModule!!.start_action(windowModule)
+                movementModule!!.startAction(windowModule)
             }
         }
         sendAction(ACTION_ON_CREATE, Bundle())
@@ -77,13 +86,10 @@ class FloatingComponent(context: Context, type: String) {
         Handler().postDelayed(Runnable {
             if (movementModule!!.is_alive) {
                 movementModule?.destroy()
-                val num_eggs = mod.get_egg_count()
-                if (num_eggs != null) {
-                    if (num_eggs >= 5) {
-                        mod.decrease_egg_count(5)
-                    } else {
-                        mod.decrease_egg_count(num_eggs)
-                    }
+                if (eggCount >= 5) {
+                    viewModel.decrementEggCount(5)
+                } else {
+                    viewModel.decrementEggCount(eggCount)
                 }
             }
         }, 15000)

@@ -1,10 +1,9 @@
 package com.example.greedygoose.foreground.movementModule
 
-import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
-import com.example.greedygoose.*
-import com.example.greedygoose.foreground.FloatingComponent
+import com.example.greedygoose.data.Direction
+import com.example.greedygoose.foreground.FloatingViewModel
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
 
@@ -12,8 +11,9 @@ class TouchDeleteModule (
     private var params: WindowManager.LayoutParams?,
     private val rootContainer: View?,
     private var windowManager: WindowManager?,
-    private var baseView: View?
-    ): MovementModule {
+    private var baseView: View?,
+    private val viewModel: FloatingViewModel
+): MovementModule {
     override var is_alive = true
     override var isDraggable = true
     override var is_dragged = false
@@ -33,15 +33,12 @@ class TouchDeleteModule (
         }
     }
 
-    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: String) {}
+    override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {}
 
     override fun run() {
-        rootContainer?.setOnTouchListener(object : View.OnTouchListener {
-            override fun onTouch(v: View, event: MotionEvent): Boolean {
-                destroy()
-                mod.increase_egg_count(1)
-                return false
-            }
-        })
+        rootContainer?.setOnClickListener{
+            destroy()
+            viewModel.incrementEggCount()
+        }
     }
 }

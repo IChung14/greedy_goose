@@ -1,50 +1,89 @@
 package com.example.greedygoose.foreground
 
-import android.app.Service
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.Binder
 import android.os.IBinder
 import android.os.PowerManager
-import android.view.WindowManager
 import android.view.WindowManager.LayoutParams
+import androidx.lifecycle.LifecycleService
 import com.example.greedygoose.R
+import com.example.greedygoose.data.Direction
 import com.example.greedygoose.foreground.movementModule.DragMovementModule
 import com.example.greedygoose.foreground.movementModule.DragToEatModule
 import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
 import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
-import com.example.greedygoose.memes
+import com.example.greedygoose.data.memes
+import com.example.greedygoose.data.themeMap
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
 
 
-class FloatingService : Service() {
+class FloatingService : LifecycleService () {
 
-    private val binder = FloatingServiceBinder()        // Binder given to clients
+    private lateinit var viewModel: FloatingViewModel
+
     lateinit var floatingGoose: FloatingComponent
     var floatingEgg: FloatingComponent? = null
     lateinit var floatingFood: FloatingComponent
     lateinit var floatingWindow: FloatingComponent
+    var isAngry = false
 
-    override fun onBind(intent: Intent): IBinder {
+    var isRunning = false
+
+    override fun onCreate() {
+        super.onCreate()
+        viewModel = FloatingViewModel(applicationContext)
+    }
+
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val wasAngry = isAngry
+        isAngry = intent?.getBooleanExtra("angry", false) == true
+
+        // avoid running multiple geese
+        if(!isRunning){
+            if(!isAngry){
+                // run entertainment goose protocol
+                entertainmentGoose()
+            }else{
+                TODO("EXECUTE ANGRY GOOSE PROTOCOL!")
+            }
+        }else if(isAngry && !wasAngry){
+            TODO("MAKE EXISTING GOOSE ANGRY!")
+        }
+
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun entertainmentGoose(){
+
         // construct a floating object
-        floatingGoose = FloatingComponent(this@FloatingService, "GOOSE")
+        floatingGoose = FloatingComponent(
+            this@FloatingService,
+            "GOOSE",
+            viewModel)
             .setMovementModule {                      // making it responsive
                 DragMovementModule(
                     it.params,
                     it.binding.rootContainer,       // this is the view that will listen to drags
                     it.windowManager,
                     it.binding.root,
-                    this
+                    this,
+                    viewModel
                 )
             }
             .build()
+        viewModel.theme.observe(this){
+            themeMap[it]?.get(viewModel.action.value)?.let { actionImgSrc ->
+                floatingGoose.windowModule.binding.gooseImg.setImageResource(actionImgSrc)
+            }
+        }
+
         layEggs()
         formFoods()
         dragWindow()
-        return binder
     }
 
     private fun layEggs() {
@@ -54,7 +93,8 @@ class FloatingService : Service() {
                 while (true) {
                     // use percentage to determine whether to lay an egg
                     if (chance < 3 && screenOn()) {
-                        floatingEgg = FloatingComponent(this@FloatingService, "EGG")
+                        floatingEgg = FloatingComponent(this@FloatingService, "EGG",
+                            viewModel)
                             .setImageResource(R.drawable.egg_small)
                             .setWindowLayoutParams(floatingGoose.getLocation()!!)
                             .setMovementModule {
@@ -62,7 +102,8 @@ class FloatingService : Service() {
                                     it.params,
                                     it.binding.rootContainer,
                                     it.windowManager,
-                                    it.binding.root
+                                    it.binding.root,
+                                    viewModel
                                 )
                             }
                             .build()
@@ -83,7 +124,8 @@ class FloatingService : Service() {
                 if (chance > 7 && screenOn()) {
                     var x = Random().nextInt(1000) - 500
                     var y = Random().nextInt(1000) - 500
-                    floatingFood = FloatingComponent(this@FloatingService, "FOOD")
+                    floatingFood = FloatingComponent(this@FloatingService, "FOOD",
+                        viewModel)
                         .setImageResource(R.drawable.bbt)
                         .setWindowLayoutParams(x, y)
                         .setMovementModule {
@@ -118,10 +160,10 @@ class FloatingService : Service() {
 
                         if (gx > 250) {
                             (floatingGoose.movementModule!! as DragMovementModule)
-                                .walkOffScreen(floatingGoose.windowModule, "RIGHT")
+                                .walkOffScreen("RIGHT")
                         } else {
                             (floatingGoose.movementModule!! as DragMovementModule)
-                                .walkOffScreen(floatingGoose.windowModule, "LEFT")
+                                .walkOffScreen("LEFT")
                         }
 
 
@@ -142,7 +184,8 @@ class FloatingService : Service() {
                         var memeChance = Random().nextInt(7)
                         var meme = memes[memeChance]
 
-                        floatingWindow = FloatingComponent(this@FloatingService, "WINDOW")
+                        floatingWindow = FloatingComponent(this@FloatingService, "WINDOW",
+                            viewModel)
                             .setImageResource(meme)
                             .setWindowLayoutParams(windowParams)
                             .setMovementModule {
@@ -159,13 +202,13 @@ class FloatingService : Service() {
                         if (gx <= 50) {
 
                             (floatingGoose.movementModule!! as DragMovementModule)
-                                .randomWalk(floatingGoose.windowModule, true, false, "LEFT")
-                            floatingWindow.movementModule!!.start_action(null, false, "LEFT")
+                                .randomWalk(floatingGoose.windowModule, true, false, Direction.LEFT)
+                            floatingWindow.movementModule!!.startAction(null, false, Direction.LEFT)
 
                         } else {
                             (floatingGoose.movementModule!! as DragMovementModule)
-                                .randomWalk(floatingGoose.windowModule, true, false, "RIGHT")
-                            floatingWindow.movementModule!!.start_action(null, false, "RIGHT")
+                                .randomWalk(floatingGoose.windowModule, true, false, Direction.RIGHT)
+                            floatingWindow.movementModule!!.startAction(null, false, Direction.RIGHT)
 
                         }
 
@@ -187,10 +230,5 @@ class FloatingService : Service() {
         floatingGoose.destroy()
         floatingEgg!!.destroy()
         super.onDestroy()
-    }
-
-    inner class FloatingServiceBinder : Binder() {
-        // Return this instance of LocalService so clients can call public methods
-        fun getService(): FloatingService = this@FloatingService
     }
 }

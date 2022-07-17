@@ -7,6 +7,7 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.databinding.TimerPageBinding
+import com.example.greedygoose.foreground.FloatingService
 import com.example.greedygoose.mod
 
 /*
@@ -91,6 +92,14 @@ class TimerPage : AppCompatActivity() {
                 NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
                 NotificationUtil.showTimerExpired()
                 stopService(mod.get_service_intent())
+                NotificationUtil.removeNotifiation(RUNNING_NOTIF_ID)
+                NotificationUtil.showTimerExpired(this@TimerPage)
+                resetTimer()
+
+                // instantiate goose with angry flag on
+                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
+                floatingIntent.putExtra("angry", true)
+                this@TimerPage.startService(floatingIntent)
             } else {
                 NotificationUtil.updateNotification("Timer is running")
             }

@@ -1,19 +1,13 @@
 package com.example.greedygoose.foreground.movementModule
 
-import android.R
 import android.animation.*
-import android.graphics.Point
-import android.view.Display
-import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageView
-import com.example.greedygoose.foreground.FloatingComponent
+import com.example.greedygoose.data.Direction
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.util.*
 
 
 class PopUpWindowModule(
@@ -43,12 +37,12 @@ class PopUpWindowModule(
 
     override fun run() {}
 
-    override fun start_action(binding: FloatingWindowModule?, round: Boolean, dir: String) {
+    override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {
         is_dragged = true
         var pvhX =
             if (!round) PropertyValuesHolder.ofInt("x", -1080, -150)
             else PropertyValuesHolder.ofInt("x", -150, 1080)
-        if (dir == "RIGHT") {
+        if (dir == Direction.RIGHT) {
             pvhX =
                 if (!round) PropertyValuesHolder.ofInt("x", 1080, 150)
                 else PropertyValuesHolder.ofInt("x", 150, -1080)
@@ -70,7 +64,7 @@ class PopUpWindowModule(
                 if (!round) {
                     MainScope().launch {
                         delay(3500)
-                        start_action(binding, true, dir)
+                        startAction(floatingWindowModule, true, dir)
                     }
                 }
             }
