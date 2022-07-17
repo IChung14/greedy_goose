@@ -110,25 +110,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <TextView-->
-<!--        android:id="@+id/textview"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginStart="28dp"-->
-<!--        android:layout_marginTop="266dp"-->
-<!--        android:layout_marginBottom="19dp"-->
-<!--        app:layout_constraintBottom_toTopOf="@+id/listview"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
-
-<!--    <TextView-->
-<!--        android:id="@+id/appTextView"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/appSelectionLabel" />-->
-
     <ListView
         android:id="@+id/applistview"
         android:layout_width="346dp"
@@ -136,25 +117,9 @@
         android:layout_marginStart="28dp"
         android:layout_marginEnd="28dp"
         android:contentDescription="@string/list_of_apps_on_device"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/appSelectionLabel">
-
-        <!--        <LinearLayout-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:orientation="vertical" />-->
-    </ListView>
-
-<!--    <Button-->
-<!--        android:id="@+id/check"-->
-<!--        android:layout_width="match_parent"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:onClick="getallapps"-->
-<!--        android:text="Get Installed Apps"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent" />-->
+        app:layout_constraintTop_toBottomOf="@+id/appSelectionLabel"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

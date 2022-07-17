@@ -113,6 +113,9 @@ enum class TimerState {
     NOT_STARTED, RUNNING, PAUSED
 }
 
+val unproductiveApplications: MutableList<String> = mutableListOf()
+
+
 class model {
     private var egg_count = MutableLiveData<Int>(100)
     private var theme = MutableLiveData<String>("NONE")
