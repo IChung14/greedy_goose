@@ -4,13 +4,19 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.content.res.Resources
 import android.os.Bundle
 import android.text.format.DateUtils
 import android.view.View
+import android.widget.ArrayAdapter
+import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.size
+import com.example.greedygoose.R
 import com.example.greedygoose.TimerState
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
+
 
 /*
 TODO:
@@ -24,6 +30,10 @@ class TimerPage : AppCompatActivity() {
     private lateinit var serviceIntent: Intent
     private var RUNNING_NOTIF_ID = 0
     private var EXPIRED_NOTIF_ID = 1
+
+    public lateinit var listviewTimerPage: ListView
+    var arrayAdapter: ArrayAdapter<*>? = null
+//    var text: TextView? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,7 +100,117 @@ class TimerPage : AppCompatActivity() {
 
         serviceIntent = Intent(applicationContext, TimerService::class.java)
         registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
+
+        // *********************************
+        // *********************************
+        // LIST OF APPS ON PHONE STARTS HERE
+        // *********************************
+        // *********************************
+
+        listviewTimerPage = findViewById(R.id.applistview);
+//        text = findViewById(R.id.appTextView);
+
+        val mainIntent = Intent(Intent.ACTION_MAIN, null)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+
+        // get list of all the apps installed
+        val ril = packageManager.queryIntentActivities(mainIntent, 0)
+        var name: String? = null
+        var i = 0
+
+        // get size of ril and create a list
+        val apps = arrayOfNulls<String>(ril.size)
+        for (ri in ril) {
+            if (ri.activityInfo != null) {
+                // get package
+                val res: Resources =
+                    packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
+                // if activity label res is found
+                name = if (ri.activityInfo.labelRes != 0) {
+                    res.getString(ri.activityInfo.labelRes)
+                } else {
+                    ri.activityInfo.applicationInfo.loadLabel(
+                        packageManager
+                    ).toString()
+                }
+                apps[i] = name
+                i++
+            }
+        }
+
+        // set all the apps name in list view
+        arrayAdapter = ArrayAdapter(this@TimerPage,
+            R.layout.support_simple_spinner_dropdown_item, apps
+        )
+        listviewTimerPage.adapter = arrayAdapter
+
+//        listviewTimerPage.setAdapter(
+//            ArrayAdapter(
+//                this@TimerPage,
+//                android.R.layout.simple_list_item_1,
+//                apps
+//            )
+//        )
+        println("WOOHOO")
+        println(apps.size.toString())
+        println(apps[0])
+        println(apps[1])
+        println(apps[2])
+        println(apps[3])
+
+        println(listviewTimerPage.adapter.count)
+
+//        listView.setAdapter(
+//            ArrayAdapter(
+//                this@MainActivity,
+//                android.R.layout.simple_list_item_1,
+//                apps
+//            )
+//        )
+//        // write total count of apps available.
+//        text.setText(ril.size.toString() + " Apps are installed")
+
     }
+
+//    public fun getallapps(view: View) {
+//        val mainIntent = Intent(Intent.ACTION_MAIN, null)
+//        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+//
+//        // get list of all the apps installed
+//        val ril = packageManager.queryIntentActivities(mainIntent, 0)
+//        val componentList: List<String> = ArrayList()
+//        var name: String? = null
+//        var i = 0
+//
+//        // get size of ril and create a list
+//        val apps = arrayOfNulls<String>(ril.size)
+//        for (ri in ril) {
+//            if (ri.activityInfo != null) {
+//                // get package
+//                val res: Resources =
+//                    packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
+//                // if activity label res is found
+//                name = if (ri.activityInfo.labelRes != 0) {
+//                    res.getString(ri.activityInfo.labelRes)
+//                } else {
+//                    ri.activityInfo.applicationInfo.loadLabel(
+//                        packageManager
+//                    ).toString()
+//                }
+//                apps[i] = name
+//                i++
+//            }
+//        }
+//        // set all the apps name in list view
+//        listviewTimerPage.setAdapter(
+//            ArrayAdapter(
+//                this@TimerPage,
+//                android.R.layout.simple_list_item_1,
+//                apps
+//            )
+//        )
+//
+//    }
 
     private fun pauseTimer() {
         binding.startBtn.text = "RESUME"

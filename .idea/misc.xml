@@ -3,23 +3,22 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="../../../../../../layout/custom_preview.xml" value="0.1" />
+        <entry key="../../Library/Android/sdk/platforms/android-32/data/res/layout/simple_list_item_1.xml" value="0.13541666666666666" />
         <entry key="..\:/Users/claud/Documents/UWaterloo/4B/CS 446/greedy_goose/app/src/main/res/layout/entertainment.xml" value="0.10733695652173914" />
         <entry key="..\:/workplace/GreedyGoose/app/src/main/res/layout/activity_main.xml" value="0.19010416666666666" />
         <entry key="..\:/workplace/GreedyGoose/app/src/main/res/layout/activity_settings_page.xml" value="0.22" />
-        <entry key="..\:/workplace/GreedyGoose/app/src/main/res/layout/floating_layout.xml" value="0.20208333333333334" />
         <entry key="..\:/workplace/GreedyGoose/app/src/main/res/layout/popup_window.xml" value="0.2046875" />
+        <entry key="app/src/main/res/drawable/customization_option_selector3.xml" value="0.1935" />
         <entry key="app/src/main/res/drawable/ic_launcher_background.xml" value="0.14635416666666667" />
         <entry key="app/src/main/res/font/bubble.xml" value="0.1703125" />
         <entry key="app/src/main/res/layout/activity_main.xml" value="0.27527216174183516" />
         <entry key="app/src/main/res/layout/activity_settings_page.xml" value="0.1390625" />
-        <entry key="app/src/main/res/layout/entertainment.xml" value="0.1743659420289855" />
         <entry key="app/src/main/res/layout/entertainment_fragment.xml" value="0.1" />
         <entry key="app/src/main/res/layout/floating_layout.xml" value="0.1390625" />
         <entry key="app/src/main/res/layout/fragment_egg.xml" value="0.10677083333333333" />
         <entry key="app/src/main/res/layout/fragment_goose.xml" value="0.10677083333333333" />
         <entry key="app/src/main/res/layout/popup_window.xml" value="0.13020833333333334" />
-        <entry key="app/src/main/res/layout/timer_page.xml" value="0.25" />
+        <entry key="app/src/main/res/layout/timer_page.xml" value="0.13541666666666666" />
       </map>
     </option>
   </component>
