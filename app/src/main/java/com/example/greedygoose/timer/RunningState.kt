@@ -6,33 +6,31 @@ import android.view.View
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
 
-class RunningState(var binding: TimerPageBinding, var context: Context, var intent: Intent): TimerState {
-    override fun showUI(timerStateContext: TimerStateContext) {
-        val hr = mod.get_elapsed_time()/1000/3600
-        val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
-        val sec = (mod.get_elapsed_time()/1000) % 60
+class RunningState(): TimerState {
+    override fun showUI() {
+        mod.get_binding().startBtn.text = "PAUSE"
 
-        binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
+        mod.get_binding().timerText.text = TimerUtil.getTimeString()
 
-        binding.userInputHrs.visibility = View.INVISIBLE
-        binding.userInputMins.visibility = View.INVISIBLE
-        binding.userInputSecs.visibility = View.INVISIBLE
-        binding.timerText.visibility = View.VISIBLE
-
-        timerStateContext.setState(this)
+        mod.get_binding().userInputHrs.visibility = View.INVISIBLE
+        mod.get_binding().userInputMins.visibility = View.INVISIBLE
+        mod.get_binding().userInputSecs.visibility = View.INVISIBLE
+        mod.get_binding().timerText.visibility = View.VISIBLE
     }
 
-    override fun resetTimer(timerStateContext: TimerStateContext) {
-        NotificationUtil.removeNotification(TimerConstants.RUNNING_NOTIF_ID)
-        context.stopService(intent)
+    override fun resetTimer() {
+        NotificationUtil.removeNotification(TimerUtil.EXPIRED_NOTIF_ID)
+        NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
+        mod.get_timer_page_context().stopService(mod.get_service_intent())
         mod.set_elapsed_time(mod.get_set_time())
 
+        mod.get_timer_state_context().setState(mod.get_not_started_state())
     }
 
-    fun pauseTimer(timerStateContext: TimerStateContext) {
-        NotificationUtil.updateNotification(context, "Timer is paused")
-        context.stopService(intent)
-
-        timerStateContext.setState(this)
+    // Pause timer
+    override fun nextAction() {
+        NotificationUtil.updateNotification("Timer is paused")
+        mod.get_timer_page_context().stopService(mod.get_service_intent())
+        mod.get_timer_state_context().setState(mod.get_paused_state())
     }
 }
