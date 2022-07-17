@@ -78,8 +78,6 @@ class TimerPage : AppCompatActivity() {
             mod.get_timer_state_context().getState()?.resetTimer()
             mod.get_timer_state_context().getState()?.showUI()
         }
-
-        mod.observe_entertainment(this, this)
     }
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
@@ -92,14 +90,11 @@ class TimerPage : AppCompatActivity() {
                 NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
                 NotificationUtil.showTimerExpired()
                 stopService(mod.get_service_intent())
-                NotificationUtil.removeNotifiation(RUNNING_NOTIF_ID)
-                NotificationUtil.showTimerExpired(this@TimerPage)
-                resetTimer()
 
-                // instantiate goose with angry flag on
-                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
-                floatingIntent.putExtra("angry", true)
-                this@TimerPage.startService(floatingIntent)
+//                // instantiate goose with angry flag on
+//                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
+//                floatingIntent.putExtra("angry", true)
+//                this@TimerPage.startService(floatingIntent)
             } else {
                 NotificationUtil.updateNotification("Timer is running")
             }

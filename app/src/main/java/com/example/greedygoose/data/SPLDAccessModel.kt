@@ -1,8 +1,8 @@
 package com.example.greedygoose.data
 
 import android.content.Context
+import android.preference.PreferenceManager
 import androidx.lifecycle.LiveData
-import androidx.preference.PreferenceManager
 import com.example.greedygoose.R
 
 const val DEFAULT_EGG_COUNT = 100
