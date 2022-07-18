@@ -112,8 +112,7 @@ class FloatingService : LifecycleService() {
         MainScope().launch {
             while (true) {
                 // use percentage to determine whether to drag a window out
-//                val chance = Random().nextInt(10)
-                val chance = 10
+                val chance = Random().nextInt(10)
                 if (screenOn() && chance > 6 && floatingGoose.movementModule!!.isDraggable) {
                     val gooseParams = floatingGoose.getLocation()
                     val gx = gooseParams!!.x
