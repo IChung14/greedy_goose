@@ -141,7 +141,6 @@ class FloatingService : LifecycleService() {
                     }
                 }
                 delay(5000)
-                if(::floatingWindow.isInitialized) floatingWindow.destroy()
             }
         }
     }
