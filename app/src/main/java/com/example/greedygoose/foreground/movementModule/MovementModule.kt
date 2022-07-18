@@ -18,7 +18,7 @@ abstract class MovementModule(
     protected val windowManager = windowModule.windowManager
 
     abstract fun run()
-    abstract fun startAction(floatingWindowModule: FloatingWindowModule? = null, round: Boolean = false, dir: Direction = Direction.RIGHT)
+    abstract fun startAction(round: Boolean = false, dir: Direction = Direction.RIGHT)
     fun destroy() {
         try {
             windowManager.removeViewImmediate(baseView)

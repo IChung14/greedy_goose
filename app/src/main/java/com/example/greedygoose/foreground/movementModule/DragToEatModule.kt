@@ -19,7 +19,7 @@ class DragToEatModule (
         drag()
     }
 
-    override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {}
+    override fun startAction(round: Boolean, dir: Direction) {}
 
     @SuppressLint("ClickableViewAccessibility")
     private fun drag(){
