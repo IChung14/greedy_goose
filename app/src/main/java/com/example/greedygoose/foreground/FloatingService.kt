@@ -134,7 +134,7 @@ class FloatingService : LifecycleService() {
                             round = false,
                             dir = walkDirection
                         )
-                        floatingWindow.movementModule?.startAction(null, false, walkDirection)
+                        floatingWindow.movementModule?.startAction(false, walkDirection)
 
                         delay(85)
 

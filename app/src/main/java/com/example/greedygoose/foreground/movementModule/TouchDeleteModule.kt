@@ -12,7 +12,7 @@ class TouchDeleteModule (
     windowModule: FloatingWindowModule
 ): MovementModule(windowModule) {
 
-    override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {}
+    override fun startAction(round: Boolean, dir: Direction) {}
 
     override fun run() {
         rootContainer.setOnClickListener{

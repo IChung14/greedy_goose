@@ -53,7 +53,7 @@ class FloatingGoose(
     movementModule: MovementModule
 ): FloatingComponent(windowModule, movementModule) {
 
-    init { movementModule.startAction(windowModule) }
+    init { movementModule.startAction() }
 }
 
 class FloatingEgg(

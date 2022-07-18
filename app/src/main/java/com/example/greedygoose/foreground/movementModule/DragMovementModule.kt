@@ -30,7 +30,7 @@ import kotlin.math.min
 class DragMovementModule(
     private var context: Service?,
     private val viewModel: FloatingViewModel,
-    windowModule: FloatingWindowModule
+    private val windowModule: FloatingWindowModule
 ) : MovementModule(windowModule) {
 
     private var animator: ValueAnimator? = null
@@ -41,13 +41,13 @@ class DragMovementModule(
 
     override fun run() {}
 
-    override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {
+    override fun startAction(round: Boolean, dir: Direction) {
         // set drag listener
         drag()
 
         viewModel.action.observe(context as LifecycleService){
             themeMap[viewModel.theme.value]?.get(viewModel.action.value)?.let { imgSrc ->
-                floatingWindowModule?.binding?.gooseImg?.setImageResource(imgSrc)
+                windowModule.binding.gooseImg.setImageResource(imgSrc)
             }
         }
 
@@ -58,7 +58,7 @@ class DragMovementModule(
             while (true) {
                 if (powerManager.isInteractive) {
                     if (!isDragged) {
-                        randomWalk(floatingWindowModule,
+                        randomWalk(windowModule,
                             is_meme = false,
                             round = false,
                             dir = Direction.RIGHT
