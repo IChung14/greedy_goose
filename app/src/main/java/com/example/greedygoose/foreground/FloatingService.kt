@@ -26,10 +26,10 @@ class FloatingService : LifecycleService() {
     private lateinit var viewModel: FloatingViewModel
     private lateinit var floatingFactory: FloatingComponentFactory
 
-    lateinit var floatingGoose: FloatingGoose
-    lateinit var floatingEgg: FloatingEgg
-    lateinit var floatingFood: FloatingFood
-    lateinit var floatingWindow: FloatingWindow
+    private lateinit var floatingGoose: FloatingGoose
+    private lateinit var floatingEgg: FloatingEgg
+    private lateinit var floatingFood: FloatingFood
+    private lateinit var floatingWindow: FloatingWindow
 
     var isAngry = false
     var isRunning = false
@@ -141,6 +141,7 @@ class FloatingService : LifecycleService() {
                     }
                 }
                 delay(5000)
+                floatingWindow.destroy()
             }
         }
     }
@@ -153,6 +154,7 @@ class FloatingService : LifecycleService() {
     override fun onDestroy() {
         floatingGoose.destroy()
         floatingEgg.destroy()
+        floatingWindow.destroy()
         super.onDestroy()
     }
 }

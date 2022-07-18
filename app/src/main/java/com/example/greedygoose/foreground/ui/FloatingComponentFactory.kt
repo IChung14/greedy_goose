@@ -23,27 +23,16 @@ class FloatingComponentFactory(
     fun createGoose(): FloatingGoose{
         val windowModule = FloatingWindowModule(context)
         val movementModule = DragMovementModule(
-            windowModule.params,
-            windowModule.binding.rootContainer,       // this is the view that will listen to drags
-            windowModule.windowManager,
-            windowModule.binding.root,
             context,
-            viewModel
+            viewModel,
+            windowModule
         )
         return FloatingGoose(windowModule, movementModule)
     }
 
     fun createEgg(gooseParams: WindowManager.LayoutParams, receiver: ResultReceiver? = null): FloatingEgg{
         val windowModule = FloatingWindowModule(context, R.drawable.egg_small, gooseParams)
-
-        val movementModule = TouchDeleteModule(
-            windowModule.params,
-            windowModule.binding.rootContainer,
-            windowModule.windowManager,
-            windowModule.binding.root,
-            viewModel
-        )
-
+        val movementModule = TouchDeleteModule(viewModel, windowModule)
         return FloatingEgg(windowModule, movementModule, receiver)
     }
 
@@ -57,14 +46,8 @@ class FloatingComponentFactory(
         layoutParams.y = Random().nextInt(1000) - 500
 
         val windowModule = FloatingWindowModule(context, R.drawable.bbt, layoutParams)
+        val movementModule = DragToEatModule(floatingGoose, windowModule)
 
-        val movementModule = DragToEatModule(
-            windowModule.params,
-            windowModule.binding.rootContainer,
-            windowModule.windowManager,
-            windowModule.binding.root,
-            floatingGoose
-        )
         return FloatingFood(context, viewModel, windowModule, movementModule, receiver)
     }
 
@@ -77,13 +60,7 @@ class FloatingComponentFactory(
         windowParams.y = gooseParams.y
 
         val windowModule = FloatingWindowModule(context, meme, windowParams)
-
-        val movementModule = PopUpWindowModule(
-            windowParams,
-            windowModule.binding.rootContainer,
-            windowModule.windowManager,
-            windowModule.binding.root
-        )
+        val movementModule = PopUpWindowModule(windowModule)
 
         return FloatingWindow(windowModule, movementModule)
     }
