@@ -115,7 +115,7 @@ class FloatingService : LifecycleService() {
                 val chance = Random().nextInt(10)
                 if (screenOn() && chance > 6 && floatingGoose.movementModule!!.isDraggable) {
                     val gooseParams = floatingGoose.getLocation()
-                    val gx = gooseParams!!.x
+                    val gx = gooseParams.x
                     if (gx > 250 || gx <= 50) {
                         val gooseMM = floatingGoose.movementModule!! as DragMovementModule
                         gooseMM.isDragged = true
@@ -123,7 +123,7 @@ class FloatingService : LifecycleService() {
 
                         gooseMM.walkOffScreen(if (gx > 250) "RIGHT" else "LEFT")
 
-                        floatingWindow = floatingFactory.createWindow(floatingGoose.getLocation()!!)
+                        floatingWindow = floatingFactory.createWindow(floatingGoose.getLocation())
 
                         delay(2700)
 
@@ -141,7 +141,7 @@ class FloatingService : LifecycleService() {
                     }
                 }
                 delay(5000)
-                floatingWindow.destroy()
+                if(::floatingWindow.isInitialized) floatingWindow.destroy()
             }
         }
     }
@@ -152,9 +152,9 @@ class FloatingService : LifecycleService() {
     }
 
     override fun onDestroy() {
-        floatingGoose.destroy()
-        floatingEgg.destroy()
-        floatingWindow.destroy()
+        if(::floatingGoose.isInitialized) floatingGoose.destroy()
+        if(::floatingEgg.isInitialized) floatingEgg.destroy()
+        if(::floatingWindow.isInitialized) floatingWindow.destroy()
         super.onDestroy()
     }
 }
