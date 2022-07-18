@@ -14,22 +14,20 @@ class TouchDeleteModule (
     private var baseView: View?,
     private val viewModel: FloatingViewModel
 ): MovementModule {
-    override var is_alive = true
+    override var isAlive = true
     override var isDraggable = true
-    override var is_dragged = false
+    override var isDragged = false
 
     override fun destroy() {
         try {
-            if (windowManager != null) if (baseView != null) windowManager!!.removeViewImmediate(
-                baseView
-            )
+            windowManager?.removeViewImmediate(baseView)
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
         } finally {
             params = null
             baseView = null
             windowManager = null
-            this.is_alive = false
+            this.isAlive = false
         }
     }
 

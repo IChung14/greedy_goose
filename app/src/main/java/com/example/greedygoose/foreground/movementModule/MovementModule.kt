@@ -4,9 +4,9 @@ import com.example.greedygoose.data.Direction
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
 interface MovementModule {
-    var is_alive: Boolean
+    var isAlive: Boolean
     var isDraggable: Boolean
-    var is_dragged: Boolean
+    var isDragged: Boolean
     fun run()
     fun startAction(floatingWindowModule: FloatingWindowModule? = null, round: Boolean = false, dir: Direction = Direction.RIGHT)
     fun destroy()
