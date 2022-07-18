@@ -100,3 +100,16 @@ class FloatingWindow(
     receiver: ResultReceiver? = null
 ): FloatingComponent(windowModule, movementModule, receiver) {
 }
+
+class FloatingPrints(
+    windowModule: FloatingWindowModule,
+    movementModule: MovementModule? = null,
+    receiver: ResultReceiver? = null
+): FloatingComponent(windowModule, movementModule, receiver) {
+
+    fun expirePrints() {
+        Handler().postDelayed( {
+            destroy()
+        }, 10000)
+    }
+}

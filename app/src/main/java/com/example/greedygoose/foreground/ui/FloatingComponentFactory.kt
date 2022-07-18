@@ -10,6 +10,7 @@ import androidx.annotation.DrawableRes
 import androidx.lifecycle.LifecycleService
 import androidx.lifecycle.ViewModel
 import com.example.greedygoose.R
+import com.example.greedygoose.data.Direction
 import com.example.greedygoose.data.memes
 import com.example.greedygoose.foreground.FloatingViewModel
 import com.example.greedygoose.foreground.movementModule.*
@@ -86,5 +87,15 @@ class FloatingComponentFactory(
         )
 
         return FloatingWindow(windowModule, movementModule)
+    }
+
+    fun createPrints(gooseParams: WindowManager.LayoutParams, dir: Direction, receiver: ResultReceiver? = null): FloatingPrints{
+         var windowModule = if(dir == Direction.RIGHT){
+            FloatingWindowModule(context, R.drawable.prints_right, gooseParams)
+        } else{
+            FloatingWindowModule(context, R.drawable.prints_left, gooseParams)
+        }
+
+        return FloatingPrints(windowModule, null, receiver)
     }
 }

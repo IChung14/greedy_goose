@@ -30,6 +30,7 @@ class FloatingService : LifecycleService() {
     lateinit var floatingEgg: FloatingEgg
     lateinit var floatingFood: FloatingFood
     lateinit var floatingWindow: FloatingWindow
+    lateinit var floatingPrints: FloatingPrints
 
     var isAngry = false
     var isRunning = false
@@ -72,6 +73,7 @@ class FloatingService : LifecycleService() {
         layEggs()
         formFoods()
         dragWindow()
+        makePrints()
     }
 
     private fun layEggs() {
@@ -141,6 +143,27 @@ class FloatingService : LifecycleService() {
                     }
                 }
                 delay(5000)
+            }
+        }
+    }
+
+    private fun makePrints(){
+        MainScope().launch {
+            if (floatingGoose.movementModule!!.isDraggable) {
+                var chance = 1
+                while (true) {
+                    // use percentage to determine whether to lay an egg
+                    if (chance > 7 && screenOn()) {
+                        floatingGoose.getLocation()?.let {
+                            val gx = it!!.x
+                            val walkDirection = if (gx <= 50) Direction.LEFT else Direction.RIGHT
+                            floatingPrints = floatingFactory.createPrints(it, walkDirection)
+                            floatingPrints.expirePrints()
+                        }
+                    }
+                    delay(5000)
+                    chance = Random().nextInt(10)
+                }
             }
         }
     }
