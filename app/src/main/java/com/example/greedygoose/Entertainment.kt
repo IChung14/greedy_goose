@@ -1,14 +1,13 @@
 package com.example.greedygoose;
 
-import android.app.*
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import com.example.greedygoose.databinding.EntertainmentBinding
-import android.content.DialogInterface
 import android.app.AlertDialog;
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
+import com.example.greedygoose.foreground.FloatingService
 
 
 //TODO: consider converting it into a fragment and get viewModel from mainActivity
@@ -16,9 +15,8 @@ class Entertainment : AppCompatActivity() {
 
     private lateinit var binding: EntertainmentBinding
 
-    private var resultLauncher = registerForActivityResult(StartActivityForResult()) { _ ->
-        bindFloatingService()
-    }
+    private var resultLauncher =
+        registerForActivityResult(StartActivityForResult()) { startFloatingService() }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,13 +27,13 @@ class Entertainment : AppCompatActivity() {
         checkOverlayPermission()
         setContentView(binding.root)
 
-        bindFloatingService()
+        startFloatingService()
     }
 
-    private fun bindFloatingService(){
+    private fun startFloatingService(){
         if (Settings.canDrawOverlays(this)) {
-            mod.setEntertainment(true)
-            mod.observeEntertainment(this, this)
+            val intent = Intent(this, FloatingService::class.java)
+            this.startService(intent)
         }
     }
 

@@ -16,7 +16,7 @@ import com.example.greedygoose.timer.TimerPage
 
 class HomeFragment : Fragment() {
 
-    lateinit var binding: FragmentHomeBinding
+    private lateinit var binding: FragmentHomeBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -24,8 +24,6 @@ class HomeFragment : Fragment() {
     ): View? {
         // Inflate the layout for this fragment
         binding = FragmentHomeBinding.inflate(inflater)
-
-        context?.let{ mod.observeEntertainment(this, it) }
 
         val greedyGooseText = binding.textView
         val greedy = getColoredSpanned("Greedy Goose", "#e83372", "#E191CA")

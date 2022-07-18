@@ -5,162 +5,99 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.text.format.DateUtils
-import android.view.View
 import androidx.appcompat.app.AppCompatActivity
-import com.example.greedygoose.data.TimerState
 import com.example.greedygoose.databinding.TimerPageBinding
+import com.example.greedygoose.foreground.FloatingService
 import com.example.greedygoose.mod
 
 /*
 TODO:
-Problem: When user goes back to home page, the user input is empty and doesn't reflect the time they picked before
+1. Problem: When user goes back to home page, the user input is empty and doesn't reflect the time they picked before
  - Change set_time to hrs, mins, secs ints and update userInput textviews.
+
+ 2. Calculation of hr,min,sec is repeated a lot, could make a TimerUtil for these types of functions. Maybe combine with constants
+
+ 3. Change timerstate to not nullable
+
+ 4. When user exits app, remove all notifs
 */
 
 class TimerPage : AppCompatActivity() {
 
-    private lateinit var binding: TimerPageBinding
-    private lateinit var serviceIntent: Intent
-    private var RUNNING_NOTIF_ID = 0
-    private var EXPIRED_NOTIF_ID = 1
+    companion object {
+        fun snoozeAlarm(context: Context) {
+            mod.set_elapsed_time(300000L)
+            mod.get_service_intent().putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
+            context.startService(mod.get_service_intent())
+            mod.get_timer_state_context().setState(mod.get_running_state())
+            mod.get_timer_state_context().getState()?.showUI()
+        }
+
+        fun stopAlarm() {
+            mod.get_timer_state_context().getState()?.resetTimer()
+            mod.get_timer_state_context().getState()?.showUI()
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        binding = TimerPageBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+
+        mod.set_binding(TimerPageBinding.inflate(layoutInflater))
+        setContentView(mod.get_binding().root)
+
+        mod.set_service_intent(Intent(applicationContext, TimerService::class.java))
+
+        mod.set_timer_page_context(this@TimerPage)
+
+        if (!mod.get_is_first_create()) {
+            registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
+
+            mod.set_timer_state_context(TimerStateContext())
+
+            mod.set_not_started_state(NotStartedState())
+
+            mod.set_running_state(RunningState())
+
+            mod.set_paused_state(PausedState())
+
+            mod.get_timer_state_context().setState(mod.get_not_started_state())
+
+            mod.set_is_first_create(true)
+        }
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        if (mod.get_timer_state() == TimerState.PAUSED) {
-            showTimer()
-            binding.startBtn.text = "RESUME"
-        } else if (mod.get_timer_state() == TimerState.RUNNING) {
-            showTimer()
-            binding.startBtn.text = "PAUSE"
+        mod.get_timer_state_context().getState()?.showUI()
+
+        mod.get_binding().startBtn.setOnClickListener {
+            mod.get_timer_state_context().getState()?.nextAction()
+            mod.get_timer_state_context().getState()?.showUI()
         }
 
-        binding.startBtn.setOnClickListener {
-            if (mod.get_timer_state() == TimerState.PAUSED) {
-                resumeTimer()
-            }
-            else if (mod.get_timer_state() == TimerState.RUNNING) {
-                pauseTimer()
-            }
-            else if (mod.get_timer_state() == TimerState.NOT_STARTED) {
-                val hrs = binding.userInputHrs.text.toString()
-                val mins = binding.userInputMins.text.toString()
-                val secs = binding.userInputSecs.text.toString()
-
-                // TODO: handle cases for above 60
-                var elapsedHrs = 0L
-                var elapsedMins = 0L
-                var elapsedSecs = 0L
-
-                if (hrs.isNotEmpty()) {
-                    elapsedHrs = hrs.toLong() * DateUtils.HOUR_IN_MILLIS
-                }
-
-                if (mins.isNotEmpty()) {
-                    elapsedMins = mins.toLong() * DateUtils.MINUTE_IN_MILLIS
-                }
-
-                if (secs.isNotEmpty()) {
-                    elapsedSecs = secs.toLong() * DateUtils.SECOND_IN_MILLIS
-                }
-
-                mod.set_elapsed_time(elapsedHrs + elapsedMins + elapsedSecs)
-                mod.set_set_time(elapsedHrs + elapsedMins + elapsedSecs)
-
-                if (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() || mod.get_elapsed_time() == 0L) {
-                    // TODO: Add snackbar to tell user to input a valid time
-                    return@setOnClickListener
-                }
-
-                mod.set_r_notif_manager(NotificationUtil.showTimerRunning(this@TimerPage))
-                NotificationUtil.removeNotifiation(EXPIRED_NOTIF_ID)
-                startTimer()
-            }
+        mod.get_binding().resetBtn.setOnClickListener {
+            mod.get_timer_state_context().getState()?.resetTimer()
+            mod.get_timer_state_context().getState()?.showUI()
         }
-
-        binding.resetBtn.setOnClickListener {
-            NotificationUtil.removeNotifiation(EXPIRED_NOTIF_ID)
-            resetTimer()
-        }
-
-        serviceIntent = Intent(applicationContext, TimerService::class.java)
-        registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
-
-        mod.observeEntertainment(this, this)
-    }
-
-    private fun pauseTimer() {
-        binding.startBtn.text = "RESUME"
-        NotificationUtil.updateNotification(this@TimerPage, "Timer is paused")
-        stopService(serviceIntent)
-        mod.setTimerState(TimerState.PAUSED)
-    }
-
-    private fun resumeTimer() {
-        binding.startBtn.text = "PAUSE"
-        startTimer()
-        mod.setTimerState(TimerState.RUNNING)
-    }
-
-    private fun startTimer() {
-        serviceIntent.putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
-        startService(serviceIntent)
-
-        mod.setTimerState(TimerState.RUNNING)
-        binding.startBtn.text = "PAUSE"
-        showTimer()
-    }
-
-    private fun resetTimer() {
-        binding.startBtn.text = "START"
-        showUserInput()
-        NotificationUtil.removeNotifiation(RUNNING_NOTIF_ID)
-        stopService(serviceIntent)
-        mod.set_elapsed_time(mod.get_set_time())
-        mod.setTimerState(TimerState.NOT_STARTED)
     }
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent)
         {
             mod.set_elapsed_time(intent.getLongExtra(TimerService.TIME_EXTRA, 0L))
-            updateTextUI()
+            mod.get_timer_state_context().getState()?.showUI()
 
             if (mod.get_elapsed_time() <= 0L) {
-                NotificationUtil.removeNotifiation(RUNNING_NOTIF_ID)
-                NotificationUtil.showTimerExpired(this@TimerPage)
-                resetTimer()
+                NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
+                NotificationUtil.showTimerExpired()
+                stopService(mod.get_service_intent())
+
+//                // instantiate goose with angry flag on
+//                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
+//                floatingIntent.putExtra("angry", true)
+//                this@TimerPage.startService(floatingIntent)
             } else {
-                NotificationUtil.updateNotification(this@TimerPage, "Timer is running")
+                NotificationUtil.updateNotification("Timer is running")
             }
         }
-    }
-
-    private fun updateTextUI() {
-        val hr = mod.get_elapsed_time()/1000/3600
-        val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
-        val sec = (mod.get_elapsed_time()/1000) % 60
-
-        binding.timerText.text = String.format("%02d:%02d:%02d", hr, min, sec)
-    }
-
-    private fun showTimer() {
-        updateTextUI()
-        binding.userInputHrs.visibility = View.INVISIBLE
-        binding.userInputMins.visibility = View.INVISIBLE
-        binding.userInputSecs.visibility = View.INVISIBLE
-        binding.timerText.visibility = View.VISIBLE
-    }
-
-    private fun showUserInput() {
-        binding.userInputHrs.visibility = View.VISIBLE
-        binding.userInputMins.visibility = View.VISIBLE
-        binding.userInputSecs.visibility = View.VISIBLE
-        binding.timerText.visibility = View.INVISIBLE
     }
 }

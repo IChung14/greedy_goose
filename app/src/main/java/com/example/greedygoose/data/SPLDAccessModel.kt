@@ -1,8 +1,8 @@
 package com.example.greedygoose.data
 
 import android.content.Context
+import android.preference.PreferenceManager
 import androidx.lifecycle.LiveData
-import androidx.preference.PreferenceManager
 import com.example.greedygoose.R
 
 const val DEFAULT_EGG_COUNT = 100
@@ -13,7 +13,6 @@ class SPLDAccessModel(val context: Context) {
         PreferenceManager.getDefaultSharedPreferences(context.applicationContext)
 
     val eggCount = sharedPreference.intLiveData(ModelKeys.EGG_COUNT.key, DEFAULT_EGG_COUNT)
-
     fun setEggCount(num: Int){
         with(sharedPreference.edit()){
             putInt(ModelKeys.EGG_COUNT.key, num)
@@ -29,13 +28,30 @@ class SPLDAccessModel(val context: Context) {
         }
     }
 
+    val purchased = mapOf(
+        Theme.MATH to sharedPreference.booleanLiveData(Theme.MATH.key, false),
+        Theme.SCI to sharedPreference.booleanLiveData(Theme.SCI.key, false),
+        Theme.ENG to sharedPreference.booleanLiveData(Theme.ENG.key, false)
+    )
+    fun setPurchased(item: Theme){
+        with(sharedPreference.edit()){
+            putBoolean(item.key, true)
+            apply()
+        }
+    }
 
+}
+
+enum class Theme(val key: String){
+    MATH("math"),
+    SCI("sci"),
+    ENG("eng"),
+    NONE("none")
 }
 
 enum class ModelKeys(val key: String){
     EGG_COUNT("EggCount"),
     THEME("Theme"),
-    ACTION("Action"),
 }
 
 val memes: List<Int> = listOf(
@@ -52,10 +68,6 @@ enum class Action {
     BEHIND_RIGHT2, FLYING_LEFT, FLYING_RIGHT, SITTING_LEFT, SITTING_RIGHT, WALKING_LEFT, WALKING_LEFT2,
     WALKING_RIGHT, WALKING_RIGHT2, WINDOW_LEFT, WINDOW_RIGHT, ANGRY_LEFT_MIDDLE, ANGRY_RIGHT_MIDDLE,
     WALKING_LEFT_MIDDLE, WALKING_RIGHT_MIDDLE
-}
-
-enum class Theme {
-    ENG, MATH, SCI, NONE
 }
 
 enum class Direction {

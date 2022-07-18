@@ -2,51 +2,89 @@ package com.example.greedygoose.data
 
 import android.app.NotificationManager
 import android.content.Context
-import android.widget.ImageView
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.Observer
-import com.example.greedygoose.R
-import com.example.greedygoose.foreground.FloatingLayout
-
-
+import android.content.Intent
+import com.example.greedygoose.databinding.TimerPageBinding
+import com.example.greedygoose.timer.NotStartedState
+import com.example.greedygoose.timer.PausedState
+import com.example.greedygoose.timer.RunningState
+import com.example.greedygoose.timer.TimerStateContext
 
 
 class model {
-    private var entertainment = MutableLiveData<Boolean>(false)
-    private var floatingLayout: FloatingLayout? = null
-
-    var is_tie_unlocked = true
-    var is_goggle_unlocked = true
-    var is_hard_hat_unlocked = true
-
-    var is_tie_selected = false
-    var is_goggle_selected = false
-    var is_hard_hat_selected = false
-    var timer_state = TimerState.NOT_STARTED
+    private var isFirstCreate = false
+    private lateinit var binding: TimerPageBinding
+    private lateinit var timerPageContext: Context
+    private lateinit var serviceIntent: Intent
+    private lateinit var timerStateContext: TimerStateContext
+    private lateinit var notStartedState: NotStartedState
+    private lateinit var runningState: RunningState
+    private lateinit var pausedState: PausedState
     var elapsed_time = 0L
     var set_time = 0L
     lateinit var r_notif_manager: NotificationManager
 
-    fun setEntertainment(b: Boolean) {
-        this.entertainment.value = b
+    fun set_is_first_create(isFirstCreate: Boolean) {
+        this.isFirstCreate = isFirstCreate
     }
 
-    fun observeEntertainment(life: LifecycleOwner, context: Context) {
-        this.entertainment.observe(life, Observer {
-            if (it == true) {
-                floatingLayout = FloatingLayout(context, R.drawable.egg_small, life)
-                floatingLayout!!.setView()
-            }
-        })
+    fun get_is_first_create(): Boolean {
+        return this.isFirstCreate
     }
 
-    fun setTimerState(timer_state: TimerState) {
-        this.timer_state = timer_state
+    fun set_binding(binding: TimerPageBinding) {
+        this.binding = binding
     }
 
-    fun get_timer_state(): TimerState {
-        return this.timer_state
+    fun get_binding(): TimerPageBinding {
+        return this.binding
+    }
+
+    fun set_timer_page_context(context: Context) {
+        this.timerPageContext = context
+    }
+
+    fun get_timer_page_context(): Context {
+        return this.timerPageContext
+    }
+
+    fun set_service_intent(serviceIntent: Intent) {
+        this.serviceIntent = serviceIntent
+    }
+
+    fun get_service_intent(): Intent {
+        return this.serviceIntent
+    }
+
+    fun set_timer_state_context(timerStateContext: TimerStateContext) {
+        this.timerStateContext = timerStateContext
+    }
+
+    fun get_timer_state_context(): TimerStateContext {
+        return this.timerStateContext
+    }
+
+    fun set_not_started_state(notStartedState: NotStartedState) {
+        this.notStartedState = notStartedState
+    }
+
+    fun get_not_started_state(): NotStartedState {
+        return this.notStartedState
+    }
+
+    fun set_running_state(runningState: RunningState) {
+        this.runningState = runningState
+    }
+
+    fun get_running_state(): RunningState {
+        return this.runningState
+    }
+
+    fun set_paused_state(pausedState: PausedState) {
+        this.pausedState = pausedState
+    }
+
+    fun get_paused_state(): PausedState {
+        return this.pausedState
     }
 
     fun set_elapsed_time(elapsed_time: Long) {

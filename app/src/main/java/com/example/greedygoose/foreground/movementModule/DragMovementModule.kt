@@ -9,15 +9,12 @@ import android.util.DisplayMetrics
 import android.view.*
 import android.view.View.OnTouchListener
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
-import com.example.greedygoose.mod
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
-import android.animation.Animator
 
 
-import android.animation.AnimatorListenerAdapter
 import androidx.core.animation.doOnEnd
 import androidx.lifecycle.LifecycleService
 import com.example.greedygoose.data.Action
@@ -37,9 +34,9 @@ class DragMovementModule(
     private var context: Service?,
     private val viewModel: FloatingViewModel
 ) : MovementModule {
-    override var is_alive = true
+    override var isAlive = true
     override var isDraggable = true
-    override var is_dragged = false
+    override var isDragged = false
 
     private var animator: ValueAnimator? = null
         set(value) {
@@ -65,7 +62,7 @@ class DragMovementModule(
             delay(2000)
             while (true) {
                 if (powerManager.isInteractive) {
-                    if (!is_dragged) {
+                    if (!isDragged) {
                         randomWalk(floatingWindowModule,
                             is_meme = false,
                             round = false,
@@ -79,7 +76,7 @@ class DragMovementModule(
     }
 
     fun walkOffScreen(dir: String) {
-        is_dragged = true
+        isDragged = true
         isDraggable = false
 
         var pvhX = PropertyValuesHolder.ofInt("x", params!!.x, -1080)
@@ -105,15 +102,21 @@ class DragMovementModule(
             if (updates % 5 == 0) {
                 if (layoutParams.x > startx) {
                     direction = Direction.RIGHT
-                    gooseWalkSetter(isAngry = false, isRight = true)
+                    gooseWalkImageSetter(isAngry = false, isRight = true)
                 } else {
                     direction = Direction.LEFT
-                    gooseWalkSetter(isAngry = false, isRight = false)
+                    gooseWalkImageSetter(isAngry = false, isRight = false)
                 }
             }
         }
 
-        animator?.doOnEnd { gooseSit(direction) }
+        animator?.doOnEnd {
+            gooseSit(direction)
+
+            // Allow dragging again when the animation finishes
+            isDraggable = true
+            isDragged = false
+        }
 
         animator?.duration = 2500
         animator?.start()
@@ -122,7 +125,7 @@ class DragMovementModule(
     fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, round: Boolean, dir: Direction) {
         // Do not allow dragging while the goose is moving
         isDraggable = false
-        is_dragged = true
+        isDragged = true
 
         val displayMetrics = DisplayMetrics()
         windowManager!!.defaultDisplay.getMetrics(displayMetrics)
@@ -161,10 +164,10 @@ class DragMovementModule(
             if (updates % 5 == 0) {
                 if ((layoutParams.x > startx) xor (is_meme == true)) {
                     direction = Direction.RIGHT
-                    gooseWalkSetter(isAngry = false, isRight = true)
+                    gooseWalkImageSetter(isAngry = false, isRight = true)
                 } else {
                     direction = Direction.LEFT
-                    gooseWalkSetter(isAngry = false, isRight = false)
+                    gooseWalkImageSetter(isAngry = false, isRight = false)
                 }
             }
         }
@@ -178,7 +181,13 @@ class DragMovementModule(
                     delay(3500)
                     randomWalk(window, is_meme = true, round = true, dir = dir)
                 }
-            } else gooseSit(direction)
+            } else {
+                gooseSit(direction)
+
+                // Allow dragging again when the animation finishes
+                isDraggable = true
+                isDragged = false
+            }
         }
 
         animator?.duration = Random().nextInt(2000).toLong() + 2500
@@ -204,7 +213,7 @@ class DragMovementModule(
 
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        is_dragged = true
+                        isDragged = true
                         //remember the initial position.
                         initialX = params!!.x
                         initialY = params!!.y
@@ -215,7 +224,7 @@ class DragMovementModule(
                         return true
                     }
                     MotionEvent.ACTION_UP -> {
-                        is_dragged = false
+                        isDragged = false
                         viewModel.action.value =
                             if (direction == Direction.LEFT) Action.SITTING_LEFT
                             else Action.SITTING_RIGHT
@@ -238,11 +247,11 @@ class DragMovementModule(
                                     else Action.ANGRY_RIGHT
                             } else if (params!!.x < prevx && (abs(params!!.x.minus(prevx)) <= 100f)) {
                                 direction = Direction.LEFT
-                                gooseWalkSetter(isAngry = true, isRight = false)
+                                gooseWalkImageSetter(isAngry = true, isRight = false)
                             } else {
                                 // Make the goose face the right when swiping vertically
                                 direction = Direction.RIGHT
-                                gooseWalkSetter(isAngry = true, isRight = true)
+                                gooseWalkImageSetter(isAngry = true, isRight = true)
                             }
                         }
                         return true
@@ -263,13 +272,9 @@ class DragMovementModule(
             if (direction == Direction.LEFT) Action.WALKING_LEFT
             else Action.WALKING_RIGHT
         }
-
-        // Allow dragging again when the animation finishes
-        isDraggable = true
-        is_dragged = false
     }
 
-    private fun gooseWalkSetter(isAngry: Boolean, isRight: Boolean){
+    private fun gooseWalkImageSetter(isAngry: Boolean, isRight: Boolean){
         viewModel.action.value = if(isAngry){
             if(isRight){
                 when (viewModel.action.value) {
@@ -312,7 +317,7 @@ class DragMovementModule(
             params = null
             baseView = null
             windowManager = null
-            this.is_alive = false
+            this.isAlive = false
         }
     }
 }
