@@ -34,9 +34,9 @@ class DragMovementModule(
     private var context: Service?,
     private val viewModel: FloatingViewModel
 ) : MovementModule {
-    override var is_alive = true
+    override var isAlive = true
     override var isDraggable = true
-    override var is_dragged = false
+    override var isDragged = false
 
     private var animator: ValueAnimator? = null
         set(value) {
@@ -62,7 +62,7 @@ class DragMovementModule(
             delay(2000)
             while (true) {
                 if (powerManager.isInteractive) {
-                    if (!is_dragged) {
+                    if (!isDragged) {
                         randomWalk(floatingWindowModule,
                             is_meme = false,
                             round = false,
@@ -76,7 +76,7 @@ class DragMovementModule(
     }
 
     fun walkOffScreen(dir: String) {
-        is_dragged = true
+        isDragged = true
         isDraggable = false
 
         var pvhX = PropertyValuesHolder.ofInt("x", params!!.x, -1080)
@@ -115,7 +115,7 @@ class DragMovementModule(
 
             // Allow dragging again when the animation finishes
             isDraggable = true
-            is_dragged = false
+            isDragged = false
         }
 
         animator?.duration = 2500
@@ -125,7 +125,7 @@ class DragMovementModule(
     fun randomWalk(window: FloatingWindowModule?, is_meme: Boolean?, round: Boolean, dir: Direction) {
         // Do not allow dragging while the goose is moving
         isDraggable = false
-        is_dragged = true
+        isDragged = true
 
         val displayMetrics = DisplayMetrics()
         windowManager!!.defaultDisplay.getMetrics(displayMetrics)
@@ -186,7 +186,7 @@ class DragMovementModule(
 
                 // Allow dragging again when the animation finishes
                 isDraggable = true
-                is_dragged = false
+                isDragged = false
             }
         }
 
@@ -213,7 +213,7 @@ class DragMovementModule(
 
                 when (event.action) {
                     MotionEvent.ACTION_DOWN -> {
-                        is_dragged = true
+                        isDragged = true
                         //remember the initial position.
                         initialX = params!!.x
                         initialY = params!!.y
@@ -224,7 +224,7 @@ class DragMovementModule(
                         return true
                     }
                     MotionEvent.ACTION_UP -> {
-                        is_dragged = false
+                        isDragged = false
                         viewModel.action.value =
                             if (direction == Direction.LEFT) Action.SITTING_LEFT
                             else Action.SITTING_RIGHT
@@ -317,7 +317,7 @@ class DragMovementModule(
             params = null
             baseView = null
             windowManager = null
-            this.is_alive = false
+            this.isAlive = false
         }
     }
 }

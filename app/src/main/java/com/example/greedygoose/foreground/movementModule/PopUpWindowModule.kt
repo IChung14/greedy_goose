@@ -16,9 +16,9 @@ class PopUpWindowModule(
     private var windowManager: WindowManager?,
     private var baseView: View?
 ) : MovementModule {
-    override var is_alive = true
+    override var isAlive = true
     override var isDraggable = true
-    override var is_dragged = false
+    override var isDragged = false
 
     override fun destroy() {
         try {
@@ -31,14 +31,14 @@ class PopUpWindowModule(
             params = null
             baseView = null
             windowManager = null
-            this.is_alive = false
+            this.isAlive = false
         }
     }
 
     override fun run() {}
 
     override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {
-        is_dragged = true
+        isDragged = true
         var pvhX =
             if (!round) PropertyValuesHolder.ofInt("x", -1080, -150)
             else PropertyValuesHolder.ofInt("x", -150, 1080)
@@ -60,7 +60,7 @@ class PopUpWindowModule(
 
         movement.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
-                is_dragged = false
+                isDragged = false
                 if (!round) {
                     MainScope().launch {
                         delay(3500)

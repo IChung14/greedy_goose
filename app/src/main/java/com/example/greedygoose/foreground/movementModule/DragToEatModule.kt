@@ -4,7 +4,7 @@ import android.view.MotionEvent
 import android.view.View
 import android.view.WindowManager
 import com.example.greedygoose.data.Direction
-import com.example.greedygoose.foreground.FloatingComponent
+import com.example.greedygoose.foreground.ui.FloatingComponent
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
 class DragToEatModule (
@@ -14,9 +14,9 @@ class DragToEatModule (
     private var baseView: View?,
     private var floatingGoose: FloatingComponent
     ): MovementModule {
-    override var is_alive = true
+    override var isAlive = true
     override var isDraggable = true
-    override var is_dragged = false
+    override var isDragged = false
 
     override fun destroy() {
         try {
@@ -29,7 +29,7 @@ class DragToEatModule (
             params = null
             baseView = null
             windowManager = null
-            this.is_alive = false
+            this.isAlive = false
         }
     }
 
