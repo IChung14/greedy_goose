@@ -4,9 +4,9 @@ import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import com.example.greedygoose.databinding.TimerPageBinding
-import com.example.greedygoose.timer.state.NotStartedState
-import com.example.greedygoose.timer.state.PausedState
-import com.example.greedygoose.timer.state.RunningState
+import com.example.greedygoose.timer.NotStartedState
+import com.example.greedygoose.timer.PausedState
+import com.example.greedygoose.timer.RunningState
 import com.example.greedygoose.timer.TimerStateContext
 
 

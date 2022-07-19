@@ -1,7 +1,5 @@
 package com.example.greedygoose.timer
 
-import com.example.greedygoose.timer.state.TimerState
-
 class TimerStateContext {
 
    private var state: TimerState? = null

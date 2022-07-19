@@ -1,11 +1,8 @@
-package com.example.greedygoose.timer.state
+package com.example.greedygoose.timer
 
 import android.text.format.DateUtils
 import android.view.View
 import com.example.greedygoose.mod
-import com.example.greedygoose.timer.NotificationUtil
-import com.example.greedygoose.timer.TimerService
-import com.example.greedygoose.timer.TimerUtil
 
 class NotStartedState() : TimerState {
 
@@ -61,7 +58,7 @@ class NotStartedState() : TimerState {
             // TODO: Add snackbar to tell user to input a valid time
         }
         else {
-            mod.r_notif_manager = NotificationUtil.showTimerRunning(mod.timerPageContext)
+            mod.r_notif_manager = NotificationUtil.showTimerRunning()
             NotificationUtil.removeNotification(TimerUtil.EXPIRED_NOTIF_ID)
 
             mod.serviceIntent.putExtra(TimerService.TIME_EXTRA, mod.elapsed_time)

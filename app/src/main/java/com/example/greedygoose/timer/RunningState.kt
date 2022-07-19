@@ -1,9 +1,7 @@
-package com.example.greedygoose.timer.state
+package com.example.greedygoose.timer
 
 import android.view.View
 import com.example.greedygoose.mod
-import com.example.greedygoose.timer.NotificationUtil
-import com.example.greedygoose.timer.TimerUtil
 
 class RunningState(): TimerState {
     override fun showUI() {
@@ -28,7 +26,7 @@ class RunningState(): TimerState {
 
     // Pause timer
     override fun nextAction() {
-        NotificationUtil.updateNotification("Timer is paused")
+        NotificationUtil.updateRunningNotification("Timer is paused")
         mod.timerPageContext.stopService(mod.serviceIntent)
         mod.timerStateContext.setState(mod.pausedState)
     }

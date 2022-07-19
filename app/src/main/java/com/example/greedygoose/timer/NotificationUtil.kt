@@ -20,11 +20,11 @@ class NotificationUtil {
         private const val EXPIRED_CHANNEL_ID = "expired"
         private const val EXPIRED_CHANNEL_NAME = "goose app timer EXPIRED"
 
-        fun showTimerRunning(context: Context): NotificationManager {
-            val notifBuilder = getNotificationBuilder(context, RUNNING_CHANNEL_ID, false)
+        fun showTimerRunning(): NotificationManager {
+            val notifBuilder = getNotificationBuilder(mod.timerPageContext, RUNNING_CHANNEL_ID, false)
             notifBuilder.setContentTitle("Timer is running")
             notifBuilder.setContentText("00:00:01")
-            val notifManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+            val notifManager = mod.timerPageContext.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notifManager.createNotificationChannel(RUNNING_CHANNEL_ID, RUNNING_CHANNEL_NAME, false)
 
             notifManager.notify(TimerUtil.RUNNING_NOTIF_ID, notifBuilder.build())
@@ -33,6 +33,7 @@ class NotificationUtil {
         }
 
         fun showTimerExpired() {
+            removeNotification(TimerUtil.RUNNING_NOTIF_ID)
             val snoozeIntent = Intent(mod.timerPageContext, TimerBroadcastReceiver::class.java)
             snoozeIntent.action = TimerUtil.ACTION_SNOOZE
             val stopIntent = Intent(mod.timerPageContext, TimerBroadcastReceiver::class.java)
@@ -59,7 +60,7 @@ class NotificationUtil {
             notifManager.notify(TimerUtil.EXPIRED_NOTIF_ID, notifBuilder.build())
         }
 
-        fun updateNotification(content_title: String) {
+        fun updateRunningNotification(content_title: String) {
             val notifBuilder = getNotificationBuilder(
                 mod.timerPageContext, RUNNING_CHANNEL_ID, false)
             notifBuilder.setContentTitle(content_title)

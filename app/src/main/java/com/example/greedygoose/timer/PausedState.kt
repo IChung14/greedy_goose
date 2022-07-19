@@ -1,14 +1,11 @@
-package com.example.greedygoose.timer.state
+package com.example.greedygoose.timer
 
 import android.view.View
 import com.example.greedygoose.mod
-import com.example.greedygoose.timer.NotificationUtil
-import com.example.greedygoose.timer.TimerService
-import com.example.greedygoose.timer.TimerUtil
 
 class PausedState (): TimerState {
     override fun showUI() {
-        NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
+        NotificationUtil.updateRunningNotification("Timer is paused")
 
         mod.binding.startBtn.text = "RESUME"
 
