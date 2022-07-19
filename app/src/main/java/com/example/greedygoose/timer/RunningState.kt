@@ -1,33 +1,30 @@
 package com.example.greedygoose.timer
 
+import android.content.Context
+import android.content.Intent
 import android.view.View
+import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
 
-class RunningState(): TimerState {
-    override fun showUI() {
-        mod.binding.startBtn.text = "PAUSE"
+class RunningState(context: TimerService) : TimerState(context) {
 
-        mod.binding.timerText.text = TimerUtil.getTimeString()
+    override fun showUI(binding: TimerPageBinding) {
+        binding.startBtn.text = "PAUSE"
 
-        mod.binding.userInputHrs.visibility = View.INVISIBLE
-        mod.binding.userInputMins.visibility = View.INVISIBLE
-        mod.binding.userInputSecs.visibility = View.INVISIBLE
-        mod.binding.timerText.visibility = View.VISIBLE
-    }
+        binding.timerText.text = TimerUtil.getTimeString(context.getTime())
 
-    override fun resetTimer() {
-        NotificationUtil.removeNotification(TimerUtil.EXPIRED_NOTIF_ID)
-        NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
-        mod.timerPageContext.stopService(mod.serviceIntent)
-        mod.elapsed_time = mod.set_time
-
-        mod.timerStateContext.setState(mod.notStartedState)
+        binding.userInputHrs.visibility = View.INVISIBLE
+        binding.userInputMins.visibility = View.INVISIBLE
+        binding.userInputSecs.visibility = View.INVISIBLE
+        binding.timerText.visibility = View.VISIBLE
     }
 
     // Pause timer
-    override fun nextAction() {
-        NotificationUtil.updateRunningNotification("Timer is paused")
-        mod.timerPageContext.stopService(mod.serviceIntent)
-        mod.timerStateContext.setState(mod.pausedState)
+    override fun nextAction(): TimerState {
+        NotificationUtil.updateRunningNotification(context,"Timer is paused", context.elapsedTime)
+        val intent = Intent(context, TimerService::class.java)
+        context.stopService(intent)
+
+        return PausedState(context)
     }
 }

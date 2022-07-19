@@ -2,7 +2,6 @@ package com.example.greedygoose
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.greedygoose.data.model
 import com.example.greedygoose.databinding.ActivityMainBinding
 import com.example.greedygoose.ui.HomeFragment
 

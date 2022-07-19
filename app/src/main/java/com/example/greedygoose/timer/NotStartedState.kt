@@ -1,70 +1,39 @@
 package com.example.greedygoose.timer
 
+import android.content.Context
+import android.content.Intent
 import android.text.format.DateUtils
 import android.view.View
+import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
+import com.example.greedygoose.timer.TimerUtil
 
-class NotStartedState() : TimerState {
+class NotStartedState(context: TimerService) : TimerState(context) {
 
-    override fun showUI() {
-        mod.binding.startBtn.text = "START"
+    override fun showUI(binding: TimerPageBinding) {
+        binding.startBtn.text = "START"
 
-        mod.set_time
+        val time = context.getTime()
 
-        val time = TimerUtil.getTime()
+        binding.userInputHrs.setText(time.first)
+        binding.userInputMins.setText(time.second)
+        binding.userInputSecs.setText(time.third)
 
-        mod.binding.userInputHrs.setText(time.first)
-        mod.binding.userInputMins.setText(time.second)
-        mod.binding.userInputSecs.setText(time.third)
-
-        mod.binding.userInputHrs.visibility = View.VISIBLE
-        mod.binding.userInputMins.visibility = View.VISIBLE
-        mod.binding.userInputSecs.visibility = View.VISIBLE
-        mod.binding.timerText.visibility = View.INVISIBLE
-    }
-
-    override fun resetTimer() {
-        NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
-        mod.timerPageContext.stopService(mod.serviceIntent)
-        mod.elapsed_time = mod.set_time
+        binding.userInputHrs.visibility = View.VISIBLE
+        binding.userInputMins.visibility = View.VISIBLE
+        binding.userInputSecs.visibility = View.VISIBLE
+        binding.timerText.visibility = View.INVISIBLE
     }
 
     // Start timer
-    override fun nextAction() {
-        val hrs = mod.binding.userInputHrs.text.toString()
-        val mins = mod.binding.userInputMins.text.toString()
-        val secs = mod.binding.userInputSecs.text.toString()
+    // next action is Running State
+    override fun nextAction(): TimerState {
+        NotificationUtil.removeNotification(context, TimerUtil.EXPIRED_NOTIF_ID)
 
-        var elapsedHrs = 0L
-        var elapsedMins = 0L
-        var elapsedSecs = 0L
+        val intent = Intent(context, TimerService::class.java)
+        intent.putExtra(TimerService.TIME_EXTRA, context.elapsedTime)
+        context.startService(intent)
 
-        if (hrs.isNotEmpty()) {
-            elapsedHrs = hrs.toLong() * DateUtils.HOUR_IN_MILLIS
-        }
-
-        if (mins.isNotEmpty()) {
-            elapsedMins = mins.toLong() * DateUtils.MINUTE_IN_MILLIS
-        }
-
-        if (secs.isNotEmpty()) {
-            elapsedSecs = secs.toLong() * DateUtils.SECOND_IN_MILLIS
-        }
-
-        mod.elapsed_time = elapsedHrs + elapsedMins + elapsedSecs
-        mod.set_time = elapsedHrs + elapsedMins + elapsedSecs
-
-        if (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() || mod.elapsed_time == 0L) {
-            // TODO: Add snackbar to tell user to input a valid time
-        }
-        else {
-            mod.r_notif_manager = NotificationUtil.showTimerRunning()
-            NotificationUtil.removeNotification(TimerUtil.EXPIRED_NOTIF_ID)
-
-            mod.serviceIntent.putExtra(TimerService.TIME_EXTRA, mod.elapsed_time)
-            mod.timerPageContext.startService(mod.serviceIntent)
-        }
-
-        mod.timerStateContext.setState(mod.runningState)
+        return RunningState(context)
     }
 }

@@ -1,10 +1,9 @@
 package com.example.greedygoose.timer
 
-import android.content.BroadcastReceiver
-import android.content.Context
-import android.content.Intent
-import android.content.IntentFilter
+import android.content.*
 import android.os.Bundle
+import android.os.IBinder
+import android.text.format.DateUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
@@ -21,85 +20,102 @@ TODO:
 class TimerPage : AppCompatActivity() {
 
     private lateinit var binding: TimerPageBinding
+    private lateinit var viewModel: TimerViewModel
+
+    private lateinit var timerService: TimerService
+    private var timerBound: Boolean = false
+
+    private val connection = object : ServiceConnection {
+
+        override fun onServiceConnected(className: ComponentName, service: IBinder) {
+            // We've bound to LocalService, cast the IBinder and get LocalService instance
+            val binder = service as TimerService.TimerBinder
+            timerService = binder.getService()
+            timerBound = true
+
+            timerService.timerState.observe(this@TimerPage){
+                it.showUI(binding)
+            }
+        }
+
+        override fun onServiceDisconnected(arg0: ComponentName) {
+            timerBound = false
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel = TimerViewModel()
+
         binding = TimerPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        mod.binding = binding
+        // when entering TimerPage, instantiate TimerService right away
+        bindService(
+            Intent(applicationContext, TimerService::class.java),
+            connection,
+            Context.BIND_AUTO_CREATE
+        )
 
-        mod.serviceIntent = Intent(applicationContext, TimerService::class.java)
-
-        mod.timerPageContext = this@TimerPage
-
-        if (!mod.isFirstCreate) {
-            registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
-
-            mod.timerStateContext = TimerStateContext()
-
-            mod.notStartedState = NotStartedState()
-
-            mod.runningState = RunningState()
-
-            mod.pausedState = PausedState()
-
-            mod.timerStateContext.setState(mod.notStartedState)
-
-            mod.isFirstCreate = true
-        }
-
+        registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        mod.timerStateContext.getState()?.showUI()
+        // maybe first call
+//        timerService.timerState.value?.showUI(binding)
 
-        mod.binding.startBtn.setOnClickListener {
-            mod.timerStateContext.getState()?.nextAction()
-            mod.timerStateContext.getState()?.showUI()
+        binding.startBtn.setOnClickListener {
+            val hrs = binding.userInputHrs.text.toString()
+            val mins = binding.userInputMins.text.toString()
+            val secs = binding.userInputSecs.text.toString()
+
+            val elapsedHrs = if (hrs.isNotEmpty()) hrs.toLong() * DateUtils.HOUR_IN_MILLIS else 0L
+            val elapsedMins = if (mins.isNotEmpty()) mins.toLong() * DateUtils.MINUTE_IN_MILLIS else 0L
+            val elapsedSecs = if (secs.isNotEmpty()) secs.toLong() * DateUtils.SECOND_IN_MILLIS else  0L
+
+            if (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() ||
+                elapsedHrs+elapsedMins+elapsedSecs == 0L) {
+                // TODO: Add snackbar to tell user to input a valid time
+            }else{
+                timerService.onTimerStartPressed(elapsedHrs, elapsedMins, elapsedSecs)
+            }
+
         }
 
-        mod.binding.resetBtn.setOnClickListener {
-            mod.timerStateContext.getState()?.resetTimer()
-            mod.timerStateContext.getState()?.showUI()
+        binding.resetBtn.setOnClickListener {
+            timerService.onTimerResetPressed()
         }
+    }
+
+    override fun onStop() {
+        super.onStop()
+        unbindService(connection)
+        timerBound = false
     }
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent)
         {
-            mod.elapsed_time = intent.getLongExtra(TimerService.TIME_EXTRA, 0L)
-            mod.timerStateContext.getState()?.showUI()
+            timerService.elapsedTime = intent.getLongExtra(TimerService.TIME_EXTRA, 0L)
+            timerService.timerState.value?.showUI(binding)
 
-            if (mod.elapsed_time <= 0L) {
+            if (timerService.elapsedTime <= 0L) {
                 timeout()
             } else {
-                NotificationUtil.updateRunningNotification("Timer is running")
+                NotificationUtil.updateRunningNotification(
+                    context,
+                    "Timer is running",
+                    timerService.elapsedTime)
             }
         }
     }
     private fun timeout() {
-        NotificationUtil.showTimerExpired()
-        stopService(mod.serviceIntent)
+        NotificationUtil.showTimerExpired(this)
+        stopService(Intent(applicationContext, TimerService::class.java))
 
 //                // instantiate goose with angry flag on
 //                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
 //                floatingIntent.putExtra("angry", true)
 //                this@TimerPage.startService(floatingIntent)
-    }
-
-    companion object {
-        fun snoozeAlarm(context: Context) {
-            mod.elapsed_time = 300000L
-            mod.serviceIntent.putExtra(TimerService.TIME_EXTRA, mod.elapsed_time)
-            mod.timerPageContext.startService(mod.serviceIntent)
-            mod.timerStateContext.setState(mod.runningState)
-            mod.timerStateContext.getState()?.showUI()
-        }
-
-        fun stopAlarm() {
-            mod.timerStateContext.getState()?.resetTimer()
-            mod.timerStateContext.getState()?.showUI()
-        }
     }
 }
