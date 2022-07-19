@@ -1,16 +1,13 @@
-package com.example.greedygoose.timer
+package com.example.greedygoose.timer.state
 
-import android.content.Context
-import android.content.Intent
 import android.view.View
-import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
+import com.example.greedygoose.timer.NotificationUtil
+import com.example.greedygoose.timer.TimerUtil
 
-class PausedState (): TimerState {
+class RunningState(): TimerState {
     override fun showUI() {
-        NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
-
-        mod.get_binding().startBtn.text = "RESUME"
+        mod.get_binding().startBtn.text = "PAUSE"
 
         mod.get_binding().timerText.text = TimerUtil.getTimeString()
 
@@ -29,10 +26,10 @@ class PausedState (): TimerState {
         mod.get_timer_state_context().setState(mod.get_not_started_state())
     }
 
-    // Resume timer
+    // Pause timer
     override fun nextAction() {
-        mod.get_service_intent().putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
-        mod.get_timer_page_context().startService(mod.get_service_intent())
-        mod.get_timer_state_context().setState(mod.get_running_state())
+        NotificationUtil.updateNotification("Timer is paused")
+        mod.get_timer_page_context().stopService(mod.get_service_intent())
+        mod.get_timer_state_context().setState(mod.get_paused_state())
     }
 }

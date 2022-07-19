@@ -1,4 +1,4 @@
-package com.example.greedygoose.timer
+package com.example.greedygoose.timer.state
 
 interface TimerState {
     fun showUI()

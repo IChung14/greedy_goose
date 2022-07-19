@@ -1,11 +1,11 @@
-package com.example.greedygoose.timer
+package com.example.greedygoose.timer.state
 
-import android.content.Context
-import android.content.Intent
 import android.text.format.DateUtils
 import android.view.View
-import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
+import com.example.greedygoose.timer.NotificationUtil
+import com.example.greedygoose.timer.TimerService
+import com.example.greedygoose.timer.TimerUtil
 
 class NotStartedState() : TimerState {
 

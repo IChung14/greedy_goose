@@ -1,4 +1,4 @@
-package com.example.greedygoose.timer
+package com.example.greedygoose
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,20 +7,13 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.databinding.TimerPageBinding
-import com.example.greedygoose.foreground.FloatingService
-import com.example.greedygoose.mod
-
-/*
-TODO:
-1. Problem: When user goes back to home page, the user input is empty and doesn't reflect the time they picked before
- - Change set_time to hrs, mins, secs ints and update userInput textviews.
-
- 2. Calculation of hr,min,sec is repeated a lot, could make a TimerUtil for these types of functions. Maybe combine with constants
-
- 3. Change timerstate to not nullable
-
- 4. When user exits app, remove all notifs
-*/
+import com.example.greedygoose.timer.NotificationUtil
+import com.example.greedygoose.timer.TimerService
+import com.example.greedygoose.timer.TimerStateContext
+import com.example.greedygoose.timer.TimerUtil
+import com.example.greedygoose.timer.state.NotStartedState
+import com.example.greedygoose.timer.state.PausedState
+import com.example.greedygoose.timer.state.RunningState
 
 class TimerPage : AppCompatActivity() {
 

@@ -6,7 +6,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/customization2"
-    tools:context=".timer.TimerPage">
+    tools:context=".TimerPage">
 
     <TextView
         android:id="@+id/timerLabel"

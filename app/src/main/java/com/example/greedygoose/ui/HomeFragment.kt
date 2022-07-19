@@ -12,7 +12,7 @@ import com.example.greedygoose.R
 import com.example.greedygoose.SettingsPage
 import com.example.greedygoose.databinding.FragmentHomeBinding
 import com.example.greedygoose.mod
-import com.example.greedygoose.timer.TimerPage
+import com.example.greedygoose.TimerPage
 
 class HomeFragment : Fragment() {
 
