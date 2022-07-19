@@ -10,9 +10,9 @@ class TimerUtil {
         const val EXPIRED_NOTIF_ID = 1
 
         fun getTime(): Triple<String, String, String> {
-            val hr = mod.get_elapsed_time()/1000/3600
-            val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
-            val sec = (mod.get_elapsed_time()/1000) % 60
+            val hr = mod.elapsed_time/1000/3600
+            val min = (mod.elapsed_time/1000 - hr*3600) / 60
+            val sec = (mod.elapsed_time/1000) % 60
 
             return Triple(hr.toString(), min.toString(), sec.toString())
         }

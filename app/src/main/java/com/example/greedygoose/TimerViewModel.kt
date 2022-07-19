@@ -1,4 +1,4 @@
-package com.example.greedygoose.timer
+package com.example.greedygoose
 
 import androidx.lifecycle.ViewModel
 

@@ -17,72 +17,61 @@ import com.example.greedygoose.timer.state.RunningState
 
 class TimerPage : AppCompatActivity() {
 
-    companion object {
-        fun snoozeAlarm(context: Context) {
-            mod.set_elapsed_time(300000L)
-            mod.get_service_intent().putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
-            context.startService(mod.get_service_intent())
-            mod.get_timer_state_context().setState(mod.get_running_state())
-            mod.get_timer_state_context().getState()?.showUI()
-        }
-
-        fun stopAlarm() {
-            mod.get_timer_state_context().getState()?.resetTimer()
-            mod.get_timer_state_context().getState()?.showUI()
-        }
-    }
+    private lateinit var binding: TimerPageBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        mod.set_binding(TimerPageBinding.inflate(layoutInflater))
-        setContentView(mod.get_binding().root)
+        binding = TimerPageBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        mod.set_service_intent(Intent(applicationContext, TimerService::class.java))
+        mod.binding = binding
 
-        mod.set_timer_page_context(this@TimerPage)
+        mod.serviceIntent = Intent(applicationContext, TimerService::class.java)
 
-        if (!mod.get_is_first_create()) {
+        mod.timerPageContext = this@TimerPage
+
+        if (!mod.isFirstCreate) {
             registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
 
-            mod.set_timer_state_context(TimerStateContext())
+            mod.timerStateContext = TimerStateContext()
 
-            mod.set_not_started_state(NotStartedState())
+            mod.notStartedState = NotStartedState()
 
-            mod.set_running_state(RunningState())
+            mod.runningState = RunningState()
 
-            mod.set_paused_state(PausedState())
+            mod.pausedState = PausedState()
 
-            mod.get_timer_state_context().setState(mod.get_not_started_state())
+            mod.timerStateContext.setState(mod.notStartedState)
 
-            mod.set_is_first_create(true)
+            mod.isFirstCreate = true
         }
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        mod.get_timer_state_context().getState()?.showUI()
+        mod.timerStateContext.getState()?.showUI()
 
-        mod.get_binding().startBtn.setOnClickListener {
-            mod.get_timer_state_context().getState()?.nextAction()
-            mod.get_timer_state_context().getState()?.showUI()
+        mod.binding.startBtn.setOnClickListener {
+            mod.timerStateContext.getState()?.nextAction()
+            mod.timerStateContext.getState()?.showUI()
         }
 
-        mod.get_binding().resetBtn.setOnClickListener {
-            mod.get_timer_state_context().getState()?.resetTimer()
-            mod.get_timer_state_context().getState()?.showUI()
+        mod.binding.resetBtn.setOnClickListener {
+            mod.timerStateContext.getState()?.resetTimer()
+            mod.timerStateContext.getState()?.showUI()
         }
     }
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent)
         {
-            mod.set_elapsed_time(intent.getLongExtra(TimerService.TIME_EXTRA, 0L))
-            mod.get_timer_state_context().getState()?.showUI()
+            mod.elapsed_time = intent.getLongExtra(TimerService.TIME_EXTRA, 0L)
+            mod.timerStateContext.getState()?.showUI()
 
-            if (mod.get_elapsed_time() <= 0L) {
+            if (mod.elapsed_time <= 0L) {
                 NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
                 NotificationUtil.showTimerExpired()
-                stopService(mod.get_service_intent())
+                stopService(mod.serviceIntent)
 
 //                // instantiate goose with angry flag on
 //                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
@@ -91,6 +80,21 @@ class TimerPage : AppCompatActivity() {
             } else {
                 NotificationUtil.updateNotification("Timer is running")
             }
+        }
+    }
+
+    companion object {
+        fun snoozeAlarm(context: Context) {
+            mod.elapsed_time = 300000L
+            mod.serviceIntent.putExtra(TimerService.TIME_EXTRA, mod.elapsed_time)
+            context.startService(mod.serviceIntent)
+            mod.timerStateContext.setState(mod.runningState)
+            mod.timerStateContext.getState()?.showUI()
+        }
+
+        fun stopAlarm() {
+            mod.timerStateContext.getState()?.resetTimer()
+            mod.timerStateContext.getState()?.showUI()
         }
     }
 }

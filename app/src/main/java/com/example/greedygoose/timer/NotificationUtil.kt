@@ -33,28 +33,26 @@ class NotificationUtil {
         }
 
         fun showTimerExpired() {
-            val snoozeIntent = Intent(mod.get_timer_page_context(), TimerBroadcastReceiver::class.java)
+            val snoozeIntent = Intent(mod.timerPageContext, TimerBroadcastReceiver::class.java)
             snoozeIntent.action = TimerUtil.ACTION_SNOOZE
-            val stopIntent = Intent(mod.get_timer_page_context(), TimerBroadcastReceiver::class.java)
+            val stopIntent = Intent(mod.timerPageContext, TimerBroadcastReceiver::class.java)
             stopIntent.action = TimerUtil.ACTION_STOP
 
-            var flag = PendingIntent.FLAG_UPDATE_CURRENT
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-                flag = PendingIntent.FLAG_IMMUTABLE or flag
-            }
-            val snoozePendingIntent = PendingIntent.getBroadcast(mod.get_timer_page_context(),
+            val flag = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+
+            val snoozePendingIntent = PendingIntent.getBroadcast(mod.timerPageContext,
                 0, snoozeIntent, flag)
-            val stopPendingIntent = PendingIntent.getBroadcast(mod.get_timer_page_context(),
+            val stopPendingIntent = PendingIntent.getBroadcast(mod.timerPageContext,
                 0, stopIntent, flag)
 
             val notifBuilder = getNotificationBuilder(
-                mod.get_timer_page_context(), EXPIRED_CHANNEL_ID, true)
+                mod.timerPageContext, EXPIRED_CHANNEL_ID, true)
             notifBuilder.setContentTitle("Time's up")
-            notifBuilder.setPriority(NotificationCompat.PRIORITY_HIGH)
+            notifBuilder.priority = NotificationCompat.PRIORITY_HIGH
             notifBuilder.addAction(R.drawable.eng_flying_left, "Snooze 5 min", snoozePendingIntent)
             notifBuilder.addAction(R.drawable.eng_flying_left, "Stop", stopPendingIntent)
 
-            val notifManager = mod.get_timer_page_context()
+            val notifManager = mod.timerPageContext
                 .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notifManager.createNotificationChannel(EXPIRED_CHANNEL_ID, EXPIRED_CHANNEL_NAME, true)
 
@@ -63,20 +61,20 @@ class NotificationUtil {
 
         fun updateNotification(content_title: String) {
             val notifBuilder = getNotificationBuilder(
-                mod.get_timer_page_context(), RUNNING_CHANNEL_ID, false)
+                mod.timerPageContext, RUNNING_CHANNEL_ID, false)
             notifBuilder.setContentTitle(content_title)
-            val hr = mod.get_elapsed_time()/1000/3600
-            val min = (mod.get_elapsed_time()/1000 - hr*3600) / 60
-            val sec = (mod.get_elapsed_time()/1000) % 60
+            val hr = mod.elapsed_time/1000/3600
+            val min = (mod.elapsed_time/1000 - hr*3600) / 60
+            val sec = (mod.elapsed_time/1000) % 60
 
             notifBuilder.setContentText(String.format("%02d:%02d:%02d", hr, min, sec))
             notifBuilder.setSmallIcon(R.drawable.eng_sitting_left)
 
-            mod.get_r_notif_manager().notify(TimerUtil.RUNNING_NOTIF_ID, notifBuilder.build());
+            mod.r_notif_manager.notify(TimerUtil.RUNNING_NOTIF_ID, notifBuilder.build());
         }
 
         fun removeNotification(notif_id: Int) {
-            mod.get_r_notif_manager().cancel(notif_id)
+            mod.r_notif_manager.cancel(notif_id)
         }
 
         private fun getNotificationBuilder(context: Context, channelId: String, playSound: Boolean)
