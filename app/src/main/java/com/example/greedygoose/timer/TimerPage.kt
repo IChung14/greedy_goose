@@ -87,9 +87,13 @@ class TimerPage : AppCompatActivity() {
     }
 
     override fun onStop() {
-        super.onStop()
-        unbindService(connection)
         timerBound = false
+        super.onStop()
+    }
+
+    override fun onDestroy() {
+        unbindService(connection)
+        super.onDestroy()
     }
 
     private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
