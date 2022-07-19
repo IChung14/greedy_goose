@@ -8,33 +8,14 @@ import com.example.greedygoose.foreground.ui.FloatingWindowModule
 
 
 class TouchDeleteModule (
-    private var params: WindowManager.LayoutParams?,
-    private val rootContainer: View?,
-    private var windowManager: WindowManager?,
-    private var baseView: View?,
-    private val viewModel: FloatingViewModel
-): MovementModule {
-    override var isAlive = true
-    override var isDraggable = true
-    override var isDragged = false
+    private val viewModel: FloatingViewModel,
+    windowModule: FloatingWindowModule
+): MovementModule(windowModule) {
 
-    override fun destroy() {
-        try {
-            windowManager?.removeViewImmediate(baseView)
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-        } finally {
-            params = null
-            baseView = null
-            windowManager = null
-            this.isAlive = false
-        }
-    }
-
-    override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {}
+    override fun startAction(round: Boolean, dir: Direction) {}
 
     override fun run() {
-        rootContainer?.setOnClickListener{
+        rootContainer.setOnClickListener{
             destroy()
             viewModel.incrementEggCount()
         }

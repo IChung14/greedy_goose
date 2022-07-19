@@ -11,33 +11,12 @@ import kotlinx.coroutines.launch
 
 
 class PopUpWindowModule(
-    private var params: WindowManager.LayoutParams?,
-    private val rootContainer: View?,
-    private var windowManager: WindowManager?,
-    private var baseView: View?
-) : MovementModule {
-    override var isAlive = true
-    override var isDraggable = true
-    override var isDragged = false
-
-    override fun destroy() {
-        try {
-            if (windowManager != null) if (baseView != null) windowManager!!.removeViewImmediate(
-                baseView
-            )
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-        } finally {
-            params = null
-            baseView = null
-            windowManager = null
-            this.isAlive = false
-        }
-    }
+    windowModule: FloatingWindowModule
+) : MovementModule(windowModule) {
 
     override fun run() {}
 
-    override fun startAction(floatingWindowModule: FloatingWindowModule?, round: Boolean, dir: Direction) {
+    override fun startAction(round: Boolean, dir: Direction) {
         isDragged = true
         var pvhX =
             if (!round) PropertyValuesHolder.ofInt("x", -1080, -150)
@@ -47,15 +26,15 @@ class PopUpWindowModule(
                 if (!round) PropertyValuesHolder.ofInt("x", 1080, 150)
                 else PropertyValuesHolder.ofInt("x", 150, -1080)
         }
-        var pvhY = PropertyValuesHolder.ofInt("y", params!!.y, params!!.y)
+        var pvhY = PropertyValuesHolder.ofInt("y", params.y, params.y)
 
         val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
         movement.addUpdateListener { valueAnimator ->
-            val layoutParams = rootContainer!!.getLayoutParams() as WindowManager.LayoutParams
-            layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)!!
-            layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)!!
-            windowManager!!.updateViewLayout(rootContainer, layoutParams)
+            val layoutParams = rootContainer.getLayoutParams() as WindowManager.LayoutParams
+            layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)
+            layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)
+            windowManager.updateViewLayout(rootContainer, layoutParams)
         }
 
         movement.addListener(object : AnimatorListenerAdapter() {
@@ -64,7 +43,7 @@ class PopUpWindowModule(
                 if (!round) {
                     MainScope().launch {
                         delay(3500)
-                        startAction(floatingWindowModule, true, dir)
+                        startAction(true, dir)
                     }
                 }
             }

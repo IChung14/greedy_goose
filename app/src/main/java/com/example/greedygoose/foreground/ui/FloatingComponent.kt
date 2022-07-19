@@ -27,7 +27,7 @@ abstract class FloatingComponent(
         sendAction(ACTION_ON_CREATE, Bundle())
     }
 
-    fun getLocation(): WindowManager.LayoutParams? {
+    fun getLocation(): WindowManager.LayoutParams {
         return this.windowModule.params
     }
 
@@ -50,11 +50,10 @@ abstract class FloatingComponent(
 
 class FloatingGoose(
     windowModule: FloatingWindowModule,
-    movementModule: MovementModule,
-    receiver: ResultReceiver? = null
-): FloatingComponent(windowModule, movementModule, receiver) {
+    movementModule: MovementModule
+): FloatingComponent(windowModule, movementModule) {
 
-    init { movementModule.startAction(windowModule) }
+    init { movementModule.startAction() }
 }
 
 class FloatingEgg(
@@ -81,13 +80,10 @@ class FloatingFood(
     receiver: ResultReceiver? = null
 ): FloatingComponent(windowModule, movementModule, receiver) {
 
-    private var eggCount = 0
-    init { viewModel.eggCount.observe(context){ eggCount = it } }
-
     fun expireFood() {
         Handler().postDelayed({
             if (movementModule?.isAlive == true) {
-                viewModel.decrementEggCount(if (eggCount >= 5) 5 else eggCount)
+                viewModel.decrementEggCount(if (viewModel.eggCount.value >= 5) 5 else viewModel.eggCount.value)
                 destroy()
             }
         }, 15000)
@@ -96,7 +92,18 @@ class FloatingFood(
 
 class FloatingWindow(
     windowModule: FloatingWindowModule,
-    movementModule: MovementModule,
+    movementModule: MovementModule
+): FloatingComponent(windowModule, movementModule) {}
+
+class FloatingPrints(
+    windowModule: FloatingWindowModule,
+    movementModule: MovementModule? = null,
     receiver: ResultReceiver? = null
 ): FloatingComponent(windowModule, movementModule, receiver) {
+
+    fun expirePrints() {
+        Handler().postDelayed( {
+            destroy()
+        }, 10000)
+    }
 }

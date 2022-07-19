@@ -35,6 +35,13 @@ android {
         enabled = true
     }
     namespace 'com.example.greedygoose'
+    sourceSets {
+        main {
+            assets {
+                srcDirs 'src\\main\\assets'
+            }
+        }
+    }
 }
 
 dependencies {

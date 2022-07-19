@@ -26,10 +26,11 @@ class FloatingService : LifecycleService() {
     private lateinit var viewModel: FloatingViewModel
     private lateinit var floatingFactory: FloatingComponentFactory
 
-    lateinit var floatingGoose: FloatingGoose
-    lateinit var floatingEgg: FloatingEgg
-    lateinit var floatingFood: FloatingFood
-    lateinit var floatingWindow: FloatingWindow
+    private lateinit var floatingGoose: FloatingGoose
+    private lateinit var floatingEgg: FloatingEgg
+    private lateinit var floatingFood: FloatingFood
+    private lateinit var floatingWindow: FloatingWindow
+    private lateinit var floatingPrints: FloatingPrints
 
     var isAngry = false
     var isRunning = false
@@ -46,6 +47,7 @@ class FloatingService : LifecycleService() {
 
         // avoid running multiple geese
         if (!isRunning) {
+	    isRunning = true
             if (!isAngry) {
                 // run entertainment goose protocol
                 entertainmentGoose()
@@ -72,6 +74,7 @@ class FloatingService : LifecycleService() {
         layEggs()
         formFoods()
         dragWindow()
+        makePrints()
     }
 
     private fun layEggs() {
@@ -100,6 +103,7 @@ class FloatingService : LifecycleService() {
                 // use percentage to determine whether to create a food item
                 if (chance > 7 && screenOn()) {
                     floatingFood = floatingFactory.createFood(floatingGoose)
+                    (floatingFood.movementModule as DragToEatModule).setContext(applicationContext)
                     floatingFood.expireFood()
                 }
                 delay(5000)
@@ -115,7 +119,7 @@ class FloatingService : LifecycleService() {
                 val chance = Random().nextInt(10)
                 if (screenOn() && chance > 6 && floatingGoose.movementModule!!.isDraggable) {
                     val gooseParams = floatingGoose.getLocation()
-                    val gx = gooseParams!!.x
+                    val gx = gooseParams.x
                     if (gx > 250 || gx <= 50) {
                         val gooseMM = floatingGoose.movementModule!! as DragMovementModule
                         gooseMM.isDragged = true
@@ -123,7 +127,7 @@ class FloatingService : LifecycleService() {
 
                         gooseMM.walkOffScreen(if (gx > 250) "RIGHT" else "LEFT")
 
-                        floatingWindow = floatingFactory.createWindow(floatingGoose.getLocation()!!)
+                        floatingWindow = floatingFactory.createWindow(floatingGoose.getLocation())
 
                         delay(2700)
 
@@ -134,7 +138,7 @@ class FloatingService : LifecycleService() {
                             round = false,
                             dir = walkDirection
                         )
-                        floatingWindow.movementModule?.startAction(null, false, walkDirection)
+                        floatingWindow.movementModule?.startAction(false, walkDirection)
 
                         delay(85)
 
@@ -145,14 +149,36 @@ class FloatingService : LifecycleService() {
         }
     }
 
+    private fun makePrints(){
+        MainScope().launch {
+            if (floatingGoose.movementModule!!.isDraggable) {
+                var chance = 1
+                while (true) {
+                    // use percentage to determine whether to lay an egg
+                    if (chance > 7 && screenOn()) {
+                        floatingGoose.getLocation()?.let {
+                            val gx = it.x
+                            val walkDirection = if (gx <= 50) Direction.LEFT else Direction.RIGHT
+                            floatingPrints = floatingFactory.createPrints(it, walkDirection)
+                            floatingPrints.expirePrints()
+                        }
+                    }
+                    delay(5000)
+                    chance = Random().nextInt(10)
+                }
+            }
+        }
+    }
+
     private fun screenOn(): Boolean {
         val powerManager = getSystemService(POWER_SERVICE) as PowerManager
         return powerManager.isInteractive
     }
 
     override fun onDestroy() {
-        floatingGoose.destroy()
-        floatingEgg.destroy()
+        if(::floatingGoose.isInitialized) floatingGoose.destroy()
+        if(::floatingEgg.isInitialized) floatingEgg.destroy()
+        if(::floatingWindow.isInitialized) floatingWindow.destroy()
         super.onDestroy()
     }
 }
