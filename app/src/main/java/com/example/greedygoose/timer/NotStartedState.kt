@@ -61,7 +61,7 @@ class NotStartedState() : TimerState {
             // TODO: Add snackbar to tell user to input a valid time
         }
         else {
-            mod.set_r_notif_manager(NotificationUtil.showTimerRunning(mod.get_timer_page_context()))
+            mod.set_r_notif_manager(NotificationUtil.showTimerRunning())
             NotificationUtil.removeNotification(TimerUtil.EXPIRED_NOTIF_ID)
 
             mod.get_service_intent().putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
