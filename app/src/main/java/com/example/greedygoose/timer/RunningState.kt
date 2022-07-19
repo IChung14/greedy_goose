@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.view.View
 import com.example.greedygoose.databinding.TimerPageBinding
-import com.example.greedygoose.mod
 
 class RunningState(context: TimerService) : TimerState(context) {
 

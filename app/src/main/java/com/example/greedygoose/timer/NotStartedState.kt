@@ -5,7 +5,6 @@ import android.content.Intent
 import android.text.format.DateUtils
 import android.view.View
 import com.example.greedygoose.databinding.TimerPageBinding
-import com.example.greedygoose.mod
 import com.example.greedygoose.timer.TimerUtil
 
 class NotStartedState(context: TimerService) : TimerState(context) {

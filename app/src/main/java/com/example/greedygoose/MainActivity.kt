@@ -5,8 +5,6 @@ import android.os.Bundle
 import com.example.greedygoose.databinding.ActivityMainBinding
 import com.example.greedygoose.ui.HomeFragment
 
-var mod: model = model()
-
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
 

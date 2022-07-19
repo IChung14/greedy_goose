@@ -11,7 +11,6 @@ import android.net.Uri
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import com.example.greedygoose.R
-import com.example.greedygoose.mod
 
 class NotificationUtil {
     companion object {

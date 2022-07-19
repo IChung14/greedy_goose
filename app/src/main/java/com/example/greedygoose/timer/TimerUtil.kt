@@ -1,6 +1,5 @@
 package com.example.greedygoose.timer
 
-import com.example.greedygoose.mod
 
 class TimerUtil {
     companion object {

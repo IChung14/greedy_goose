@@ -6,7 +6,6 @@ import android.os.IBinder
 import android.text.format.DateUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.databinding.TimerPageBinding
-import com.example.greedygoose.mod
 
 /*
 TODO:
@@ -100,7 +99,9 @@ class TimerPage : AppCompatActivity() {
             timerService.timerState.value?.showUI(binding)
 
             if (timerService.elapsedTime <= 0L) {
-                timeout()
+                NotificationUtil.showTimerExpired(this@TimerPage)
+                unbindService(connection)
+                stopService(Intent(applicationContext, TimerService::class.java))
             } else {
                 NotificationUtil.updateRunningNotification(
                     context,
@@ -108,14 +109,5 @@ class TimerPage : AppCompatActivity() {
                     timerService.elapsedTime)
             }
         }
-    }
-    private fun timeout() {
-        NotificationUtil.showTimerExpired(this)
-        stopService(Intent(applicationContext, TimerService::class.java))
-
-//                // instantiate goose with angry flag on
-//                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
-//                floatingIntent.putExtra("angry", true)
-//                this@TimerPage.startService(floatingIntent)
     }
 }
