@@ -1,11 +1,10 @@
 package com.example.greedygoose.timer
 
-import android.content.Context
-import android.content.Intent
 import android.text.format.DateUtils
 import android.view.View
-import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
+import com.google.android.material.snackbar.Snackbar
+
 
 class NotStartedState() : TimerState {
 
@@ -27,13 +26,27 @@ class NotStartedState() : TimerState {
     }
 
     override fun resetTimer() {
-        NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
-        mod.get_timer_page_context().stopService(mod.get_service_intent())
-        mod.set_elapsed_time(mod.get_set_time())
+        if (validateAndSetUserInput()) {
+            NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
+            mod.get_timer_page_context().stopService(mod.get_service_intent())
+            mod.set_elapsed_time(mod.get_set_time())
+        }
     }
 
     // Start timer
     override fun nextAction() {
+        if (validateAndSetUserInput()) {
+            mod.set_r_notif_manager(NotificationUtil.showTimerRunning())
+            NotificationUtil.removeNotification(TimerUtil.EXPIRED_NOTIF_ID)
+
+            mod.get_service_intent().putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
+            mod.get_timer_page_context().startService(mod.get_service_intent())
+
+            mod.get_timer_state_context().setState(mod.get_running_state())
+        }
+    }
+
+    private fun validateAndSetUserInput() : Boolean {
         val hrs = mod.get_binding().userInputHrs.text.toString()
         val mins = mod.get_binding().userInputMins.text.toString()
         val secs = mod.get_binding().userInputSecs.text.toString()
@@ -58,16 +71,14 @@ class NotStartedState() : TimerState {
         mod.set_set_time(elapsedHrs + elapsedMins + elapsedSecs)
 
         if (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() || mod.get_elapsed_time() == 0L) {
-            // TODO: Add snackbar to tell user to input a valid time
+            val snackbar = Snackbar
+                .make(mod.get_binding().root,
+                    "Please input a time greater than 0 sec",
+                    Snackbar.LENGTH_SHORT)
+            snackbar.show()
+            return false
         }
-        else {
-            mod.set_r_notif_manager(NotificationUtil.showTimerRunning())
-            NotificationUtil.removeNotification(TimerUtil.EXPIRED_NOTIF_ID)
-
-            mod.get_service_intent().putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
-            mod.get_timer_page_context().startService(mod.get_service_intent())
-        }
-
-        mod.get_timer_state_context().setState(mod.get_running_state())
+        return true
     }
+
 }
