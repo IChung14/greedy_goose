@@ -102,6 +102,7 @@ class FloatingService : LifecycleService() {
                 // use percentage to determine whether to create a food item
                 if (chance > 7 && screenOn()) {
                     floatingFood = floatingFactory.createFood(floatingGoose)
+                    (floatingFood.movementModule as DragToEatModule).setContext(applicationContext)
                     floatingFood.expireFood()
                 }
                 delay(5000)

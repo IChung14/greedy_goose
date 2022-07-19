@@ -1,18 +1,22 @@
 package com.example.greedygoose.foreground.movementModule
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.media.MediaPlayer
 import android.view.MotionEvent
 import android.view.View
-import android.view.WindowManager
 import com.example.greedygoose.data.Direction
 import com.example.greedygoose.foreground.ui.FloatingComponent
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
 import kotlin.math.abs
 
+
 class DragToEatModule (
     private var floatingGoose: FloatingComponent,
     windowModule: FloatingWindowModule
     ): MovementModule(windowModule) {
+
+    private lateinit var context: Context
 
     override fun run() {
         rootContainer.performClick()
@@ -54,6 +58,12 @@ class DragToEatModule (
                         if(abs(goose_params.x - new_x) <= 200 &&
                             abs(goose_params.y - new_y) <= 200){
                             destroy()
+
+                            val mediaPlayer = MediaPlayer()
+                            var afd = context.getAssets().openFd("honk.mp3")
+                            mediaPlayer.setDataSource(afd.getFileDescriptor());
+                                mediaPlayer.prepare();
+                                mediaPlayer.start();
                         }
                         return true
                     }
@@ -61,5 +71,9 @@ class DragToEatModule (
                 return false
             }
         })
+    }
+
+    fun setContext(context: Context){
+        this.context = context
     }
 }
