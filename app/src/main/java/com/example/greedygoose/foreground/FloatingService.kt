@@ -47,6 +47,7 @@ class FloatingService : LifecycleService() {
 
         // avoid running multiple geese
         if (!isRunning) {
+	    isRunning = true
             if (!isAngry) {
                 // run entertainment goose protocol
                 entertainmentGoose()
