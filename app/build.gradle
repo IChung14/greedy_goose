@@ -35,6 +35,13 @@ android {
         enabled = true
     }
     namespace 'com.example.greedygoose'
+    sourceSets {
+        main {
+            assets {
+                srcDirs 'src\\main\\assets'
+            }
+        }
+    }
 }
 
 dependencies {
@@ -47,6 +54,9 @@ dependencies {
     // navigation component
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.4'
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.4'
+
+    implementation 'androidx.preference:preference-ktx:1.2.0'
+    implementation 'androidx.lifecycle:lifecycle-service:2.3.1'
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'

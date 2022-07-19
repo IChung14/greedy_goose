@@ -5,43 +5,50 @@ import android.graphics.PixelFormat
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.WindowManager
+import androidx.annotation.DrawableRes
 import com.example.greedygoose.databinding.FloatingLayoutBinding
 
-class FloatingWindowModule(private val context: Context) {
-    var params: WindowManager.LayoutParams? = null
-    lateinit var binding: FloatingLayoutBinding
+class FloatingWindowModule(
+    context: Context,
+    @DrawableRes private var imgRes: Int? = null,
+    var params: WindowManager.LayoutParams = defaultParam()
+) {
+    var binding: FloatingLayoutBinding
         private set
-    lateinit var windowManager: WindowManager
+    var windowManager: WindowManager
 
-    fun create() {
-        if(params == null) params = defaultParam()
-        params!!.gravity = Gravity.CENTER;
+    // Set to TYPE_SYSTEM_ALERT so that the Service can display it
+
+    init {
+        params.gravity = Gravity.CENTER;
         binding = FloatingLayoutBinding.inflate(LayoutInflater.from(context))
+
+        // default image is the goose
+        imgRes?.let { binding.gooseImg.setImageResource(it) }
         windowManager = context.getSystemService(Context.WINDOW_SERVICE) as WindowManager
         windowManager.addView(binding.root, params)
     }
-
-    fun defaultParam(): WindowManager.LayoutParams{
-        return WindowManager.LayoutParams(
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            WindowManager.LayoutParams.WRAP_CONTENT,
-            windowType,
-            WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
-            PixelFormat.TRANSLUCENT
-        )
-    }
-
-    // Set to TYPE_SYSTEM_ALERT so that the Service can display it
-    private val windowType: Int
-        get() = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
 
     fun destroy() {
         try {
             windowManager.removeViewImmediate(binding.root)
         } catch (e: IllegalArgumentException) {
             e.printStackTrace()
-        } finally {
-            params = null
+        }
+    }
+
+    companion object{
+        private val windowType: Int
+            get() = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY
+
+        fun defaultParam(): WindowManager.LayoutParams{
+            return WindowManager.LayoutParams(
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                WindowManager.LayoutParams.WRAP_CONTENT,
+                windowType,
+                WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE,
+                PixelFormat.TRANSLUCENT
+            )
         }
     }
 }

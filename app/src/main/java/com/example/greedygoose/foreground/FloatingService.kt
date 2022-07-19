@@ -1,99 +1,173 @@
 package com.example.greedygoose.foreground
 
-import android.app.Service
+import android.content.Context.POWER_SERVICE
 import android.content.Intent
-import android.os.Binder
-import android.os.IBinder
+import android.graphics.PixelFormat
+import android.os.PowerManager
+import android.view.WindowManager.LayoutParams
+import androidx.core.content.ContextCompat.getSystemService
+import androidx.lifecycle.LifecycleService
 import com.example.greedygoose.R
+import com.example.greedygoose.data.Direction
+import com.example.greedygoose.foreground.movementModule.DragMovementModule
+import com.example.greedygoose.foreground.movementModule.DragToEatModule
+import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
 import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
+import com.example.greedygoose.data.memes
+import com.example.greedygoose.data.themeMap
+import com.example.greedygoose.foreground.ui.*
+import com.example.greedygoose.foreground.ui.FloatingWindowModule.Companion.defaultParam
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.util.*
-import android.os.PowerManager
-import com.example.greedygoose.foreground.movementModule.DragMovementModule
-import com.example.greedygoose.foreground.movementModule.DragToEatModule
 
 
-class FloatingService : Service() {
+class FloatingService : LifecycleService() {
 
-    // Binder given to clients
-    private val binder = FloatingServiceBinder()
+    private lateinit var viewModel: FloatingViewModel
+    private lateinit var floatingFactory: FloatingComponentFactory
 
-    // This FloatingGoose holds 1 floating entity
-    lateinit var floatingGoose : FloatingComponent
-    lateinit var floatingEgg : FloatingComponent
-    lateinit var floatingFood: FloatingComponent
+    private lateinit var floatingGoose: FloatingGoose
+    private lateinit var floatingEgg: FloatingEgg
+    private lateinit var floatingFood: FloatingFood
+    private lateinit var floatingWindow: FloatingWindow
+    private lateinit var floatingPrints: FloatingPrints
 
-    override fun onBind(intent: Intent): IBinder {
-        floatingGoose = FloatingComponent(this@FloatingService, "GOOSE")         // construct a floating object
-            .setMovementModule {                      // making it responsive
-                DragMovementModule(
-                    it.params,
-                    it.binding.rootContainer,       // this is the view that will listen to drags
-                    it.windowManager,
-                    it.binding.root,
-                    this
-                )
-            }
-            .build()
-        layEggs()
-        formFoods()
-        return binder
+    var isAngry = false
+    var isRunning = false
+
+    override fun onCreate() {
+        super.onCreate()
+        viewModel = FloatingViewModel(applicationContext)
+        floatingFactory = FloatingComponentFactory(this, viewModel)
     }
 
-    private fun layEggs(){
-        MainScope().launch{
-            var chance = 1
-            while(true) {
-                // use percentage to determine whether to lay an egg
-                if(chance < 3 && screenOn()){
-                    floatingEgg = FloatingComponent(this@FloatingService, "EGG")
-                        .setImageResource(R.drawable.egg_small)
-                        .setWindowLayoutParams(floatingGoose.getLocation()!!)
-                        .setMovementModule {
-                            TouchDeleteModule(
-                                it.params,
-                                it.binding.rootContainer,
-                                it.windowManager,
-                                it.binding.root
-                            )
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        val wasAngry = isAngry
+        isAngry = intent?.getBooleanExtra("angry", false) == true
+
+        // avoid running multiple geese
+        if (!isRunning) {
+            isRunning = true
+            if (!isAngry) {
+                // run entertainment goose protocol
+                entertainmentGoose()
+            } else {
+                TODO("EXECUTE ANGRY GOOSE PROTOCOL!")
+            }
+        } else if (isAngry && !wasAngry) {
+            TODO("MAKE EXISTING GOOSE ANGRY!")
+        }
+
+        return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun entertainmentGoose() {
+
+        // construct a floating object
+        floatingGoose = floatingFactory.createGoose()
+        viewModel.theme.observe(this) {
+            themeMap[it]?.get(viewModel.action.value)?.let { actionImgSrc ->
+                floatingGoose.windowModule.binding.gooseImg.setImageResource(actionImgSrc)
+            }
+        }
+
+        layEggs()
+        formFoods()
+        dragWindow()
+        makePrints()
+    }
+
+    private fun layEggs() {
+        MainScope().launch {
+            if (floatingGoose.movementModule!!.isDraggable) {
+                var chance = 4
+                while (true) {
+                    // use percentage to determine whether to lay an egg
+                    if (chance < 3 && screenOn()) {
+                        floatingGoose.getLocation()?.let {
+                            floatingEgg = floatingFactory.createEgg(it)
+                            floatingEgg.expireEgg()
                         }
-                        .build()
-                    floatingEgg.delete_egg()
+                    }
+                    delay(5000)
+                    chance = Random().nextInt(10)
+                }
+            }
+        }
+    }
+
+    private fun formFoods() {
+        MainScope().launch {
+            var chance = 1
+            while (true) {
+                // use percentage to determine whether to create a food item
+                if (chance > 7 && screenOn()) {
+                    floatingFood = floatingFactory.createFood(floatingGoose)
+                    (floatingFood.movementModule as DragToEatModule).setContext(applicationContext)
+                    floatingFood.expireFood()
                 }
                 delay(5000)
-
                 chance = Random().nextInt(10)
             }
         }
     }
 
-    private fun formFoods(){
+    private fun dragWindow() {
         MainScope().launch {
-            var chance = 1
             while (true) {
-                if(chance > 7 && screenOn()) {
-                    var x = Random().nextInt(1000) - 500
-                    var y = Random().nextInt(1000) - 500
-                    floatingFood = FloatingComponent(this@FloatingService, "FOOD")
-                        .setImageResource(R.drawable.bbt)
-                        .setWindowLayoutParams(x, y)
-                        .setMovementModule {
-                            DragToEatModule(
-                                it.params,
-                                it.binding.rootContainer,
-                                it.windowManager,
-                                it.binding.root,
-                                floatingGoose
-                            )
-                        }
-                    floatingFood.build()
-                    floatingFood.delete_food()
+                // use percentage to determine whether to drag a window out
+                val chance = Random().nextInt(10)
+                if (screenOn() && chance > 6 && floatingGoose.movementModule!!.isDraggable) {
+                    val gooseParams = floatingGoose.getLocation()
+                    val gx = gooseParams.x
+                    if (gx > 250 || gx <= 50) {
+                        val gooseMM = floatingGoose.movementModule!! as DragMovementModule
+                        gooseMM.isDragged = true
+                        gooseMM.isDraggable = false
+
+                        gooseMM.walkOffScreen(if (gx > 250) "RIGHT" else "LEFT")
+
+                        floatingWindow = floatingFactory.createWindow(floatingGoose.getLocation())
+
+                        delay(2700)
+
+                        val walkDirection = if (gx <= 50) Direction.LEFT else Direction.RIGHT
+                        gooseMM.randomWalk(
+                            floatingGoose.windowModule,
+                            is_meme = true,
+                            round = false,
+                            dir = walkDirection
+                        )
+                        floatingWindow.movementModule?.startAction(false, walkDirection)
+
+                        delay(85)
+
+                    }
                 }
                 delay(5000)
+            }
+        }
+    }
 
-                chance = Random().nextInt(10)
+    private fun makePrints(){
+        MainScope().launch {
+            if (floatingGoose.movementModule!!.isDraggable) {
+                var chance = 1
+                while (true) {
+                    // use percentage to determine whether to lay an egg
+                    if (chance > 7 && screenOn()) {
+                        floatingGoose.getLocation()?.let {
+                            val gx = it.x
+                            val walkDirection = if (gx <= 50) Direction.LEFT else Direction.RIGHT
+                            floatingPrints = floatingFactory.createPrints(it, walkDirection)
+                            floatingPrints.expirePrints()
+                        }
+                    }
+                    delay(5000)
+                    chance = Random().nextInt(10)
+                }
             }
         }
     }
@@ -104,13 +178,9 @@ class FloatingService : Service() {
     }
 
     override fun onDestroy() {
-        floatingGoose.destroy()
-        floatingEgg.destroy()
+        if(::floatingGoose.isInitialized) floatingGoose.destroy()
+        if(::floatingEgg.isInitialized) floatingEgg.destroy()
+        if(::floatingWindow.isInitialized) floatingWindow.destroy()
         super.onDestroy()
-    }
-
-    inner class FloatingServiceBinder : Binder() {
-        // Return this instance of LocalService so clients can call public methods
-        fun getService(): FloatingService = this@FloatingService
     }
 }
