@@ -14,11 +14,7 @@ import java.util.*
 
 class TimerService : Service() {
     private val binder = TimerBinder()
-    private var timer: Timer? = null
-
-    var setTime = 0L
-    var elapsedTime = MutableLiveData(0L)
-    var timerState:MutableLiveData<TimerState> = MutableLiveData(NotStartedState(this))
+    val stateTimer = StateTimer(this)
 
     override fun onCreate() {
         super.onCreate()
@@ -28,48 +24,25 @@ class TimerService : Service() {
     override fun onBind(intent: Intent): IBinder = binder
 
     override fun onDestroy() {
-        timer?.cancel()
         unregisterReceiver(notificationReceiver)
         super.onDestroy()
     }
 
-    fun pauseTimer(){
-        timer?.cancel()
-    }
-    fun resumeTimer(){
-        timer = Timer()
-        timer?.scheduleAtFixedRate(TimeTask(elapsedTime.value ?: 0L), 1000, 1000)
-    }
-    private fun progressState(){
-        timerState.postValue(timerState.value?.nextAction())
-    }
-
     fun onTimerStartPressed(elapsedHrs: Long, elapsedMins: Long, elapsedSecs: Long){
-        if(timerState.value is NotStartedState){
-            setTime = elapsedHrs + elapsedMins + elapsedSecs
-            elapsedTime.value = elapsedHrs + elapsedMins + elapsedSecs
-        }
-        progressState()
+        stateTimer.initTimer(elapsedHrs, elapsedMins, elapsedSecs)
+        stateTimer.next()
     }
 
     // also called when alarm is stopped
     fun onTimerResetPressed(){
-        timerState.value = timerState.value?.resetTimer()
+        stateTimer.reset()
     }
 
     fun snoozeAlarm() {
-        elapsedTime.value = 300000L
-        progressState()
+        stateTimer.setElapsedTime(300000L)
+        stateTimer.next()
     }
 
-    fun getTime(): Triple<String, String, String> {
-        val eTime = elapsedTime.value!!
-        val hr = eTime/1000/3600
-        val min = (eTime/1000 - hr*3600) / 60
-        val sec = (eTime/1000) % 60
-
-        return Triple(hr.toString(), min.toString(), sec.toString())
-    }
 
     private val notificationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent)
@@ -83,24 +56,6 @@ class TimerService : Service() {
                     NotificationUtil.removeNotification(context, 1)
                     onTimerResetPressed()
                 }
-            }
-        }
-    }
-
-    private inner class TimeTask(private var time: Long) : TimerTask() {
-        override fun run() {
-            time -= 1000
-            elapsedTime.postValue(time)
-
-            if (time <= 0L) {
-                NotificationUtil.showTimerExpired(this@TimerService)
-                progressState()
-            } else {
-                NotificationUtil.updateRunningNotification(
-                    this@TimerService,
-                    "Timer is running",
-                    time
-                )
             }
         }
     }

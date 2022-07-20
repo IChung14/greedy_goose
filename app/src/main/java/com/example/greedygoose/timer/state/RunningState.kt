@@ -3,14 +3,15 @@ package com.example.greedygoose.timer.state
 import android.view.View
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.timer.NotificationUtil
+import com.example.greedygoose.timer.StateTimer
 import com.example.greedygoose.timer.TimerService
 
-class RunningState(context: TimerService) : TimerState(context) {
+class RunningState(context: TimerService, stateTimer: StateTimer) : TimerState(context, stateTimer) {
 
     override fun showUI(binding: TimerPageBinding) {
         binding.startBtn.text = "PAUSE"
 
-        binding.timerText.text = TimerService.getTimeString(context.getTime())
+        binding.timerText.text = TimerService.getTimeString(stateTimer.getTime())
 
         binding.userInputHrs.visibility = View.INVISIBLE
         binding.userInputMins.visibility = View.INVISIBLE
@@ -23,10 +24,10 @@ class RunningState(context: TimerService) : TimerState(context) {
         NotificationUtil.updateRunningNotification(
             context,
             "Timer is paused",
-            context.elapsedTime.value ?: 0L
+            stateTimer.elapsedTime.value ?: 0L
         )
-        context.pauseTimer()
+        stateTimer.pauseTimer()
 
-        return PausedState(context)
+        return PausedState(context, stateTimer)
     }
 }

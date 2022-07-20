@@ -33,11 +33,11 @@ class TimerPage : AppCompatActivity() {
             timerService = binder.getService()
             timerBound = true
 
-            timerService.timerState.observe(this@TimerPage){
+            timerService.stateTimer.timerState.observe(this@TimerPage){
                 it.showUI(binding)
             }
-            timerService.elapsedTime.observe(this@TimerPage){
-                timerService.timerState.value?.showUI(binding)
+            timerService.stateTimer.elapsedTime.observe(this@TimerPage){
+                timerService.stateTimer.timerState.value?.showUI(binding)
             }
         }
 
