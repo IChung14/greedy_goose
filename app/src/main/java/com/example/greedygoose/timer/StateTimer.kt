@@ -6,7 +6,7 @@ import com.example.greedygoose.timer.state.NotStartedState
 import com.example.greedygoose.timer.state.TimerState
 import java.util.*
 
-class StateTimer(val context: TimerService) {
+class StateTimer(val context: TimerService, val onExpire:()->Unit) {
     private var timer: Timer? = null
 
     private var setTime = 0L
@@ -61,6 +61,7 @@ class StateTimer(val context: TimerService) {
             if (time <= 0L) {
                 NotificationUtil.showTimerExpired(context)
                 progressState()
+		onExpire()
             } else {
                 NotificationUtil.updateRunningNotification(
                     context,
