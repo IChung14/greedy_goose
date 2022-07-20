@@ -2,7 +2,6 @@ package com.example.greedygoose.data
 
 import android.content.Context
 import android.preference.PreferenceManager
-import androidx.lifecycle.LiveData
 import com.example.greedygoose.R
 
 const val DEFAULT_EGG_COUNT = 100
@@ -58,10 +57,6 @@ val memes: List<Int> = listOf(
     R.drawable.meme_1, R.drawable.meme_2, R.drawable.meme_3, R.drawable.meme_4,
     R.drawable.meme_5, R.drawable.meme_6, R.drawable.meme_7
 )
-
-enum class TimerState {
-    NOT_STARTED, RUNNING, PAUSED
-}
 
 enum class Action {
     ANGRY_LEFT, ANGRY_LEFT2, ANGRY_RIGHT, ANGRY_RIGHT2, BEHIND_LEFT, BEHIND_LEFT2, BEHIND_RIGHT,

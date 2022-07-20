@@ -1,10 +1,6 @@
 package com.example.greedygoose.timer
 
-import android.content.Context
-import android.content.Intent
 import androidx.lifecycle.MutableLiveData
-import com.example.greedygoose.data.GooseState
-import com.example.greedygoose.foreground.FloatingService
 import com.example.greedygoose.timer.state.NotStartedState
 import com.example.greedygoose.timer.state.TimerState
 import java.util.*

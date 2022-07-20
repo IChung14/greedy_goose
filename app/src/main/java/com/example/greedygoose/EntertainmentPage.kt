@@ -10,7 +10,6 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.foreground.FloatingService
 
 
-//TODO: consider converting it into a fragment and get viewModel from mainActivity
 class EntertainmentPage : AppCompatActivity() {
 
     private lateinit var binding: EntertainmentBinding

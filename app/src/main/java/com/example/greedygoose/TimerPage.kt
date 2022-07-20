@@ -9,15 +9,6 @@ import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.timer.TimerService
 import com.google.android.material.snackbar.Snackbar
 
-/*
-TODO:
-1. Problem: Set time to 0 and start it
-2. Problem: Reset or start timer when 0
-3. When user exits app, remove all notifs
-4. When user clicks on notification timer
-5. Add snackbar when invalid user input (0s or empty)
-*/
-
 class TimerPage : AppCompatActivity() {
 
     private lateinit var binding: TimerPageBinding

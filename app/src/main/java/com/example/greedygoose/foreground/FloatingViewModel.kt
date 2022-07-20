@@ -1,6 +1,5 @@
 package com.example.greedygoose.foreground
 
-import android.app.Service
 import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel

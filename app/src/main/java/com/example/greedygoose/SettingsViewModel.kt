@@ -5,8 +5,6 @@ import androidx.annotation.DrawableRes
 import androidx.lifecycle.ViewModel
 import com.example.greedygoose.data.SPLDAccessModel
 import com.example.greedygoose.data.Theme
-import java.lang.Math.random
-import kotlin.random.Random
 
 class SettingsViewModel(context: Context): ViewModel() {
     private val model = SPLDAccessModel(context = context)

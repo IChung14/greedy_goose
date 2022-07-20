@@ -1,7 +1,6 @@
 package com.example.greedygoose.foreground.movementModule
 
 import android.animation.*
-import android.view.View
 import android.view.WindowManager
 import com.example.greedygoose.data.Direction
 import com.example.greedygoose.foreground.ui.FloatingWindowModule
