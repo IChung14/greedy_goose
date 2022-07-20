@@ -5,6 +5,7 @@ import android.animation.*
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context.POWER_SERVICE
+import android.media.MediaPlayer
 import android.os.PowerManager
 import android.util.DisplayMetrics
 import android.view.*
@@ -191,10 +192,15 @@ class DragMovementModule(
             }
         }
 
-        animator?.duration = Random().nextInt(2000).toLong() + 2500
-        if (is_meme == true) {
+        // change the speed of the walk depending on the mode
+        if(is_meme == true){
             animator?.duration = 2000
+        } else if (viewModel.appMode.value == GooseState.PROD_GOOSE){
+            animator?.duration = Random().nextInt(2000).toLong() + 1000
+        } else {
+            animator?.duration = Random().nextInt(2000).toLong() + 2500
         }
+
         animator?.start()
     }
 
@@ -266,6 +272,12 @@ class DragMovementModule(
     }
 
     private fun gooseSit(direction: Direction){
+        val mediaPlayer = MediaPlayer()
+        var afd = context?.getAssets()?.openFd("honk.mp3")
+        mediaPlayer.setDataSource(afd?.getFileDescriptor())
+        mediaPlayer.prepare()
+        mediaPlayer.start()
+
         // After walking, make the goose sit sometimes
         viewModel.action.value = if (Random().nextInt(10) > 5) {
             if (direction == Direction.LEFT) Action.SITTING_LEFT
