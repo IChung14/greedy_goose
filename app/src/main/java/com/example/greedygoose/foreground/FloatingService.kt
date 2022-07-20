@@ -32,8 +32,8 @@ class FloatingService : LifecycleService() {
     private lateinit var floatingWindow: FloatingWindow
     private lateinit var floatingPrints: FloatingPrints
 
-    var isAngry = false
     var isRunning = false
+    var globalFlag: Int = 0
 
     override fun onCreate() {
         super.onCreate()
@@ -42,53 +42,51 @@ class FloatingService : LifecycleService() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        val wasAngry = isAngry
-        isAngry = intent?.getBooleanExtra("angry", false) == true
 
-        // avoid running multiple geese
-        if (!isRunning) {
-            if (!isAngry) {
-                // run entertainment goose protocol
-                entertainmentGoose()
-            } else {
-                productivityGoose()
-            }
-        } else if (isAngry && !wasAngry) {
-            TODO("MAKE EXISTING GOOSE ANGRY!")
+        // set the flags to constants for now, but will be passed into function containing correct activity
+        globalFlag = intent?.getIntExtra("flags", 0)!!
+
+        // set the flag in the view model for the movementModules to access it
+        // observe this in the movementModule to make decisions about speed etc.
+        //viewModel.flag = flags_fake
+
+        if(globalFlag == 1){
+            // KILL_GOOSE, when timer is snoozed or killed for good
+            // may need to update destroy to cleanly end jobs
+            floatingGoose.destroy()
+            isRunning = false
+
+        } else if ((globalFlag == 2) || (globalFlag == 3)){
+            // PROD_GOOSE, when timer goes off or is resumed after snoozing
+            // ENT_GOOSE, when goose should begin entertainment mode
+            runGoose()
         }
 
         return super.onStartCommand(intent, flags, startId)
     }
 
-    private fun  productivityGoose() {
-        println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        println("TIMER WENT OFF");
-        println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-        floatingGoose.destroy()
-//        this.onDestroy()
-    }
-
-    private fun entertainmentGoose() {
-
-        // construct a floating object
-        floatingGoose = floatingFactory.createGoose()
-        viewModel.theme.observe(this) {
-            themeMap[it]?.get(viewModel.action.value)?.let { actionImgSrc ->
-                floatingGoose.windowModule.binding.gooseImg.setImageResource(actionImgSrc)
+    private fun runGoose(){
+        if (!isRunning) {
+            isRunning = true
+            // construct a floating object
+            floatingGoose = floatingFactory.createGoose()
+            viewModel.theme.observe(this) {
+                themeMap[it]?.get(viewModel.action.value)?.let { actionImgSrc ->
+                    floatingGoose.windowModule.binding.gooseImg.setImageResource(actionImgSrc)
+                }
             }
+            layEggs()
+            formFoods()
+            dragWindow()
+            makePrints()
         }
-
-        layEggs()
-        formFoods()
-        dragWindow()
-        makePrints()
     }
 
     private fun layEggs() {
         MainScope().launch {
             if (floatingGoose.movementModule!!.isDraggable) {
                 var chance = 4
-                while (true) {
+                while (globalFlag == 3) {
                     // use percentage to determine whether to lay an egg
                     if (chance < 3 && screenOn()) {
                         floatingGoose.getLocation()?.let {
@@ -106,7 +104,7 @@ class FloatingService : LifecycleService() {
     private fun formFoods() {
         MainScope().launch {
             var chance = 1
-            while (true) {
+            while (globalFlag == 3) {
                 // use percentage to determine whether to create a food item
                 if (chance > 7 && screenOn()) {
                     floatingFood = floatingFactory.createFood(floatingGoose)

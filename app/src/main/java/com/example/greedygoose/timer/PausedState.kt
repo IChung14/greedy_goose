@@ -8,7 +8,7 @@ import com.example.greedygoose.mod
 
 class PausedState (): TimerState {
     override fun showUI() {
-        NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
+        NotificationUtil.updateRunningNotification("Timer is paused")
 
         mod.get_binding().startBtn.text = "RESUME"
 

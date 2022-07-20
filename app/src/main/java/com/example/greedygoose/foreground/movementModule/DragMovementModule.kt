@@ -57,8 +57,11 @@ class DragMovementModule(
             delay(2000)
             while (true) {
                 if (!isAlive) {
+                    println("Job died %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
                     break;
                 }
+//                println("lopoppp")
+                println(isAlive)
                 if (powerManager.isInteractive) {
                     if (!isDragged) {
                         randomWalk(windowModule,
