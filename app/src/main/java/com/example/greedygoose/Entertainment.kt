@@ -33,6 +33,7 @@ class Entertainment : AppCompatActivity() {
     private fun startFloatingService(){
         if (Settings.canDrawOverlays(this)) {
             val intent = Intent(this, FloatingService::class.java)
+            //TODO: pass ENT_GOOSE to FloatingService
             this.startService(intent)
         }
     }
