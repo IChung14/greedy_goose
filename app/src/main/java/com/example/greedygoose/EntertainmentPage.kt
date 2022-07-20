@@ -28,6 +28,14 @@ class EntertainmentPage : AppCompatActivity() {
         setContentView(binding.root)
 
         startFloatingService()
+
+        val stopButton = binding.stopEntBtn
+        stopButton.setOnClickListener {
+            val intent = Intent(this, FloatingService::class.java)
+            intent.putExtra("flags", 1)
+            intent.putExtra("entertainment", 1)
+            this.startService(intent)
+        }
     }
 
     private fun startFloatingService(){

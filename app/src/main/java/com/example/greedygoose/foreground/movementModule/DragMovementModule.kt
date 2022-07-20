@@ -303,11 +303,13 @@ class DragMovementModule(
     }
 
     private fun gooseSit(direction: Direction) {
-        val mediaPlayer = MediaPlayer()
-        var afd = context?.getAssets()?.openFd("honk.mp3")
-        mediaPlayer.setDataSource(afd?.getFileDescriptor())
-        mediaPlayer.prepare()
-        mediaPlayer.start()
+        if (viewModel.appMode.value == GooseState.PROD_GOOSE) {
+            val mediaPlayer = MediaPlayer()
+            var afd = context?.getAssets()?.openFd("honk.mp3")
+            mediaPlayer.setDataSource(afd?.getFileDescriptor())
+            mediaPlayer.prepare()
+            mediaPlayer.start()
+        }
         // After walking, make the goose sit sometimes
         viewModel.action.value = if (Random().nextInt(10) > 5) {
             if (direction == Direction.LEFT) Action.SITTING_LEFT
