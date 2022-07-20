@@ -104,8 +104,9 @@ class TimerPage : AppCompatActivity() {
 
             if (timerService.elapsedTime <= 0L) {
                 NotificationUtil.showTimerExpired(this@TimerPage)
-                unbindService(connection)
-                stopService(Intent(applicationContext, TimerService::class.java))
+                timerService.timer.cancel()
+//                unbindService(connection)
+//                stopService(Intent(applicationContext, TimerService::class.java))
             } else {
                 NotificationUtil.updateRunningNotification(
                     context,

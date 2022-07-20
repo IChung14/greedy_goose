@@ -8,11 +8,12 @@ import android.content.IntentFilter
 import android.os.Binder
 import android.os.IBinder
 import androidx.lifecycle.MutableLiveData
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.util.*
 
 class TimerService : Service() {
     private val binder = TimerBinder()
-    private val timer = Timer()
+    lateinit var timer: Timer
 
     var setTime = 0L
     var elapsedTime = 0L
@@ -27,6 +28,7 @@ class TimerService : Service() {
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val time = intent.getLongExtra(TIME_EXTRA, 0L)
+        timer = Timer()
         timer.scheduleAtFixedRate(TimeTask(time), 1000, 1000)
         return START_NOT_STICKY
     }
@@ -63,6 +65,22 @@ class TimerService : Service() {
         return Triple(hr.toString(), min.toString(), sec.toString())
     }
 
+    private val notificationReceiver = object : BroadcastReceiver() {
+        override fun onReceive(context: Context, intent: Intent)
+        {
+            when (intent.getStringExtra(NOTIF_EXTRA)) {
+                ACTION_SNOOZE -> {
+                    NotificationUtil.removeNotification(context, 1)
+                    this@TimerService.snoozeAlarm()
+                }
+                ACTION_STOP -> {
+                    NotificationUtil.removeNotification(context, 1)
+                    onTimerResetPressed()
+                }
+            }
+        }
+    }
+
     private inner class TimeTask(private var time: Long) : TimerTask() {
         override fun run() {
             val intent = Intent(TIMER_UPDATED)
@@ -77,28 +95,12 @@ class TimerService : Service() {
         fun getService(): TimerService = this@TimerService
     }
 
-
-
-    private val notificationReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent)
-        {
-            when (intent.action) {
-                ACTION_SNOOZE -> {
-                    NotificationUtil.removeNotification(context, 1)
-                    this@TimerService.snoozeAlarm()
-                }
-                ACTION_STOP -> {
-                    NotificationUtil.removeNotification(context, 1)
-                    onTimerResetPressed()
-                }
-            }
-        }
-    }
-
     companion object {
         const val TIMER_UPDATED = "timerUpdated"
         const val TIME_EXTRA = "timeExtra"
+
         const val NOTIF_ACTION = "notificationAction"
+        const val NOTIF_EXTRA = "notificationExtra"
         const val ACTION_STOP = "stop"
         const val ACTION_SNOOZE = "snooze"
     }

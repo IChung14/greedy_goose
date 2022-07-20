@@ -37,16 +37,16 @@ class NotificationUtil {
             removeNotification(context, TimerUtil.RUNNING_NOTIF_ID)
 
             val snoozeIntent = Intent(TimerService.NOTIF_ACTION)
-            snoozeIntent.action = TimerService.ACTION_SNOOZE
+            snoozeIntent.putExtra(TimerService.NOTIF_EXTRA, TimerService.ACTION_SNOOZE)
             val stopIntent = Intent(TimerService.NOTIF_ACTION)
-            stopIntent.action = TimerService.ACTION_STOP
+            stopIntent.putExtra(TimerService.NOTIF_EXTRA, TimerService.ACTION_STOP)
 
             val flag = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
 
             val snoozePendingIntent = PendingIntent.getBroadcast(context,
                 0, snoozeIntent, flag)
             val stopPendingIntent = PendingIntent.getBroadcast(context,
-                0, stopIntent, flag)
+                1, stopIntent, flag)
 
             val notifBuilder = getNotificationBuilder(
                 context, EXPIRED_CHANNEL_ID, true)
