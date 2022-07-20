@@ -1,11 +1,7 @@
 package com.example.greedygoose.timer
 
-import android.content.Context
-import android.content.Intent
-import android.text.format.DateUtils
 import android.view.View
 import com.example.greedygoose.databinding.TimerPageBinding
-import com.example.greedygoose.timer.TimerUtil
 
 class NotStartedState(context: TimerService) : TimerState(context) {
 
@@ -27,11 +23,8 @@ class NotStartedState(context: TimerService) : TimerState(context) {
     // Start timer
     // next action is Running State
     override fun nextAction(): TimerState {
-        NotificationUtil.removeNotification(context, TimerUtil.EXPIRED_NOTIF_ID)
-
-        val intent = Intent(context, TimerService::class.java)
-        intent.putExtra(TimerService.TIME_EXTRA, context.elapsedTime)
-        context.startService(intent)
+        NotificationUtil.removeNotification(context, TimerService.EXPIRED_NOTIF_ID)
+        context.resumeTimer()
 
         return RunningState(context)
     }

@@ -8,15 +8,14 @@ import android.content.IntentFilter
 import android.os.Binder
 import android.os.IBinder
 import androidx.lifecycle.MutableLiveData
-import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import java.util.*
 
 class TimerService : Service() {
     private val binder = TimerBinder()
-    lateinit var timer: Timer
+    private var timer: Timer? = null
 
     var setTime = 0L
-    var elapsedTime = 0L
+    var elapsedTime = MutableLiveData(0L)
     var timerState:MutableLiveData<TimerState> = MutableLiveData(NotStartedState(this))
 
     override fun onCreate() {
@@ -26,25 +25,29 @@ class TimerService : Service() {
 
     override fun onBind(intent: Intent): IBinder = binder
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-        val time = intent.getLongExtra(TIME_EXTRA, 0L)
-        timer = Timer()
-        timer.scheduleAtFixedRate(TimeTask(time), 1000, 1000)
-        return START_NOT_STICKY
-    }
-
     override fun onDestroy() {
-        timer.cancel()
+        timer?.cancel()
         unregisterReceiver(notificationReceiver)
         super.onDestroy()
+    }
+
+    fun pauseTimer(){
+        timer?.cancel()
+    }
+    fun resumeTimer(){
+        timer = Timer()
+        timer?.scheduleAtFixedRate(TimeTask(elapsedTime.value ?: 0L), 1000, 1000)
+    }
+    private fun progressState(){
+        timerState.postValue(timerState.value?.nextAction())
     }
 
     fun onTimerStartPressed(elapsedHrs: Long, elapsedMins: Long, elapsedSecs: Long){
         if(timerState.value is NotStartedState){
             setTime = elapsedHrs + elapsedMins + elapsedSecs
-            elapsedTime = elapsedHrs + elapsedMins + elapsedSecs
+            elapsedTime.value = elapsedHrs + elapsedMins + elapsedSecs
         }
-        timerState.value = timerState.value?.nextAction()
+        progressState()
     }
 
     // also called when alarm is stopped
@@ -53,14 +56,15 @@ class TimerService : Service() {
     }
 
     fun snoozeAlarm() {
-        elapsedTime = 300000L
-        timerState.value = RunningState(this)
+        elapsedTime.value = 300000L
+        progressState()
     }
 
     fun getTime(): Triple<String, String, String> {
-        val hr = elapsedTime/1000/3600
-        val min = (elapsedTime/1000 - hr*3600) / 60
-        val sec = (elapsedTime/1000) % 60
+        val eTime = elapsedTime.value!!
+        val hr = eTime/1000/3600
+        val min = (eTime/1000 - hr*3600) / 60
+        val sec = (eTime/1000) % 60
 
         return Triple(hr.toString(), min.toString(), sec.toString())
     }
@@ -83,10 +87,19 @@ class TimerService : Service() {
 
     private inner class TimeTask(private var time: Long) : TimerTask() {
         override fun run() {
-            val intent = Intent(TIMER_UPDATED)
-            time-=1000
-            intent.putExtra(TIME_EXTRA, time)
-            sendBroadcast(intent)
+            time -= 1000
+            elapsedTime.postValue(time)
+
+            if (time <= 0L) {
+                NotificationUtil.showTimerExpired(this@TimerService)
+                progressState()
+            } else {
+                NotificationUtil.updateRunningNotification(
+                    this@TimerService,
+                    "Timer is running",
+                    time
+                )
+            }
         }
     }
 
@@ -96,12 +109,17 @@ class TimerService : Service() {
     }
 
     companion object {
-        const val TIMER_UPDATED = "timerUpdated"
-        const val TIME_EXTRA = "timeExtra"
+        const val RUNNING_NOTIF_ID = 0
+        const val EXPIRED_NOTIF_ID = 1
 
         const val NOTIF_ACTION = "notificationAction"
         const val NOTIF_EXTRA = "notificationExtra"
         const val ACTION_STOP = "stop"
         const val ACTION_SNOOZE = "snooze"
+
+        fun getTimeString(time: Triple<String, String, String>): String {
+            return String.format("%02d:%02d:%02d", time.first.toInt(), time.second.toInt(),
+                time.third.toInt())
+        }
     }
 }

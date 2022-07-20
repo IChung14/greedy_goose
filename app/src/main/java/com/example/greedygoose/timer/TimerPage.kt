@@ -19,7 +19,6 @@ TODO:
 class TimerPage : AppCompatActivity() {
 
     private lateinit var binding: TimerPageBinding
-    private lateinit var viewModel: TimerViewModel
 
     private lateinit var timerService: TimerService
     private var timerBound: Boolean = false
@@ -35,6 +34,9 @@ class TimerPage : AppCompatActivity() {
             timerService.timerState.observe(this@TimerPage){
                 it.showUI(binding)
             }
+            timerService.elapsedTime.observe(this@TimerPage){
+                timerService.timerState.value?.showUI(binding)
+            }
         }
 
         override fun onServiceDisconnected(arg0: ComponentName) {
@@ -44,8 +46,6 @@ class TimerPage : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        viewModel = TimerViewModel()
 
         binding = TimerPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
@@ -57,7 +57,6 @@ class TimerPage : AppCompatActivity() {
             Context.BIND_AUTO_CREATE
         )
 
-        registerReceiver(updateTime, IntentFilter(TimerService.TIMER_UPDATED))
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
         // maybe first call
@@ -96,23 +95,4 @@ class TimerPage : AppCompatActivity() {
         super.onDestroy()
     }
 
-    private val updateTime: BroadcastReceiver = object : BroadcastReceiver() {
-        override fun onReceive(context: Context, intent: Intent)
-        {
-            timerService.elapsedTime = intent.getLongExtra(TimerService.TIME_EXTRA, 0L)
-            timerService.timerState.value?.showUI(binding)
-
-            if (timerService.elapsedTime <= 0L) {
-                NotificationUtil.showTimerExpired(this@TimerPage)
-                timerService.timer.cancel()
-//                unbindService(connection)
-//                stopService(Intent(applicationContext, TimerService::class.java))
-            } else {
-                NotificationUtil.updateRunningNotification(
-                    context,
-                    "Timer is running",
-                    timerService.elapsedTime)
-            }
-        }
-    }
 }

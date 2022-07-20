@@ -10,7 +10,7 @@ class RunningState(context: TimerService) : TimerState(context) {
     override fun showUI(binding: TimerPageBinding) {
         binding.startBtn.text = "PAUSE"
 
-        binding.timerText.text = TimerUtil.getTimeString(context.getTime())
+        binding.timerText.text = TimerService.getTimeString(context.getTime())
 
         binding.userInputHrs.visibility = View.INVISIBLE
         binding.userInputMins.visibility = View.INVISIBLE
@@ -20,9 +20,8 @@ class RunningState(context: TimerService) : TimerState(context) {
 
     // Pause timer
     override fun nextAction(): TimerState {
-        NotificationUtil.updateRunningNotification(context,"Timer is paused", context.elapsedTime)
-        val intent = Intent(context, TimerService::class.java)
-        context.stopService(intent)
+        NotificationUtil.updateRunningNotification(context,"Timer is paused", context.elapsedTime.value ?: 0L)
+        context.pauseTimer()
 
         return PausedState(context)
     }

@@ -8,11 +8,11 @@ import com.example.greedygoose.databinding.TimerPageBinding
 class PausedState (context: TimerService) : TimerState(context) {
 
     override fun showUI(binding: TimerPageBinding) {
-        NotificationUtil.updateRunningNotification(context,"Timer is paused", context.elapsedTime)
+        NotificationUtil.updateRunningNotification(context,"Timer is paused", context.elapsedTime.value ?: 0L)
 
         binding.startBtn.text = "RESUME"
 
-        binding.timerText.text = TimerUtil.getTimeString(context.getTime())
+        binding.timerText.text = TimerService.getTimeString(context.getTime())
 
         binding.userInputHrs.visibility = View.INVISIBLE
         binding.userInputMins.visibility = View.INVISIBLE
@@ -22,9 +22,7 @@ class PausedState (context: TimerService) : TimerState(context) {
 
     // Resume timer
     override fun nextAction(): TimerState {
-        val intent = Intent(context, TimerService::class.java)
-        intent.putExtra(TimerService.TIME_EXTRA, context.elapsedTime)
-        context.startService(intent)
+        context.resumeTimer()
 
         return RunningState(context)
     }

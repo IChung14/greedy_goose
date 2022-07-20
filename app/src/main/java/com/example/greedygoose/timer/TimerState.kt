@@ -1,7 +1,5 @@
 package com.example.greedygoose.timer
 
-import android.content.Context
-import android.content.Intent
 import com.example.greedygoose.databinding.TimerPageBinding
 
 abstract class TimerState(val context: TimerService) {
@@ -9,10 +7,10 @@ abstract class TimerState(val context: TimerService) {
     abstract fun nextAction(): TimerState
 
     fun resetTimer(): TimerState {
-        NotificationUtil.removeNotification(context, TimerUtil.EXPIRED_NOTIF_ID)
-        NotificationUtil.removeNotification(context, TimerUtil.RUNNING_NOTIF_ID)
-        context.stopService(Intent(context, TimerService::class.java))
-        context.elapsedTime = context.setTime
+        NotificationUtil.removeNotification(context, TimerService.EXPIRED_NOTIF_ID)
+        NotificationUtil.removeNotification(context, TimerService.RUNNING_NOTIF_ID)
+        context.pauseTimer()
+        context.elapsedTime.value = context.setTime
 
         return NotStartedState(context)
     }

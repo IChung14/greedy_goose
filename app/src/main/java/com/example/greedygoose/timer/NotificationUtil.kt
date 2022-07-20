@@ -28,13 +28,13 @@ class NotificationUtil {
 
             val notifManager = getNotifManager(context)
             notifManager.createNotificationChannel(RUNNING_CHANNEL_ID, RUNNING_CHANNEL_NAME, false)
-            notifManager.notify(TimerUtil.RUNNING_NOTIF_ID, notifBuilder.build())
+            notifManager.notify(TimerService.RUNNING_NOTIF_ID, notifBuilder.build())
 
             return notifManager
         }
 
         fun showTimerExpired(context: Context) {
-            removeNotification(context, TimerUtil.RUNNING_NOTIF_ID)
+            removeNotification(context, TimerService.RUNNING_NOTIF_ID)
 
             val snoozeIntent = Intent(TimerService.NOTIF_ACTION)
             snoozeIntent.putExtra(TimerService.NOTIF_EXTRA, TimerService.ACTION_SNOOZE)
@@ -59,7 +59,7 @@ class NotificationUtil {
                 .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             notifManager.createNotificationChannel(EXPIRED_CHANNEL_ID, EXPIRED_CHANNEL_NAME, true)
 
-            notifManager.notify(TimerUtil.EXPIRED_NOTIF_ID, notifBuilder.build())
+            notifManager.notify(TimerService.EXPIRED_NOTIF_ID, notifBuilder.build())
         }
 
         fun updateRunningNotification(context: Context, content_title: String, elapsedTime: Long) {
@@ -73,7 +73,7 @@ class NotificationUtil {
             notifBuilder.setContentText(String.format("%02d:%02d:%02d", hr, min, sec))
             notifBuilder.setSmallIcon(R.drawable.eng_sitting_left)
 
-            getNotifManager(context).notify(TimerUtil.RUNNING_NOTIF_ID, notifBuilder.build());
+            getNotifManager(context).notify(TimerService.RUNNING_NOTIF_ID, notifBuilder.build());
         }
 
         fun removeNotification(context: Context, notif_id: Int) {
