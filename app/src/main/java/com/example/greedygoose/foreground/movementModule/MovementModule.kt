@@ -11,6 +11,7 @@ abstract class MovementModule(
     var isAlive = true
     var isDraggable = true
     var isDragged = false
+    var isFlying = false
 
     protected val baseView = windowModule.binding.root
     protected val rootContainer = windowModule.binding.rootContainer

@@ -165,7 +165,7 @@ class FloatingService : LifecycleService() {
 
     private fun makePrints(){
         MainScope().launch {
-            if (floatingGoose.movementModule!!.isDraggable) {
+            if (floatingGoose.movementModule!!.isDraggable && !floatingGoose.movementModule!!.isFlying) {
                 var chance = 1
                 while (true) {
                     // use percentage to determine whether to lay an egg
