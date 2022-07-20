@@ -14,7 +14,10 @@ import java.util.*
 
 class TimerService : Service() {
     private val binder = TimerBinder()
-    val stateTimer = StateTimer(this)
+    val stateTimer = StateTimer(this){
+	//TODO: onExpire behavior
+	// summon angry goose
+    }
 
     override fun onCreate() {
         super.onCreate()

@@ -9,7 +9,7 @@ import com.example.greedygoose.timer.state.NotStartedState
 import com.example.greedygoose.timer.state.TimerState
 import java.util.*
 
-class StateTimer(val context: TimerService) {
+class StateTimer(val context: TimerService, val onExpire:()->Unit) {
     private var timer: Timer? = null
 
     private var setTime = 0L
@@ -67,6 +67,7 @@ class StateTimer(val context: TimerService) {
                 floatingIntent.putExtra("flags", 2)
                 context.startService(floatingIntent)
                 progressState()
+		onExpire()
             } else {
                 NotificationUtil.updateRunningNotification(
                     context,
