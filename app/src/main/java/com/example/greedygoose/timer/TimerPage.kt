@@ -91,10 +91,10 @@ class TimerPage : AppCompatActivity() {
                 NotificationUtil.showTimerExpired()
                 stopService(mod.get_service_intent())
 
-//                // instantiate goose with angry flag on
-//                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
-//                floatingIntent.putExtra("angry", true)
-//                this@TimerPage.startService(floatingIntent)
+                // instantiate goose with angry flag on
+                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
+                floatingIntent.putExtra("angry", true)
+                this@TimerPage.startService(floatingIntent)
             } else {
                 NotificationUtil.updateNotification("Timer is running")
             }

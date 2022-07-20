@@ -51,13 +51,21 @@ class FloatingService : LifecycleService() {
                 // run entertainment goose protocol
                 entertainmentGoose()
             } else {
-                TODO("EXECUTE ANGRY GOOSE PROTOCOL!")
+                productivityGoose()
             }
         } else if (isAngry && !wasAngry) {
             TODO("MAKE EXISTING GOOSE ANGRY!")
         }
 
         return super.onStartCommand(intent, flags, startId)
+    }
+
+    private fun  productivityGoose() {
+        println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        println("TIMER WENT OFF");
+        println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
+        floatingGoose.destroy()
+//        this.onDestroy()
     }
 
     private fun entertainmentGoose() {

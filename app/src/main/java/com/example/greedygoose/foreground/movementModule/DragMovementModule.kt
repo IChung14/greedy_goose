@@ -52,10 +52,13 @@ class DragMovementModule(
         }
 
         // start random movements
-        MainScope().launch {
+        var job = MainScope().launch {
             val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
             delay(2000)
             while (true) {
+                if (!isAlive) {
+                    break;
+                }
                 if (powerManager.isInteractive) {
                     if (!isDragged) {
                         randomWalk(windowModule,
@@ -68,6 +71,7 @@ class DragMovementModule(
                 delay(7000)
             }
         }
+        job.cancel()
     }
 
     fun walkOffScreen(dir: String) {
