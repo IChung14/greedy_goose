@@ -7,16 +7,16 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Binder
 import android.os.IBinder
-import androidx.lifecycle.MutableLiveData
-import com.example.greedygoose.timer.state.NotStartedState
-import com.example.greedygoose.timer.state.TimerState
-import java.util.*
+import com.example.greedygoose.data.GooseState
+import com.example.greedygoose.foreground.FloatingService
 
 class TimerService : Service() {
     private val binder = TimerBinder()
     val stateTimer = StateTimer(this){
-	//TODO: onExpire behavior
-	// summon angry goose
+
+        val floatingIntent = Intent(this, FloatingService::class.java)
+        floatingIntent.putExtra("flags", 2)
+        startService(floatingIntent)
     }
 
     override fun onCreate() {
@@ -38,6 +38,12 @@ class TimerService : Service() {
 
     // also called when alarm is stopped
     fun onTimerResetPressed(){
+
+        // we kill the goose when we snooze the timer
+        val murder = Intent(this@TimerService,FloatingService::class.java)
+        murder.putExtra("flags", GooseState.KILL_GOOSE.ordinal)
+        startService(murder)
+
         stateTimer.reset()
     }
 
@@ -46,10 +52,14 @@ class TimerService : Service() {
         stateTimer.next()
     }
 
-
     private val notificationReceiver = object : BroadcastReceiver() {
         override fun onReceive(context: Context, intent: Intent)
         {
+            // we kill the goose when we snooze the timer
+            val murder = Intent(this@TimerService,FloatingService::class.java)
+            murder.putExtra("flags", GooseState.KILL_GOOSE.ordinal)
+            startService(murder)
+
             when (intent.getStringExtra(NOTIF_EXTRA)) {
                 ACTION_SNOOZE -> {
                     NotificationUtil.removeNotification(context, 1)

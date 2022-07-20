@@ -10,8 +10,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.foreground.FloatingService
 
 
-//TODO: consider converting it into a fragment and get viewModel from mainActivity
-class Entertainment : AppCompatActivity() {
+class EntertainmentPage : AppCompatActivity() {
 
     private lateinit var binding: EntertainmentBinding
 
@@ -28,12 +27,21 @@ class Entertainment : AppCompatActivity() {
         setContentView(binding.root)
 
         startFloatingService()
+
+        val stopButton = binding.stopEntBtn
+        stopButton.setOnClickListener {
+            val intent = Intent(this, FloatingService::class.java)
+            intent.putExtra("flags", 1)
+            intent.putExtra("entertainment", 1)
+            this.startService(intent)
+        }
     }
 
     private fun startFloatingService(){
         if (Settings.canDrawOverlays(this)) {
             val intent = Intent(this, FloatingService::class.java)
-            //TODO: pass ENT_GOOSE to FloatingService
+            intent.putExtra("flags", 3)
+            intent.putExtra("entertainment", 1)
             this.startService(intent)
         }
     }

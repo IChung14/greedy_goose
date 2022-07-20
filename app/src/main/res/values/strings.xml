@@ -1,6 +1,7 @@
 <resources>
     <string name="app_name">Greedy Goose</string>
     <string name="start">START</string>
+    <string name="stop">STOP</string>
     <string name="reset">RESET</string>
     <string name="app_selection">App Selection</string>
     <string name="hours">HH</string>
@@ -10,6 +11,5 @@
     <string name="textview">TextView</string>
     <string name="back_string"><![CDATA[<-]]></string>
     <string name="timer">Timer</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

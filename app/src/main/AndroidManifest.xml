@@ -35,7 +35,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Entertainment"
+            android:name=".EntertainmentPage"
             android:parentActivityName=".MainActivity" />
 
         <service android:name=".timer.TimerService" />

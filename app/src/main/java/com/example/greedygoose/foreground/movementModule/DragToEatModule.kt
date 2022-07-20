@@ -61,9 +61,9 @@ class DragToEatModule (
 
                             val mediaPlayer = MediaPlayer()
                             var afd = context.getAssets().openFd("honk.mp3")
-                            mediaPlayer.setDataSource(afd.getFileDescriptor());
-                                mediaPlayer.prepare();
-                                mediaPlayer.start();
+                            mediaPlayer.setDataSource(afd.getFileDescriptor())
+                                mediaPlayer.prepare()
+                                mediaPlayer.start()
                         }
                         return true
                     }

@@ -1,14 +1,8 @@
 package com.example.greedygoose.foreground.ui
 
-import android.content.Context
-import android.graphics.PixelFormat
-import android.os.Bundle
-import android.os.Handler
 import android.os.ResultReceiver
 import android.view.WindowManager
-import androidx.annotation.DrawableRes
 import androidx.lifecycle.LifecycleService
-import androidx.lifecycle.ViewModel
 import com.example.greedygoose.R
 import com.example.greedygoose.data.Direction
 import com.example.greedygoose.data.memes
@@ -33,8 +27,8 @@ class FloatingComponentFactory(
 
     fun createEgg(gooseParams: WindowManager.LayoutParams, receiver: ResultReceiver? = null): FloatingEgg{
         val windowModule = FloatingWindowModule(context, R.drawable.egg_small, gooseParams)
-        val movementModule = TouchDeleteModule(viewModel, windowModule)
-        return FloatingEgg(windowModule, movementModule, receiver)
+        val movementModule = TouchDeleteModule(viewModel, windowModule, ObjectType.EGG)
+        return FloatingEgg(context, windowModule, movementModule, receiver)
     }
 
     fun createFood(
@@ -72,7 +66,8 @@ class FloatingComponentFactory(
         } else{
             FloatingWindowModule(context, R.drawable.prints_left, gooseParams)
         }
+        val movementModule = TouchDeleteModule(viewModel, windowModule, ObjectType.PRINTS)
 
-        return FloatingPrints(windowModule, null, receiver)
+        return FloatingPrints(context, windowModule, movementModule, receiver)
     }
 }

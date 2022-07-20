@@ -1,6 +1,5 @@
 package com.example.greedygoose.timer
 
-import android.content.Context
 import androidx.lifecycle.MutableLiveData
 import com.example.greedygoose.timer.state.NotStartedState
 import com.example.greedygoose.timer.state.TimerState
@@ -61,7 +60,7 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
             if (time <= 0L) {
                 NotificationUtil.showTimerExpired(context)
                 progressState()
-		onExpire()
+		        onExpire()
             } else {
                 NotificationUtil.updateRunningNotification(
                     context,
