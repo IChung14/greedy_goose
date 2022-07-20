@@ -41,7 +41,8 @@ class FloatingService : LifecycleService() {
         val state = intent?.getIntExtra("flags", GooseState.NONE.ordinal)!!
         val isEntertainment = intent.getIntExtra("entertainment", 0)
 
-        globalFlag.value = if (state == 1 && globalFlag.value != GooseState.ENT_GOOSE) {
+        globalFlag.value =
+            if (state == 1 && (globalFlag.value != GooseState.ENT_GOOSE || isEntertainment == 1)) {
             GooseState.KILL_GOOSE
         } else if (state == 2) {
             GooseState.PROD_GOOSE

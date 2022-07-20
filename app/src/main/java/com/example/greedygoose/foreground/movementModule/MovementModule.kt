@@ -5,7 +5,7 @@ import com.example.greedygoose.foreground.ui.FloatingWindowModule
 import kotlinx.coroutines.Job
 
 abstract class MovementModule(
-    private val windowModule:  FloatingWindowModule
+    private val windowModule: FloatingWindowModule
 ) {
     var isAlive = true
     var isDraggable = true
@@ -26,7 +26,6 @@ abstract class MovementModule(
         try {
             windowManager.removeViewImmediate(baseView)
         } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
         } finally {
             this.isAlive = false
         }
