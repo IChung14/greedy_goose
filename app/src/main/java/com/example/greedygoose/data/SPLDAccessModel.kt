@@ -60,9 +60,10 @@ val memes: List<Int> = listOf(
 
 enum class Action {
     ANGRY_LEFT, ANGRY_LEFT2, ANGRY_RIGHT, ANGRY_RIGHT2, BEHIND_LEFT, BEHIND_LEFT2, BEHIND_RIGHT,
-    BEHIND_RIGHT2, FLYING_LEFT, FLYING_RIGHT, SITTING_LEFT, SITTING_RIGHT, WALKING_LEFT, WALKING_LEFT2,
-    WALKING_RIGHT, WALKING_RIGHT2, WINDOW_LEFT, WINDOW_RIGHT, ANGRY_LEFT_MIDDLE, ANGRY_RIGHT_MIDDLE,
-    WALKING_LEFT_MIDDLE, WALKING_RIGHT_MIDDLE
+    BEHIND_RIGHT2, FLYING_LEFT_MIDDLE, FLYING_RIGHT_MIDDLE, SITTING_LEFT, SITTING_RIGHT,
+    WALKING_LEFT, WALKING_LEFT2, WALKING_RIGHT, WALKING_RIGHT2, WINDOW_LEFT, WINDOW_RIGHT,
+    ANGRY_LEFT_MIDDLE, ANGRY_RIGHT_MIDDLE, WALKING_LEFT_MIDDLE, WALKING_RIGHT_MIDDLE, FLYING_RIGHT,
+    FLYING_RIGHT2, FLYING_LEFT, FLYING_LEFT2
 }
 
 enum class Direction {
@@ -83,8 +84,8 @@ val themeMap: HashMap<Theme, HashMap<Action, Int>> = hashMapOf(
         Action.BEHIND_LEFT2 to R.drawable.eng_behind_left2,
         Action.BEHIND_RIGHT to R.drawable.eng_behind_right,
         Action.BEHIND_RIGHT2 to R.drawable.eng_behind_right2,
-        Action.FLYING_LEFT to R.drawable.eng_flying_left,
-        Action.FLYING_RIGHT to R.drawable.eng_flying_right,
+        Action.FLYING_LEFT_MIDDLE to R.drawable.eng_flying_left2,
+        Action.FLYING_RIGHT_MIDDLE to R.drawable.eng_flying_right2,
         Action.SITTING_LEFT to R.drawable.eng_sitting_left,
         Action.SITTING_RIGHT to R.drawable.eng_sitting_right,
         Action.WALKING_LEFT to R.drawable.eng_walking_left,
@@ -97,6 +98,10 @@ val themeMap: HashMap<Theme, HashMap<Action, Int>> = hashMapOf(
         Action.ANGRY_RIGHT_MIDDLE to R.drawable.eng_angry_rightmiddle,
         Action.WALKING_LEFT_MIDDLE to R.drawable.eng_walking_leftmiddle,
         Action.WALKING_RIGHT_MIDDLE to R.drawable.eng_walking_rightmiddle,
+        Action.FLYING_RIGHT to R.drawable.eng_flying_right1,
+        Action.FLYING_RIGHT2 to R.drawable.eng_flying_right3,
+        Action.FLYING_LEFT to R.drawable.eng_flying_left1,
+        Action.FLYING_LEFT2 to R.drawable.eng_flying_left3,
     ),
     Theme.MATH to hashMapOf(
         Action.ANGRY_LEFT to R.drawable.math_angry_left,
@@ -107,8 +112,8 @@ val themeMap: HashMap<Theme, HashMap<Action, Int>> = hashMapOf(
         Action.BEHIND_LEFT2 to R.drawable.math_behind_left2,
         Action.BEHIND_RIGHT to R.drawable.math_behind_right,
         Action.BEHIND_RIGHT2 to R.drawable.math_behind_right2,
-        Action.FLYING_LEFT to R.drawable.math_flying_left,
-        Action.FLYING_RIGHT to R.drawable.math_flying_right,
+        Action.FLYING_LEFT_MIDDLE to R.drawable.math_flying_left2,
+        Action.FLYING_RIGHT_MIDDLE to R.drawable.math_flying_right2,
         Action.SITTING_LEFT to R.drawable.math_sitting_left,
         Action.SITTING_RIGHT to R.drawable.math_sitting_right,
         Action.WALKING_LEFT to R.drawable.math_walking_left,
@@ -121,6 +126,10 @@ val themeMap: HashMap<Theme, HashMap<Action, Int>> = hashMapOf(
         Action.ANGRY_RIGHT_MIDDLE to R.drawable.math_angry_rightmiddle,
         Action.WALKING_LEFT_MIDDLE to R.drawable.math_walking_leftmiddle,
         Action.WALKING_RIGHT_MIDDLE to R.drawable.math_walking_rightmiddle,
+        Action.FLYING_RIGHT to R.drawable.math_flying_right1,
+        Action.FLYING_RIGHT2 to R.drawable.math_flying_right3,
+        Action.FLYING_LEFT to R.drawable.math_flying_left1,
+        Action.FLYING_LEFT2 to R.drawable.math_flying_left3,
     ),
     Theme.SCI to hashMapOf(
         Action.ANGRY_LEFT to R.drawable.sci_angry_left,
@@ -131,8 +140,8 @@ val themeMap: HashMap<Theme, HashMap<Action, Int>> = hashMapOf(
         Action.BEHIND_LEFT2 to R.drawable.sci_behind_left2,
         Action.BEHIND_RIGHT to R.drawable.sci_behind_right,
         Action.BEHIND_RIGHT2 to R.drawable.sci_behind_right2,
-        Action.FLYING_LEFT to R.drawable.sci_flying_left,
-        Action.FLYING_RIGHT to R.drawable.sci_flying_right,
+        Action.FLYING_LEFT_MIDDLE to R.drawable.sci_flying_left2,
+        Action.FLYING_RIGHT_MIDDLE to R.drawable.sci_flying_right2,
         Action.SITTING_LEFT to R.drawable.sci_sitting_left,
         Action.SITTING_RIGHT to R.drawable.sci_sitting_right,
         Action.WALKING_LEFT to R.drawable.sci_walking_left,
@@ -145,6 +154,10 @@ val themeMap: HashMap<Theme, HashMap<Action, Int>> = hashMapOf(
         Action.ANGRY_RIGHT_MIDDLE to R.drawable.sci_angry_rightmiddle,
         Action.WALKING_LEFT_MIDDLE to R.drawable.sci_walking_leftmiddle,
         Action.WALKING_RIGHT_MIDDLE to R.drawable.sci_walking_rightmiddle,
+        Action.FLYING_RIGHT to R.drawable.sci_flying_right1,
+        Action.FLYING_RIGHT2 to R.drawable.sci_flying_right3,
+        Action.FLYING_LEFT to R.drawable.sci_flying_left1,
+        Action.FLYING_LEFT2 to R.drawable.sci_flying_left3,
     ),
     Theme.NONE to hashMapOf(
         Action.ANGRY_LEFT to R.drawable.none_angry_left,
@@ -155,8 +168,8 @@ val themeMap: HashMap<Theme, HashMap<Action, Int>> = hashMapOf(
         Action.BEHIND_LEFT2 to R.drawable.none_behind_left2,
         Action.BEHIND_RIGHT to R.drawable.none_behind_right,
         Action.BEHIND_RIGHT2 to R.drawable.none_behind_right2,
-        Action.FLYING_LEFT to R.drawable.none_flying_left,
-        Action.FLYING_RIGHT to R.drawable.none_flying_right,
+        Action.FLYING_LEFT_MIDDLE to R.drawable.none_flying_left2,
+        Action.FLYING_RIGHT_MIDDLE to R.drawable.none_flying_right2,
         Action.SITTING_LEFT to R.drawable.none_sitting_left,
         Action.SITTING_RIGHT to R.drawable.none_sitting_right,
         Action.WALKING_LEFT to R.drawable.none_walking_left,
@@ -169,5 +182,9 @@ val themeMap: HashMap<Theme, HashMap<Action, Int>> = hashMapOf(
         Action.ANGRY_RIGHT_MIDDLE to R.drawable.none_angry_rightmiddle,
         Action.WALKING_LEFT_MIDDLE to R.drawable.none_walking_leftmiddle,
         Action.WALKING_RIGHT_MIDDLE to R.drawable.none_walking_rightmiddle,
+        Action.FLYING_RIGHT to R.drawable.none_flying_right1,
+        Action.FLYING_RIGHT2 to R.drawable.none_flying_right3,
+        Action.FLYING_LEFT to R.drawable.none_flying_left1,
+        Action.FLYING_LEFT2 to R.drawable.none_flying_left3,
     )
 )
