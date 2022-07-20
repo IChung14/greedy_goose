@@ -10,7 +10,7 @@ class TimerBroadcastReceiver : BroadcastReceiver() {
         when (intent.action) {
             TimerUtil.ACTION_SNOOZE -> {
                 NotificationUtil.removeNotification(1)
-                TimerPage.snoozeAlarm(context)
+                TimerPage.snoozeAlarm()
             }
             TimerUtil.ACTION_STOP -> {
                 NotificationUtil.removeNotification(1)

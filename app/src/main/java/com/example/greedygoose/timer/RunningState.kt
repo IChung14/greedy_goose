@@ -1,9 +1,6 @@
 package com.example.greedygoose.timer
 
-import android.content.Context
-import android.content.Intent
 import android.view.View
-import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.mod
 
 class RunningState(): TimerState {
@@ -29,7 +26,7 @@ class RunningState(): TimerState {
 
     // Pause timer
     override fun nextAction() {
-        NotificationUtil.updateNotification("Timer is paused")
+        NotificationUtil.updateRunningNotification("Timer is paused")
         mod.get_timer_page_context().stopService(mod.get_service_intent())
         mod.get_timer_state_context().setState(mod.get_paused_state())
     }

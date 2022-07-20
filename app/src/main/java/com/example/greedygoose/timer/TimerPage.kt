@@ -7,28 +7,24 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.databinding.TimerPageBinding
-import com.example.greedygoose.foreground.FloatingService
 import com.example.greedygoose.mod
 
 /*
 TODO:
-1. Problem: When user goes back to home page, the user input is empty and doesn't reflect the time they picked before
- - Change set_time to hrs, mins, secs ints and update userInput textviews.
-
- 2. Calculation of hr,min,sec is repeated a lot, could make a TimerUtil for these types of functions. Maybe combine with constants
-
- 3. Change timerstate to not nullable
-
- 4. When user exits app, remove all notifs
+1. Problem: Set time to 0 and start it
+2. Problem: Reset or start timer when 0
+3. When user exits app, remove all notifs
+4. When user clicks on notification timer
+5. Add snackbar when invalid user input (0s or empty)
 */
 
 class TimerPage : AppCompatActivity() {
 
     companion object {
-        fun snoozeAlarm(context: Context) {
+        fun snoozeAlarm() {
             mod.set_elapsed_time(300000L)
             mod.get_service_intent().putExtra(TimerService.TIME_EXTRA, mod.get_elapsed_time())
-            context.startService(mod.get_service_intent())
+            mod.get_timer_page_context().startService(mod.get_service_intent())
             mod.get_timer_state_context().setState(mod.get_running_state())
             mod.get_timer_state_context().getState()?.showUI()
         }
@@ -87,17 +83,20 @@ class TimerPage : AppCompatActivity() {
             mod.get_timer_state_context().getState()?.showUI()
 
             if (mod.get_elapsed_time() <= 0L) {
-                NotificationUtil.removeNotification(TimerUtil.RUNNING_NOTIF_ID)
-                NotificationUtil.showTimerExpired()
-                stopService(mod.get_service_intent())
+                timeout()
+            } else {
+                NotificationUtil.updateRunningNotification("Timer is running")
+            }
+        }
+    }
+
+    private fun timeout() {
+        NotificationUtil.showTimerExpired()
+        stopService(mod.get_service_intent())
 
 //                // instantiate goose with angry flag on
 //                val floatingIntent = Intent(this@TimerPage, FloatingService::class.java)
 //                floatingIntent.putExtra("angry", true)
 //                this@TimerPage.startService(floatingIntent)
-            } else {
-                NotificationUtil.updateNotification("Timer is running")
-            }
-        }
     }
 }
