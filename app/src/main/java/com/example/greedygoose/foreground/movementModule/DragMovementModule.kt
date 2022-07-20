@@ -20,6 +20,7 @@ import androidx.core.animation.doOnEnd
 import androidx.lifecycle.LifecycleService
 import com.example.greedygoose.data.Action
 import com.example.greedygoose.data.Direction
+import com.example.greedygoose.data.GooseState
 import com.example.greedygoose.data.themeMap
 import com.example.greedygoose.foreground.FloatingViewModel
 import kotlin.math.abs
@@ -151,7 +152,7 @@ class DragMovementModule(
 
         // Do not allow dragging while the goose is moving
         var updates = 0
-        var direction = Direction.RIGHT
+        var direction = Direction.NONE
 
         animator?.addUpdateListener { valueAnimator ->
             val layoutParams = rootContainer.getLayoutParams() as WindowManager.LayoutParams
@@ -175,9 +176,9 @@ class DragMovementModule(
         animator?.doOnEnd {
             if (!round && is_meme == true) {
                 MainScope().launch {
-                    viewModel.action.value =
-                        if (direction == Direction.LEFT) Action.WINDOW_LEFT
-                        else Action.WINDOW_RIGHT
+                        viewModel.action.value =
+                            if (direction == Direction.LEFT) Action.WINDOW_LEFT
+                            else Action.WINDOW_RIGHT
                     delay(3500)
                     randomWalk(window, is_meme = true, round = true, dir = dir)
                 }
@@ -270,14 +271,15 @@ class DragMovementModule(
             if (direction == Direction.LEFT) Action.SITTING_LEFT
             else Action.SITTING_RIGHT
         } else {
-            // If the goose is not sitting, make sure it doesn't stop on the image with only one leg
-            if (direction == Direction.LEFT) Action.WALKING_LEFT
-            else Action.WALKING_RIGHT
+                if (direction == Direction.LEFT && viewModel.appMode.value == GooseState.PROD_GOOSE) Action.ANGRY_LEFT
+                else if (viewModel.appMode.value == GooseState.PROD_GOOSE) Action.ANGRY_RIGHT
+                else if (direction == Direction.LEFT) Action.WALKING_LEFT
+                else Action.WALKING_RIGHT
         }
     }
 
     private fun gooseWalkImageSetter(isAngry: Boolean, isRight: Boolean){
-        viewModel.action.value = if(isAngry){
+        viewModel.action.value = if(isAngry || viewModel.appMode.value == GooseState.PROD_GOOSE){
             if(isRight){
                 when (viewModel.action.value) {
                     Action.ANGRY_RIGHT -> Action.ANGRY_RIGHT_MIDDLE

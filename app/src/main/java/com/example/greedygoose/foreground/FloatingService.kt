@@ -3,19 +3,11 @@ package com.example.greedygoose.foreground
 import android.content.Intent
 import android.graphics.PixelFormat
 import android.os.PowerManager
-import android.view.WindowManager.LayoutParams
 import androidx.lifecycle.LifecycleService
-import com.example.greedygoose.R
-import com.example.greedygoose.data.Direction
-import com.example.greedygoose.data.GooseState
+import com.example.greedygoose.data.*
 import com.example.greedygoose.foreground.movementModule.DragMovementModule
 import com.example.greedygoose.foreground.movementModule.DragToEatModule
-import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
-import com.example.greedygoose.foreground.movementModule.TouchDeleteModule
-import com.example.greedygoose.data.memes
-import com.example.greedygoose.data.themeMap
 import com.example.greedygoose.foreground.ui.*
-import com.example.greedygoose.foreground.ui.FloatingWindowModule.Companion.defaultParam
 import kotlinx.coroutines.MainScope
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -47,17 +39,25 @@ class FloatingService : LifecycleService() {
         // Based on the value of hte intent flag, set the globalFlag to represent the correct
         // goose enum state
         val state = intent?.getIntExtra("flags", 0)!!
+        val isEntertainment = intent?.getIntExtra("entertainment", 0)
+
         globalFlag = if (state == 1) {
             GooseState.KILL_GOOSE
         } else if (state == 2) {
             GooseState.PROD_GOOSE
-        } else if (state == 3) {
+        } else if (state == 3 && !(globalFlag == GooseState.PROD_GOOSE && isEntertainment == 1)) {
             GooseState.ENT_GOOSE
-        } else {
+        } else if (state == 0) {
             GooseState.NONE
+        } else {
+            globalFlag
         }
 
-        //viewModel.flag = flags_fake
+        if (state == 2) {
+            viewModel.action.value = Action.ANGRY_LEFT
+        }
+
+        viewModel.appMode.value = globalFlag
 
         if(globalFlag == GooseState.KILL_GOOSE){
             // KILL_GOOSE, when timer is snoozed or killed for good

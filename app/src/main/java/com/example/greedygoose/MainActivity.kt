@@ -20,7 +20,7 @@ class MainActivity : AppCompatActivity() {
 
         val entertainmentButton = binding.entertainmentButton
         entertainmentButton.setOnClickListener {
-            startActivity(Intent(this, Entertainment::class.java))
+            startActivity(Intent(this, EntertainmentPage::class.java))
         }
 
         val productivityButton = binding.productivityButton

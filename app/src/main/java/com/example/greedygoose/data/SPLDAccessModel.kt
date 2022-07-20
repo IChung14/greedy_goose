@@ -71,7 +71,7 @@ enum class Action {
 }
 
 enum class Direction {
-    LEFT, RIGHT
+    LEFT, RIGHT, NONE
 }
 
 enum class GooseState {
