@@ -1,7 +1,9 @@
-package com.example.greedygoose.timer
+package com.example.greedygoose.timer.state
 
 import android.view.View
 import com.example.greedygoose.databinding.TimerPageBinding
+import com.example.greedygoose.timer.NotificationUtil
+import com.example.greedygoose.timer.TimerService
 
 class NotStartedState(context: TimerService) : TimerState(context) {
 
@@ -28,4 +30,5 @@ class NotStartedState(context: TimerService) : TimerState(context) {
 
         return RunningState(context)
     }
+
 }

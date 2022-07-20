@@ -1,6 +1,8 @@
-package com.example.greedygoose.timer
+package com.example.greedygoose.timer.state
 
 import com.example.greedygoose.databinding.TimerPageBinding
+import com.example.greedygoose.timer.NotificationUtil
+import com.example.greedygoose.timer.TimerService
 
 abstract class TimerState(val context: TimerService) {
     abstract fun showUI(binding: TimerPageBinding)

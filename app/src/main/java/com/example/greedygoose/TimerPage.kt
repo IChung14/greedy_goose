@@ -1,4 +1,4 @@
-package com.example.greedygoose.timer
+package com.example.greedygoose
 
 import android.content.*
 import android.os.Bundle
@@ -6,6 +6,8 @@ import android.os.IBinder
 import android.text.format.DateUtils
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.databinding.TimerPageBinding
+import com.example.greedygoose.timer.TimerService
+import com.google.android.material.snackbar.Snackbar
 
 /*
 TODO:
@@ -73,7 +75,10 @@ class TimerPage : AppCompatActivity() {
 
             if (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() ||
                 elapsedHrs+elapsedMins+elapsedSecs == 0L) {
-                // TODO: Add snackbar to tell user to input a valid time
+                Snackbar.make(binding.root,
+                    "Please input a time greater than 0 sec",
+                    Snackbar.LENGTH_SHORT
+                ).show()
             }else{
                 timerService.onTimerStartPressed(elapsedHrs, elapsedMins, elapsedSecs)
             }

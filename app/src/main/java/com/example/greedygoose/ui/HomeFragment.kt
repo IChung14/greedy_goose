@@ -10,7 +10,7 @@ import android.view.ViewGroup
 import com.example.greedygoose.Entertainment
 import com.example.greedygoose.SettingsPage
 import com.example.greedygoose.databinding.FragmentHomeBinding
-import com.example.greedygoose.timer.TimerPage
+import com.example.greedygoose.TimerPage
 
 class HomeFragment : Fragment() {
 

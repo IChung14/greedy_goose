@@ -8,6 +8,8 @@ import android.content.IntentFilter
 import android.os.Binder
 import android.os.IBinder
 import androidx.lifecycle.MutableLiveData
+import com.example.greedygoose.timer.state.NotStartedState
+import com.example.greedygoose.timer.state.TimerState
 import java.util.*
 
 class TimerService : Service() {
