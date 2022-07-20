@@ -56,12 +56,10 @@ class DragMovementModule(
             val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
             delay(2000)
             while (true) {
-                if (!isAlive) {
-                    println("Job died %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
-                    break;
-                }
-//                println("lopoppp")
-                println(isAlive)
+//                if (!isAlive) {
+//                    println("Job died %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%")
+//                    break;
+//                }
                 if (powerManager.isInteractive) {
                     if (!isDragged) {
                         randomWalk(windowModule,
@@ -74,7 +72,7 @@ class DragMovementModule(
                 delay(7000)
             }
         }
-        job.cancel()
+//        job.cancel()
     }
 
     fun walkOffScreen(dir: String) {
