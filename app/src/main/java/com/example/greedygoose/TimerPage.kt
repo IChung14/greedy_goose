@@ -53,6 +53,7 @@ class TimerPage : AppCompatActivity() {
         setContentView(binding.root)
 
         // when entering TimerPage, instantiate TimerService right away
+        startService(Intent(applicationContext, TimerService::class.java))
         bindService(
             Intent(applicationContext, TimerService::class.java),
             connection,

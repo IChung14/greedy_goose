@@ -14,6 +14,8 @@ class PopUpWindowModule(
     windowModule: FloatingWindowModule
 ) : MovementModule(windowModule) {
 
+    var movement: ValueAnimator? = null
+
     override fun run() {}
 
     override fun startAction(round: Boolean, dir: Direction) {
@@ -28,16 +30,21 @@ class PopUpWindowModule(
         }
         var pvhY = PropertyValuesHolder.ofInt("y", params.y, params.y)
 
-        val movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
+        movement = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
 
-        movement.addUpdateListener { valueAnimator ->
+        movement?.addUpdateListener { valueAnimator ->
             val layoutParams = rootContainer.getLayoutParams() as WindowManager.LayoutParams
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)
             layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)
-            windowManager.updateViewLayout(rootContainer, layoutParams)
+            try {
+                windowManager.updateViewLayout(rootContainer, layoutParams)
+            } catch (e: IllegalArgumentException) {
+                movement?.removeAllUpdateListeners()
+                println("im tired")
+            }
         }
 
-        movement.addListener(object : AnimatorListenerAdapter() {
+        movement?.addListener(object : AnimatorListenerAdapter() {
             override fun onAnimationEnd(animation: Animator) {
                 isDragged = false
                 if (!round) {
@@ -48,7 +55,13 @@ class PopUpWindowModule(
                 }
             }
         })
-        movement.duration = 2150
-        movement.start()
+        movement?.duration = 2150
+        movement?.start()
+    }
+
+    override fun destroy() {
+        movement?.removeAllUpdateListeners()
+        movement?.cancel()
+        super.destroy()
     }
 }

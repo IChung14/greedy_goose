@@ -34,7 +34,7 @@ class FloatingComponentFactory(
     fun createEgg(gooseParams: WindowManager.LayoutParams, receiver: ResultReceiver? = null): FloatingEgg{
         val windowModule = FloatingWindowModule(context, R.drawable.egg_small, gooseParams)
         val movementModule = TouchDeleteModule(viewModel, windowModule)
-        return FloatingEgg(windowModule, movementModule, receiver)
+        return FloatingEgg(context, windowModule, movementModule, receiver)
     }
 
     fun createFood(
@@ -73,6 +73,6 @@ class FloatingComponentFactory(
             FloatingWindowModule(context, R.drawable.prints_left, gooseParams)
         }
 
-        return FloatingPrints(windowModule, null, receiver)
+        return FloatingPrints(context, windowModule, null, receiver)
     }
 }

@@ -63,11 +63,8 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
 
             if (time <= 0L) {
                 NotificationUtil.showTimerExpired(context)
-                val floatingIntent = Intent(context, FloatingService::class.java)
-                floatingIntent.putExtra("flags", 2)
-                context.startService(floatingIntent)
                 progressState()
-		onExpire()
+		        onExpire()
             } else {
                 NotificationUtil.updateRunningNotification(
                     context,
