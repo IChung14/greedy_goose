@@ -74,6 +74,10 @@ enum class Direction {
     LEFT, RIGHT
 }
 
+enum class GooseState {
+    NONE, KILL_GOOSE, PROD_GOOSE, ENT_GOOSE
+}
+
 val themeMap: HashMap<Theme, HashMap<Action, Int>> = hashMapOf(
     Theme.ENG to hashMapOf(
         Action.ANGRY_LEFT to R.drawable.eng_angry_left,

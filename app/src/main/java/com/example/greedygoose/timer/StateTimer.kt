@@ -3,6 +3,7 @@ package com.example.greedygoose.timer
 import android.content.Context
 import android.content.Intent
 import androidx.lifecycle.MutableLiveData
+import com.example.greedygoose.data.GooseState
 import com.example.greedygoose.foreground.FloatingService
 import com.example.greedygoose.timer.state.NotStartedState
 import com.example.greedygoose.timer.state.TimerState
@@ -63,7 +64,7 @@ class StateTimer(val context: TimerService) {
             if (time <= 0L) {
                 NotificationUtil.showTimerExpired(context)
                 val floatingIntent = Intent(context, FloatingService::class.java)
-                floatingIntent.putExtra("flags",2)
+                floatingIntent.putExtra("flags", 2)
                 context.startService(floatingIntent)
                 progressState()
             } else {

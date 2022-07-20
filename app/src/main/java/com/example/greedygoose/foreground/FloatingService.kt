@@ -7,6 +7,7 @@ import android.view.WindowManager.LayoutParams
 import androidx.lifecycle.LifecycleService
 import com.example.greedygoose.R
 import com.example.greedygoose.data.Direction
+import com.example.greedygoose.data.GooseState
 import com.example.greedygoose.foreground.movementModule.DragMovementModule
 import com.example.greedygoose.foreground.movementModule.DragToEatModule
 import com.example.greedygoose.foreground.movementModule.PopUpWindowModule
@@ -33,7 +34,7 @@ class FloatingService : LifecycleService() {
     private lateinit var floatingPrints: FloatingPrints
 
     var isRunning = false
-    var globalFlag: Int = 0
+    var globalFlag: GooseState = GooseState.NONE
 
     override fun onCreate() {
         super.onCreate()
@@ -43,20 +44,28 @@ class FloatingService : LifecycleService() {
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
 
-        // set the flags to constants for now, but will be passed into function containing correct activity
-        globalFlag = intent?.getIntExtra("flags", 0)!!
+        // Based on the value of hte intent flag, set the globalFlag to represent the correct
+        // goose enum state
+        val state = intent?.getIntExtra("flags", 0)!!
+        globalFlag = if (state == 1) {
+            GooseState.KILL_GOOSE
+        } else if (state == 2) {
+            GooseState.PROD_GOOSE
+        } else if (state == 3) {
+            GooseState.ENT_GOOSE
+        } else {
+            GooseState.NONE
+        }
 
-        // set the flag in the view model for the movementModules to access it
-        // observe this in the movementModule to make decisions about speed etc.
         //viewModel.flag = flags_fake
 
-        if(globalFlag == 1){
+        if(globalFlag == GooseState.KILL_GOOSE){
             // KILL_GOOSE, when timer is snoozed or killed for good
             // may need to update destroy to cleanly end jobs
             floatingGoose.destroy()
             isRunning = false
 
-        } else if ((globalFlag == 2) || (globalFlag == 3)){
+        } else if (globalFlag == GooseState.PROD_GOOSE || globalFlag == GooseState.ENT_GOOSE){
             // PROD_GOOSE, when timer goes off or is resumed after snoozing
             // ENT_GOOSE, when goose should begin entertainment mode
             runGoose()
@@ -86,7 +95,7 @@ class FloatingService : LifecycleService() {
         MainScope().launch {
             if (floatingGoose.movementModule!!.isDraggable) {
                 var chance = 4
-                while (globalFlag == 3) {
+                while (globalFlag == GooseState.ENT_GOOSE) {
                     // use percentage to determine whether to lay an egg
                     if (chance < 3 && screenOn()) {
                         floatingGoose.getLocation()?.let {
@@ -104,7 +113,7 @@ class FloatingService : LifecycleService() {
     private fun formFoods() {
         MainScope().launch {
             var chance = 1
-            while (globalFlag == 3) {
+            while (globalFlag == GooseState.ENT_GOOSE) {
                 // use percentage to determine whether to create a food item
                 if (chance > 7 && screenOn()) {
                     floatingFood = floatingFactory.createFood(floatingGoose)
@@ -160,12 +169,15 @@ class FloatingService : LifecycleService() {
                 var chance = 1
                 while (true) {
                     // use percentage to determine whether to lay an egg
-                    if (chance > 7 && screenOn()) {
-                        floatingGoose.getLocation()?.let {
-                            val gx = it.x
-                            val walkDirection = if (gx <= 50) Direction.LEFT else Direction.RIGHT
-                            floatingPrints = floatingFactory.createPrints(it, walkDirection)
-                            floatingPrints.expirePrints()
+                    if (screenOn())  {
+                        if (chance > 7 || (chance > 5 && globalFlag == GooseState.PROD_GOOSE)) {
+                            floatingGoose.getLocation()?.let {
+                                val gx = it.x
+                                val walkDirection =
+                                    if (gx <= 50) Direction.LEFT else Direction.RIGHT
+                                floatingPrints = floatingFactory.createPrints(it, walkDirection)
+                                floatingPrints.expirePrints()
+                            }
                         }
                     }
                     delay(5000)
