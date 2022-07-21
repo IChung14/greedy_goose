@@ -51,8 +51,8 @@ class NotificationUtil {
                 context, EXPIRED_CHANNEL_ID, true)
             notifBuilder.setContentTitle("Time's up")
             notifBuilder.priority = NotificationCompat.PRIORITY_HIGH
-            notifBuilder.addAction(R.drawable.eng_flying_left, "Snooze 5 min", snoozePendingIntent)
-            notifBuilder.addAction(R.drawable.eng_flying_left, "Stop", stopPendingIntent)
+            notifBuilder.addAction(R.drawable.eng_flying_left2, "Snooze 5 min", snoozePendingIntent)
+            notifBuilder.addAction(R.drawable.eng_flying_left2, "Stop", stopPendingIntent)
 
             val notifManager = context
                 .getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager

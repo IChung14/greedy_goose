@@ -5,7 +5,6 @@ import android.animation.*
 import android.annotation.SuppressLint
 import android.app.Service
 import android.content.Context.POWER_SERVICE
-import android.media.MediaPlayer
 import android.os.PowerManager
 import android.util.DisplayMetrics
 import android.view.*
@@ -47,13 +46,15 @@ class DragMovementModule(
                 windowModule.binding.gooseImg.setImageResource(imgSrc)
             }
         }
+        var duration: Long = 7000
+
         job = MainScope().launch {
             val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
             delay(2000)
             while (true) {
                 if (!isAlive) { break; }
                 if (powerManager.isInteractive) {
-                    if (!isDragged) {
+                    if (!isDragged && !isFlying) {
                         var chance = Random().nextInt(2)
                         if (viewModel.appMode.value == GooseState.PROD_GOOSE && chance == 0) {
                             flyingGoose(windowModule)
@@ -67,7 +68,7 @@ class DragMovementModule(
                         }
                     }
                 }
-                delay(7000)
+                delay(duration)
             }
         }
     }
@@ -86,21 +87,25 @@ class DragMovementModule(
         animator = ValueAnimator.ofPropertyValuesHolder(pvhX, pvhY)
         var direction = Direction.NONE
         val startx = params.x
+        var updates = 0
         animator?.addUpdateListener { valueAnimator ->
             val layoutParams = rootContainer.getLayoutParams() as WindowManager.LayoutParams
             layoutParams.x = (valueAnimator.getAnimatedValue("x") as Int)
             layoutParams.y = (valueAnimator.getAnimatedValue("y") as Int)
             windowManager.updateViewLayout(rootContainer, layoutParams)
-            if (layoutParams.x > startx) {
-                direction = Direction.RIGHT
-                viewModel.action.value = Action.FLYING_RIGHT
+            updates += 1
+            if (updates % 5 == 0) {
+            direction = if (layoutParams.x > startx) {
+                Direction.RIGHT
             } else {
-                direction = Direction.LEFT
-                viewModel.action.value = Action.FLYING_LEFT
+                Direction.LEFT
+            }
+            viewModel.action.value = gooseFlyImageSetter(direction, viewModel.action.value)
             }
         }
         animator?.doOnEnd {
-            gooseSit(direction)
+            viewModel.action.value =
+                gooseSitImageSetter(direction, viewModel.appMode.value, context)
             isFlying = false
             isDragged = false
         }
@@ -135,16 +140,19 @@ class DragMovementModule(
             if (updates % 5 == 0) {
                 if (layoutParams.x > startx) {
                     direction = Direction.RIGHT
-                    gooseWalkImageSetter(isAngry = false, isRight = true)
+                    viewModel.action.value = gooseWalkImageSetter(isAngry = false, isRight = true,
+                        viewModel.action.value, viewModel.appMode.value)
                 } else {
                     direction = Direction.LEFT
-                    gooseWalkImageSetter(isAngry = false, isRight = false)
+                    viewModel.action.value = gooseWalkImageSetter(isAngry = false, isRight = false,
+                        viewModel.action.value, viewModel.appMode.value)
                 }
             }
         }
 
         animator?.doOnEnd {
-            gooseSit(direction)
+            viewModel.action.value =
+                gooseSitImageSetter(direction,viewModel.appMode.value, context)
 
             // Allow dragging again when the animation finishes
             isDraggable = true
@@ -196,10 +204,12 @@ class DragMovementModule(
             if (updates % 5 == 0) {
                 if ((layoutParams.x > startx) xor (is_meme == true)) {
                     direction = Direction.RIGHT
-                    gooseWalkImageSetter(isAngry = false, isRight = true)
+                    viewModel.action.value = gooseWalkImageSetter(isAngry = false, isRight = true,
+                        viewModel.action.value, viewModel.appMode.value)
                 } else {
                     direction = Direction.LEFT
-                    gooseWalkImageSetter(isAngry = false, isRight = false)
+                    viewModel.action.value = gooseWalkImageSetter(isAngry = false, isRight = false,
+                        viewModel.action.value, viewModel.appMode.value)
                 }
             }
         }
@@ -213,7 +223,8 @@ class DragMovementModule(
                     randomWalk(window, is_meme = true, round = true, dir = dir)
                 }
             } else {
-                gooseSit(direction)
+                viewModel.action.value =
+                    gooseSitImageSetter(direction, viewModel.appMode.value, context)
                 isDraggable = true
                 isDragged = false
             }
@@ -269,10 +280,12 @@ class DragMovementModule(
                                         else Action.ANGRY_RIGHT
                                 } else if (params.x < prevx && (abs(params.x.minus(prevx)) <= 100f)) {
                                     direction = Direction.LEFT
-                                    gooseWalkImageSetter(isAngry = true, isRight = false)
+                                    viewModel.action.value = gooseWalkImageSetter(isAngry = true, isRight = false,
+                                        viewModel.action.value, viewModel.appMode.value)
                                 } else {
                                     direction = Direction.RIGHT
-                                    gooseWalkImageSetter(isAngry = true, isRight = true)
+                                    viewModel.action.value = gooseWalkImageSetter(isAngry = true, isRight = true,
+                                        viewModel.action.value, viewModel.appMode.value)
                                 }
                             }
                             return true
@@ -281,56 +294,6 @@ class DragMovementModule(
                     return false
                 }
             })
-    }
-
-    private fun gooseSit(direction: Direction) {
-        if (viewModel.appMode.value == GooseState.PROD_GOOSE) {
-            val mediaPlayer = MediaPlayer()
-            var afd = context?.getAssets()?.openFd("honk.mp3")
-            mediaPlayer.setDataSource(afd?.getFileDescriptor())
-            mediaPlayer.prepare()
-            mediaPlayer.start()
-        }
-        // After walking, make the goose sit sometimes
-        viewModel.action.value = if (Random().nextInt(10) > 5) {
-            if (direction == Direction.LEFT) Action.SITTING_LEFT else Action.SITTING_RIGHT
-        } else {
-            if (direction == Direction.LEFT && viewModel.appMode.value == GooseState.PROD_GOOSE) Action.ANGRY_LEFT
-            else if (viewModel.appMode.value == GooseState.PROD_GOOSE) Action.ANGRY_RIGHT
-            else if (direction == Direction.LEFT) Action.WALKING_LEFT else Action.WALKING_RIGHT
-        }
-    }
-
-    private fun gooseWalkImageSetter(isAngry: Boolean, isRight: Boolean) {
-        viewModel.action.value = if (isAngry || viewModel.appMode.value == GooseState.PROD_GOOSE) {
-            if (isRight) {
-                when (viewModel.action.value) {
-                    Action.ANGRY_RIGHT -> Action.ANGRY_RIGHT_MIDDLE
-                    Action.ANGRY_RIGHT_MIDDLE -> Action.ANGRY_RIGHT2
-                    else -> Action.ANGRY_RIGHT
-                }
-            } else {
-                when (viewModel.action.value) {
-                    Action.ANGRY_LEFT -> Action.ANGRY_LEFT_MIDDLE
-                    Action.ANGRY_LEFT_MIDDLE -> Action.ANGRY_LEFT2
-                    else -> Action.ANGRY_LEFT
-                }
-            }
-        } else {
-            if (isRight) {
-                when (viewModel.action.value) {
-                    Action.WALKING_RIGHT -> Action.WALKING_RIGHT_MIDDLE
-                    Action.WALKING_RIGHT_MIDDLE -> Action.WALKING_RIGHT2
-                    else -> Action.WALKING_RIGHT
-                }
-            } else {
-                when (viewModel.action.value) {
-                    Action.WALKING_LEFT -> Action.WALKING_LEFT_MIDDLE
-                    Action.WALKING_LEFT_MIDDLE -> Action.WALKING_LEFT2
-                    else -> Action.WALKING_LEFT
-                }
-            }
-        }
     }
 
     override fun destroy() {
