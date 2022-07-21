@@ -46,6 +46,8 @@ class DragMovementModule(
                 windowModule.binding.gooseImg.setImageResource(imgSrc)
             }
         }
+        var duration: Long = 7000
+
         job = MainScope().launch {
             val powerManager = context?.getSystemService(POWER_SERVICE) as PowerManager
             delay(2000)
@@ -65,11 +67,6 @@ class DragMovementModule(
                             )
                         }
                     }
-                }
-
-                var duration: Long = 7000
-                if (viewModel.appMode.value == GooseState.PROD_GOOSE) {
-                    duration = 3500
                 }
                 delay(duration)
             }
