@@ -65,8 +65,8 @@ class TimerPage : AppCompatActivity() {
             val elapsedMins = if (mins.isNotEmpty()) mins.toLong() * DateUtils.MINUTE_IN_MILLIS else 0L
             val elapsedSecs = if (secs.isNotEmpty()) secs.toLong() * DateUtils.SECOND_IN_MILLIS else  0L
 
-            if (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() ||
-                elapsedHrs+elapsedMins+elapsedSecs == 0L) {
+            if (timerService.stateTimer.elapsedTime.value!! == 0L && (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() ||
+                elapsedHrs+elapsedMins+elapsedSecs == 0L)) {
                 Snackbar.make(binding.root,
                     "Please input a time greater than 0 sec",
                     Snackbar.LENGTH_SHORT

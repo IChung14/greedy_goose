@@ -11,6 +11,8 @@ import android.net.Uri
 import androidx.core.app.NotificationCompat
 import com.example.greedygoose.R
 
+import com.example.greedygoose.TimerPage
+
 class NotificationUtil {
     companion object {
         private const val RUNNING_CHANNEL_ID = "running"
@@ -85,6 +87,14 @@ class NotificationUtil {
                 .setSmallIcon(R.drawable.eng_sitting_left)
                 .setAutoCancel(true)
                 .setDefaults(0)
+                .setContentIntent(
+                    PendingIntent.getActivity(
+                        context,
+                        0,
+                        Intent(context.applicationContext, TimerPage::class.java),
+                        PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
+                    )
+                )
             if (playSound) {
                 val notificationSound: Uri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_ALARM)
                 notifBuilder.setSound(notificationSound)

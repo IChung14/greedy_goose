@@ -31,6 +31,12 @@ class TimerService : Service() {
         super.onDestroy()
     }
 
+    override fun onTaskRemoved(rootIntent: Intent?) {
+        super.onTaskRemoved(rootIntent)
+        NotificationUtil.removeNotification(this, RUNNING_NOTIF_ID)
+        NotificationUtil.removeNotification(this, EXPIRED_NOTIF_ID)
+    }
+
     fun onTimerStartPressed(elapsedHrs: Long, elapsedMins: Long, elapsedSecs: Long){
         stateTimer.initTimer(elapsedHrs, elapsedMins, elapsedSecs)
         stateTimer.next()

@@ -21,12 +21,17 @@ class RunningState(context: TimerService, stateTimer: StateTimer) : TimerState(c
 
     // Pause timer
     override fun nextAction(): TimerState {
+        stateTimer.pauseTimer()
+
+        if (stateTimer.elapsedTime.value == 0L) {
+            return NotStartedState(context, stateTimer)
+        }
+
         NotificationUtil.updateRunningNotification(
             context,
             "Timer is paused",
             stateTimer.elapsedTime.value ?: 0L
         )
-        stateTimer.pauseTimer()
 
         return PausedState(context, stateTimer)
     }
