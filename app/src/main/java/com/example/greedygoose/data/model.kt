@@ -22,7 +22,9 @@ class model {
     var elapsed_time = 0L
     var set_time = 0L
     lateinit var r_notif_manager: NotificationManager
-    val unproductiveApplications: MutableList<String> = mutableListOf()
+    // Timer
+    var checkBackgroundApps = true
+    val unproductiveApplications: MutableMap<String, String> = mutableMapOf()
 
     fun set_is_first_create(isFirstCreate: Boolean) {
         this.isFirstCreate = isFirstCreate
