@@ -58,9 +58,10 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
             elapsedTime.postValue(time)
 
             if (time <= 0L) {
+                elapsedTime.postValue(0L)
                 NotificationUtil.showTimerExpired(context)
                 progressState()
-		        onExpire()
+                NotificationUtil.removeNotification(context, TimerService.RUNNING_NOTIF_ID)
             } else {
                 NotificationUtil.updateRunningNotification(
                     context,
