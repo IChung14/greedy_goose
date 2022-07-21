@@ -23,7 +23,8 @@ class model {
     var set_time = 0L
     lateinit var r_notif_manager: NotificationManager
     // Timer
-    var checkBackgroundApps = true
+    var checkBackgroundApps = false
+    var timerStatus = "STOP"
     val unproductiveApplications: MutableMap<String, String> = mutableMapOf()
 
     fun set_is_first_create(isFirstCreate: Boolean) {

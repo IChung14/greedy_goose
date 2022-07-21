@@ -5,6 +5,7 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import com.example.greedygoose.mod
 
 class TimerHelper(private var context: Context ) {
 
@@ -15,6 +16,70 @@ class TimerHelper(private var context: Context ) {
 
     init {
         nonSystemAppInfoMap = getNonSystemAppsList()
+    }
+
+    fun runGetAppService() {
+        //          **********
+//          Start/Pause is clicked
+//          **********
+//            TODO:
+//            - if user starts timer, call what is running every 2 secs
+        //            x- check to see if what is running is unproductive
+        //              x - if so, check if timer is running. if it is, cool. if not, start
+        //              - else, check if timer is running, if it is, pause it. if not, cool
+//            x- if user pauses or resets the timer, exit the while loop
+
+        // if already checking apps
+        if (mod.checkBackgroundApps) {
+            mod.checkBackgroundApps = false
+            mod.get_timer_state_context().getState()?.nextAction()
+            mod.get_timer_state_context().getState()?.showUI()
+            println("backgroundapps are no longer checking")
+        }
+        // if this starts the checking process
+        else {
+            mod.checkBackgroundApps = true
+            println("backgroundapps are being checked every 2 seconds")
+
+//                while (mod.checkBackgroundApps) {
+            for (i in 1..5) {
+//                timerHelper = TimerHelper(this)
+//                val allApplications = timerHelper.getForegroundApp()
+
+                val allApplications = getForegroundApp()
+
+                //check to see if apps are unproductive
+                for ((key,value) in allApplications) {
+                    if (mod.unproductiveApplications.containsKey(key)) {
+                        if (mod.timerStatus !== "RUNNING") {
+                            mod.timerStatus = "RUNNING"
+                            mod.get_timer_state_context().getState()?.nextAction()
+                            mod.get_timer_state_context().getState()?.showUI()
+                        }
+                    }
+                    else {
+                        if (mod.timerStatus === "RUNNING") {
+                            mod.timerStatus === "PAUSED"
+                            mod.get_timer_state_context().getState()?.nextAction()
+                            mod.get_timer_state_context().getState()?.showUI()
+                        }
+                    }
+                }
+                println("**********")
+                println("should only be running every 1 second")
+                Thread.sleep(1_000)  // wait for 1 second
+            }
+        }
+//            timerHelper = TimerHelper(this)
+//            val allApplications = timerHelper.getForegroundApp()
+//            println("**********************")
+//            println("ALL APPLICATIONS BEGIN")
+//            println("**********************")
+//            for ((key,value) in allApplications) {
+//                if (mod.unproductiveApplications.containsKey(key)) {
+//
+//                }
+//            }
     }
 
     fun getForegroundApp() : Map<String,String> {

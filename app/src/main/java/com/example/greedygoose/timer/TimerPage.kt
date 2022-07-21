@@ -91,18 +91,13 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
             mod.get_timer_state_context().getState()?.showUI()
 
             timerHelper = TimerHelper(this)
-            val allApplications = timerHelper.getForegroundApp()
-            println("**********************")
-            println("ALL APPLICATIONS BEGIN")
-            println("**********************")
-            for ((key,value) in allApplications) {
-                println(key)
-            }
+            timerHelper.runGetAppService()
         }
 
         mod.get_binding().resetBtn.setOnClickListener {
             mod.get_timer_state_context().getState()?.resetTimer()
             mod.get_timer_state_context().getState()?.showUI()
+            mod.checkBackgroundApps = false
         }
 
         // *********************************
@@ -186,62 +181,59 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
         }
     }
 
-    private fun getAllApplications() {
-        if ( checkUsageStatsPermission() ) {
-            val currentTime = System.currentTimeMillis()
-
-            println("WE HAVE ARRIVED")
-            println("WE HAVE ARRIVED")
-            println("WE HAVE ARRIVED")
-            println("WE HAVE ARRIVED")
-
-            // The `queryEvents` method takes in the `beginTime` and `endTime` to retrieve the usage events.
-            // In our case, beginTime = currentTime - 1 minute ( 1000 * 60 * 1 milliseconds )
-            // and endTime = currentTime
-            val usageStatsManager = this.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
-            val usageEvents = usageStatsManager.queryEvents( currentTime - (1000*1) , currentTime )
-            val usageEvent = UsageEvents.Event()
-            while ( usageEvents.hasNextEvent() ) {
-                usageEvents.getNextEvent( usageEvent )
-                Log.e( "APP" , "${usageEvent.packageName} ${usageEvent.timeStamp}" )
-            }
-        }
-        else {
-            // Navigate the user to the permission settings
-            Intent( Settings.ACTION_USAGE_ACCESS_SETTINGS ).apply {
-                startActivity( this )
-            }
-        }
-    }
-
-    // The `PACKAGE_USAGE_STATS` permission is a not a runtime permission and hence cannot be
-    // requested directly using `ActivityCompat.requestPermissions`. All special permissions
-    // are handled by `AppOpsManager`.
-    private fun checkUsageStatsPermission() : Boolean {
-        val appOpsManager = getSystemService(AppCompatActivity.APP_OPS_SERVICE) as AppOpsManager
-        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-            appOpsManager.unsafeCheckOpNoThrow(
-                "android:get_usage_stats",
-                Process.myUid(), packageName
-            )
-        }
-        else {
-            appOpsManager.checkOpNoThrow(
-                "android:get_usage_stats",
-                Process.myUid(), packageName
-            )
-        }
-        return mode == AppOpsManager.MODE_ALLOWED
-    }
-
-    private fun getNonSystemAppsList() : Map<String,String> {
-        val appInfos = packageManager.getInstalledApplications( PackageManager.GET_META_DATA )
-        val appInfoMap = HashMap<String,String>()
-        for ( appInfo in appInfos ) {
-            if ( appInfo.flags != ApplicationInfo.FLAG_SYSTEM ) {
-                appInfoMap[ appInfo.packageName ]= packageManager.getApplicationLabel( appInfo ).toString()
-            }
-        }
-        return appInfoMap
-    }
+//    private fun getAllApplications() {
+//        if ( checkUsageStatsPermission() ) {
+//            val currentTime = System.currentTimeMillis()
+//
+//            println("WE HAVE ARRIVED")
+//
+//            // The `queryEvents` method takes in the `beginTime` and `endTime` to retrieve the usage events.
+//            // In our case, beginTime = currentTime - 1 minute ( 1000 * 60 * 1 milliseconds )
+//            // and endTime = currentTime
+//            val usageStatsManager = this.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
+//            val usageEvents = usageStatsManager.queryEvents( currentTime - (1000*1) , currentTime )
+//            val usageEvent = UsageEvents.Event()
+//            while ( usageEvents.hasNextEvent() ) {
+//                usageEvents.getNextEvent( usageEvent )
+//                Log.e( "APP" , "${usageEvent.packageName} ${usageEvent.timeStamp}" )
+//            }
+//        }
+//        else {
+//            // Navigate the user to the permission settings
+//            Intent( Settings.ACTION_USAGE_ACCESS_SETTINGS ).apply {
+//                startActivity( this )
+//            }
+//        }
+//    }
+//
+//    // The `PACKAGE_USAGE_STATS` permission is a not a runtime permission and hence cannot be
+//    // requested directly using `ActivityCompat.requestPermissions`. All special permissions
+//    // are handled by `AppOpsManager`.
+//    private fun checkUsageStatsPermission() : Boolean {
+//        val appOpsManager = getSystemService(AppCompatActivity.APP_OPS_SERVICE) as AppOpsManager
+//        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+//            appOpsManager.unsafeCheckOpNoThrow(
+//                "android:get_usage_stats",
+//                Process.myUid(), packageName
+//            )
+//        }
+//        else {
+//            appOpsManager.checkOpNoThrow(
+//                "android:get_usage_stats",
+//                Process.myUid(), packageName
+//            )
+//        }
+//        return mode == AppOpsManager.MODE_ALLOWED
+//    }
+//
+//    private fun getNonSystemAppsList() : Map<String,String> {
+//        val appInfos = packageManager.getInstalledApplications( PackageManager.GET_META_DATA )
+//        val appInfoMap = HashMap<String,String>()
+//        for ( appInfo in appInfos ) {
+//            if ( appInfo.flags != ApplicationInfo.FLAG_SYSTEM ) {
+//                appInfoMap[ appInfo.packageName ]= packageManager.getApplicationLabel( appInfo ).toString()
+//            }
+//        }
+//        return appInfoMap
+//    }
 }
