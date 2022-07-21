@@ -26,6 +26,10 @@ class NotStartedState(context: TimerService, stateTimer: StateTimer) : TimerStat
     // Start timer
     // next action is Running State
     override fun nextAction(): TimerState {
+        if (stateTimer.elapsedTime.value == 0L) {
+            return NotStartedState(context, stateTimer)
+        }
+
         NotificationUtil.removeNotification(context, TimerService.EXPIRED_NOTIF_ID)
         NotificationUtil.showTimerRunning(context)
         stateTimer.resumeTimer()
