@@ -4,11 +4,11 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.ResultReceiver
 import android.view.WindowManager
-import androidx.annotation.DrawableRes
 import androidx.lifecycle.LifecycleService
+import androidx.lifecycle.LiveData
+import com.example.greedygoose.data.GooseState
 import com.example.greedygoose.foreground.FloatingViewModel
 import com.example.greedygoose.foreground.movementModule.MovementModule
-import com.example.greedygoose.foreground.ui.FloatingWindowModule.Companion.defaultParam
 
 
 /**
@@ -36,10 +36,10 @@ abstract class FloatingComponent(
     }
 
     fun destroy() {
+        movementModule?.destroy()
         isAlive = false
         sendAction(ACTION_ON_CLOSE, Bundle())
         windowModule.destroy()
-        movementModule?.destroy()
     }
 
     companion object {
@@ -57,12 +57,16 @@ class FloatingGoose(
 }
 
 class FloatingEgg(
+    private val context: LifecycleService,
     windowModule: FloatingWindowModule,
     movementModule: MovementModule,
     receiver: ResultReceiver? = null
 ): FloatingComponent(windowModule, movementModule, receiver) {
 
-    fun expireEgg() {
+    fun expireEgg(gooseState: LiveData<GooseState>) {
+        gooseState.observe(context){
+            if(it == GooseState.KILL_GOOSE) destroy()
+        }
         Handler().postDelayed( {
             if (movementModule?.isAlive == true) {
                 destroy()
@@ -73,14 +77,18 @@ class FloatingEgg(
 }
 
 class FloatingFood(
-    context: LifecycleService,
+    private val context: LifecycleService,
     private val viewModel: FloatingViewModel,
     windowModule: FloatingWindowModule,
     movementModule: MovementModule,
     receiver: ResultReceiver? = null
 ): FloatingComponent(windowModule, movementModule, receiver) {
 
-    fun expireFood() {
+    fun expireFood(gooseState: LiveData<GooseState>) {
+        gooseState.observe(context){
+            if(it == GooseState.KILL_GOOSE) destroy()
+        }
+
         Handler().postDelayed({
             if (movementModule?.isAlive == true) {
                 viewModel.decrementEggCount(if (viewModel.eggCount.value >= 5) 5 else viewModel.eggCount.value)
@@ -96,12 +104,16 @@ class FloatingWindow(
 ): FloatingComponent(windowModule, movementModule) {}
 
 class FloatingPrints(
+    private val context: LifecycleService,
     windowModule: FloatingWindowModule,
     movementModule: MovementModule? = null,
     receiver: ResultReceiver? = null
 ): FloatingComponent(windowModule, movementModule, receiver) {
 
-    fun expirePrints() {
+    fun expirePrints(gooseState: LiveData<GooseState>) {
+        gooseState.observe(context){
+            if(it == GooseState.KILL_GOOSE) destroy()
+        }
         Handler().postDelayed( {
             destroy()
         }, 10000)

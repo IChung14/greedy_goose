@@ -32,9 +32,7 @@ class FloatingWindowModule(
     fun destroy() {
         try {
             windowManager.removeViewImmediate(binding.root)
-        } catch (e: IllegalArgumentException) {
-            e.printStackTrace()
-        }
+        } catch (e: IllegalArgumentException) {}
     }
 
     companion object{

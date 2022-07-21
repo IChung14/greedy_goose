@@ -14,10 +14,6 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.GreedyGoose">
-        <receiver
-            android:name=".timer.TimerBroadcastReceiver"
-            android:enabled="true"
-            android:exported="true"></receiver>
 
         <activity
             android:name=".SettingsPage"
@@ -29,7 +25,7 @@
             android:exported="true" />
 
         <activity
-            android:name=".timer.TimerPage"
+            android:name=".TimerPage"
             android:exported="false"
             android:parentActivityName=".MainActivity" />
         <activity
@@ -42,7 +38,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".Entertainment"
+            android:name=".EntertainmentPage"
             android:parentActivityName=".MainActivity" />
 
         <service android:name=".timer.TimerService" />
