@@ -23,7 +23,7 @@ class EntertainmentPage : AppCompatActivity() {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        checkOverlayPermission()
+        MainActivity.checkOverlayPermission(this, resultLauncher)
         setContentView(binding.root)
 
         startFloatingService()
@@ -46,18 +46,4 @@ class EntertainmentPage : AppCompatActivity() {
         }
     }
 
-    // method to ask user to grant the Overlay permission
-    private fun checkOverlayPermission() {
-        if (!Settings.canDrawOverlays(this)) {
-            // show a pop-up indicating they should set permissions for the app
-            val permissionAlert = AlertDialog.Builder(this)
-            permissionAlert.setMessage("For the application to run, please turn on permissions for Greedy Goose")
-            permissionAlert.setTitle("Permission Reminder")
-            permissionAlert.setPositiveButton("Ok") { _, _ ->
-                resultLauncher.launch(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
-            }
-            permissionAlert.setCancelable(true)
-            permissionAlert.create().show()
-        }
-    }
 }
