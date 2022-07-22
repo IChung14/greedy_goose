@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter
 import android.widget.CheckedTextView
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.timer.TimerService
 import com.google.android.material.snackbar.Snackbar
@@ -22,6 +23,8 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
     private lateinit var viewModel: TimerViewModel
     private lateinit var timerService: TimerService
     private lateinit var listviewTimerPage: ListView
+
+    private val apps = mutableMapOf<String,String>()
 
     private var timerBound: Boolean = false
     var arrayAdapter: ArrayAdapter<*>? = null
@@ -50,7 +53,7 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        viewModel = TimerViewModel()
+        viewModel = TimerViewModel(this)
         binding = TimerPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -81,10 +84,8 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
         // get list of all the apps installed
         val ril = packageManager.queryIntentActivities(mainIntent, 0)
         var name: String? = null
-        var i = 0
 
         // get size of ril and create a list
-        val apps = arrayOfNulls<String>(ril.size)
         for (ri in ril) {
             if (ri.activityInfo != null) {
                 // get package
@@ -92,14 +93,13 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
                     packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
                 // if activity label res is found
                 name = if (ri.activityInfo.labelRes != 0) {
-                    res.getString(ri.activityInfo.labelRes)
-                } else {
-                    ri.activityInfo.applicationInfo.loadLabel(
-                        packageManager
-                    ).toString()
-                }
-                apps[i] = name
-                i++
+                        res.getString(ri.activityInfo.labelRes)
+                    } else {
+                        ri.activityInfo.applicationInfo.loadLabel(
+                            packageManager
+                        ).toString()
+                    }
+                apps[name] = ri.activityInfo.packageName
             }
         }
 
@@ -107,7 +107,7 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
         arrayAdapter = ArrayAdapter(
             this@TimerPage,
             android.R.layout.simple_list_item_multiple_choice,
-            apps
+            apps.keys.toList()
         )
         listviewTimerPage.adapter = arrayAdapter
         listviewTimerPage.choiceMode = ListView.CHOICE_MODE_MULTIPLE
@@ -151,21 +151,25 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
     }
 
     override fun onItemClick (parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        var unproductive_item:String = parent.getItemAtPosition(position) as String
+        var unproductiveItem:String = parent.getItemAtPosition(position) as String
         val v = view as CheckedTextView
         val currentCheck = v.isChecked
-        if (currentCheck) {
-            viewModel.unproductiveApplications[unproductive_item] = unproductive_item
-            println("SOMETHING happened")
-            println(unproductive_item)
-            println("NUM ITEMS: " + viewModel.unproductiveApplications.size)
+
+        val newList = viewModel.currUnprod.value.toMutableList()
+        apps[unproductiveItem]?.let {
+            if (currentCheck) {
+                newList.add(it)
+                println("SOMETHING happened")
+            }
+            else {
+                newList.remove(it)
+                println("ITEM REMOVED")
+            }
         }
-        else {
-            println("NUM ITEMS BEFORE: " + viewModel.unproductiveApplications.size)
-            viewModel.unproductiveApplications.remove(unproductive_item)
-            println("ITEM REMOVED")
-            println("NUM ITEMS AFTER: " + viewModel.unproductiveApplications.size)
-        }
+
+        println("NUM ITEMS AFTER: " + newList.size)
+        println(newList)
+        viewModel.setUnproductive(newList)
     }
 
 }

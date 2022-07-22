@@ -39,6 +39,13 @@ class SPLDAccessModel(val context: Context) {
         }
     }
 
+    val unproductive = sharedPreference.listLiveData(ModelKeys.UNPROD.key, listOf())
+    fun setUnproductive(list: List<String>){
+        with(sharedPreference.edit()){
+            putString(ModelKeys.UNPROD.key, list.toString())
+            apply()
+        }
+    }
 }
 
 enum class Theme(val key: String){
@@ -51,6 +58,7 @@ enum class Theme(val key: String){
 enum class ModelKeys(val key: String){
     EGG_COUNT("EggCount"),
     THEME("Theme"),
+    UNPROD("UnproductiveApp")
 }
 
 val memes: List<Int> = listOf(

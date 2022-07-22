@@ -16,13 +16,14 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
     var timerState:MutableLiveData<TimerState> = MutableLiveData(NotStartedState(context, this))
 
     fun initTimer(elapsedHrs: Long, elapsedMins: Long, elapsedSecs: Long){
+        timerHelper = TimerHelper(context)
         if(timerState.value is NotStartedState){
             setTime = elapsedHrs + elapsedMins + elapsedSecs
             elapsedTime.value = elapsedHrs + elapsedMins + elapsedSecs
         }
 //        timer?.cancel()
 //        timer = Timer()
-        startBackgroundCheck()
+//        startBackgroundCheck()
     }
 
     fun setElapsedTime(newTime: Long = setTime){
@@ -34,9 +35,9 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
         timerState.value = timerState.value?.resetTimer()
     }
 
-    fun startBackgroundCheck () {
-        timer?.scheduleAtFixedRate(CheckAppTask(), 0, 2000)
-    }
+//    fun startBackgroundCheck () {
+//        timer?.scheduleAtFixedRate(CheckAppTask(), 0, 2000)
+//    }
 
     fun pauseTimer(){
         timer?.cancel()
@@ -64,8 +65,11 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
 
     private inner class TimeTask(private var time: Long) : TimerTask() {
         override fun run() {
-            time -= 1000
-            elapsedTime.postValue(time)
+            if (timerHelper.runGetAppService()) {
+                time -= 1000
+                elapsedTime.postValue(time)
+            }
+
 
             if (time <= 0L) {
                 elapsedTime.postValue(0L)

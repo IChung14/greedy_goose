@@ -47,6 +47,18 @@ class SharedPreferenceThemeLiveData(sharedPrefs: SharedPreferences, key: String,
         Theme.values()[sharedPrefs.getInt(key, defValue.ordinal)]
 }
 
+class SharedPreferenceListLiveData(sharedPrefs: SharedPreferences, key: String, defValue: List<String>) :
+    SharedPreferenceLiveData<List<String>>(sharedPrefs, key, defValue) {
+    override fun getValueFromPreferences(key: String, defValue: List<String>): List<String> =
+        parseStringToList(sharedPrefs.getString(key, defValue.toString())) ?: defValue
+
+    companion object{
+        fun parseStringToList(string: String?): List<String>?{
+            return string?.substring( 1, string.length - 1 )?.split(", ")
+        }
+    }
+}
+
 fun SharedPreferences.intLiveData(key: String, defValue: Int): SharedPreferenceLiveData<Int> {
     return SharedPreferenceIntLiveData(this, key, defValue)
 }
@@ -57,4 +69,7 @@ fun SharedPreferences.booleanLiveData(key: String, defValue: Boolean): SharedPre
 
 fun SharedPreferences.themeLiveData(key: String, defValue: Theme): SharedPreferenceLiveData<Theme> {
     return SharedPreferenceThemeLiveData(this, key, defValue)
+}
+fun SharedPreferences.listLiveData(key: String, defValue: List<String>): SharedPreferenceLiveData<List<String>> {
+    return SharedPreferenceListLiveData(this, key, defValue)
 }
