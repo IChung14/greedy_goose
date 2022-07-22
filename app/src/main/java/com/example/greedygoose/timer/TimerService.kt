@@ -39,7 +39,7 @@ class TimerService : Service() {
 
     fun onTimerStartPressed(elapsedHrs: Long, elapsedMins: Long, elapsedSecs: Long){
         stateTimer.initTimer(elapsedHrs, elapsedMins, elapsedSecs)
-        stateTimer.next()
+//        stateTimer.next()
     }
 
     // also called when alarm is stopped

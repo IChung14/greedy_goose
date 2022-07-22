@@ -2,12 +2,15 @@ package com.example.greedygoose.timer
 
 import androidx.lifecycle.MutableLiveData
 import com.example.greedygoose.timer.state.NotStartedState
+import com.example.greedygoose.timer.state.PausedState
+import com.example.greedygoose.timer.state.RunningState
 import com.example.greedygoose.timer.state.TimerState
 import java.util.*
 
 class StateTimer(val context: TimerService, val onExpire:()->Unit) {
     private var timer: Timer? = null
 
+    private lateinit var timerHelper: TimerHelper
     private var setTime = 0L
     var elapsedTime = MutableLiveData(0L)
     var timerState:MutableLiveData<TimerState> = MutableLiveData(NotStartedState(context, this))
@@ -17,6 +20,9 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
             setTime = elapsedHrs + elapsedMins + elapsedSecs
             elapsedTime.value = elapsedHrs + elapsedMins + elapsedSecs
         }
+//        timer?.cancel()
+//        timer = Timer()
+        startBackgroundCheck()
     }
 
     fun setElapsedTime(newTime: Long = setTime){
@@ -26,6 +32,10 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
     fun next(){ progressState() }
     fun reset() {
         timerState.value = timerState.value?.resetTimer()
+    }
+
+    fun startBackgroundCheck () {
+        timer?.scheduleAtFixedRate(CheckAppTask(), 0, 2000)
     }
 
     fun pauseTimer(){
@@ -68,6 +78,32 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
                     time
                 )
             }
+        }
+    }
+
+    private inner class CheckAppTask() : TimerTask() {
+        override fun run() {
+            timerHelper = TimerHelper(context)
+            println("BEGIN CHECKING")
+            if(timerHelper.runGetAppService()){
+//                println("ENTERED IF")
+                if(timerState.value === NotStartedState::class.java ||
+                    timerState.value === PausedState::class.java) {
+                    next()
+//                    timerState.postValue(timerState.value?.nextAction())
+//                    println("NotStartedState PausedState")
+                }
+            }
+            else {
+//                println("ENTERED ELSE")
+                if (timerState.value === RunningState::class.java) {
+                    next()
+//                    timerState.postValue(timerState.value?.nextAction())
+//                    println("RunningState")
+                }
+            }
+
+            println("FINISHED CHECKING")
         }
     }
 }
