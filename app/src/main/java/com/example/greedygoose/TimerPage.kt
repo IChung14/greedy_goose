@@ -11,7 +11,6 @@ import android.widget.ArrayAdapter
 import android.widget.CheckedTextView
 import android.widget.ListView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.children
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.timer.TimerService
 import com.google.android.material.snackbar.Snackbar
@@ -78,7 +77,7 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
 
         // get list of all the apps installed
         val ril = packageManager.queryIntentActivities(mainIntent, 0)
-        var name: String? = null
+        var appName: String? = null
 
         // get size of ril and create a list
         for (ri in ril) {
@@ -87,14 +86,14 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
                 val res: Resources =
                     packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
                 // if activity label res is found
-                name = if (ri.activityInfo.labelRes != 0) {
+                appName = if (ri.activityInfo.labelRes != 0) {
                         res.getString(ri.activityInfo.labelRes)
                     } else {
                         ri.activityInfo.applicationInfo.loadLabel(
                             packageManager
                         ).toString()
                     }
-                apps[name] = ri.activityInfo.packageName
+                apps[appName] = ri.activityInfo.packageName
             }
         }
 

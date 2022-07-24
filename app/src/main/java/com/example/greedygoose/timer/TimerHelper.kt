@@ -28,17 +28,14 @@ class TimerHelper(private var context: Context) {
         return false
     }
 
-    fun getForegroundApp(): Map<String, String> {
-
+    private fun getForegroundApp(): Map<String, String> {
         var foregroundAppPackageName: String? = null
         val currentTime = System.currentTimeMillis()
+        //runs every second
         val usageEvents = usageStatsManager.queryEvents(currentTime - (1000 * 1), currentTime)
         val usageEvent = UsageEvents.Event()
         while (usageEvents.hasNextEvent()) {
             usageEvents.getNextEvent(usageEvent)
-            println(usageEvent.packageName)
-            println(usageEvent.eventType)
-
 
             if(usageEvent.packageName == "com.android.vending"){
 
@@ -77,5 +74,4 @@ class TimerHelper(private var context: Context) {
         }
         return appInfoMap
     }
-
 }
