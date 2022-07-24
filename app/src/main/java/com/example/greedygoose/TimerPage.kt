@@ -3,7 +3,9 @@ package com.example.greedygoose
 import android.content.*
 import android.os.Bundle
 import android.os.IBinder
+import android.provider.Settings
 import android.text.format.DateUtils
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.timer.TimerService
@@ -15,6 +17,9 @@ class TimerPage : AppCompatActivity() {
 
     private lateinit var timerService: TimerService
     private var timerBound: Boolean = false
+
+    private var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
 
     private val connection = object : ServiceConnection {
 
@@ -53,10 +58,15 @@ class TimerPage : AppCompatActivity() {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        // maybe first call
-//        timerService.timerState.value?.showUI(binding)
+        MainActivity.checkOverlayPermission(this, resultLauncher)
 
         binding.startBtn.setOnClickListener {
+            // if overlay permission is not granted, cease the start button behavior.
+            if (!Settings.canDrawOverlays(this)) {
+                MainActivity.checkOverlayPermission(this, resultLauncher)
+                return@setOnClickListener
+            }
+
             val hrs = binding.userInputHrs.text.toString()
             val mins = binding.userInputMins.text.toString()
             val secs = binding.userInputSecs.text.toString()
