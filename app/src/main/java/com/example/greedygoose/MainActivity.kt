@@ -1,9 +1,13 @@
 package com.example.greedygoose
 
+import android.app.AlertDialog
+import android.content.Context
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.text.Html
+import androidx.activity.result.ActivityResultLauncher
 import com.example.greedygoose.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -46,5 +50,23 @@ class MainActivity : AppCompatActivity() {
             html += "<font color=$color><b>$element</b></font>"
         }
         return html
+    }
+
+    companion object{
+
+        // method to ask user to grant the Overlay permission
+        fun checkOverlayPermission(context: Context, resultLauncher: ActivityResultLauncher<Intent>) {
+            if (!Settings.canDrawOverlays(context)) {
+                // show a pop-up indicating they should set permissions for the app
+                val permissionAlert = AlertDialog.Builder(context)
+                permissionAlert.setMessage("For the application to run, please turn on permissions for Greedy Goose")
+                permissionAlert.setTitle("Permission Reminder")
+                permissionAlert.setPositiveButton("Ok") { _, _ ->
+                    resultLauncher.launch(Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION))
+                }
+                permissionAlert.setCancelable(true)
+                permissionAlert.create().show()
+            }
+        }
     }
 }

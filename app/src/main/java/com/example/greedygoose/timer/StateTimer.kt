@@ -57,11 +57,12 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
     private inner class TimeTask(private var time: Long) : TimerTask() {
         override fun run() {
             if (timerHelper.runGetAppService()) {
-                time -= 1000
+                time = if(time-1000 <= 0) 0 else time - 1000
                 elapsedTime.postValue(time)
             }
+
             if (time <= 0L) {
-                elapsedTime.postValue(0L)
+                onExpire()
                 NotificationUtil.showTimerExpired(context)
                 progressState()
             } else {

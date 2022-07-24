@@ -4,12 +4,14 @@ import android.content.*
 import android.content.res.Resources
 import android.os.Bundle
 import android.os.IBinder
+import android.provider.Settings
 import android.text.format.DateUtils
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.CheckedTextView
 import android.widget.ListView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.timer.TimerService
@@ -27,6 +29,9 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
 
     private var timerBound: Boolean = false
     var arrayAdapter: ArrayAdapter<*>? = null
+
+    private var resultLauncher =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
 
     private val connection = object : ServiceConnection {
 
@@ -107,7 +112,15 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
         listviewTimerPage.choiceMode = ListView.CHOICE_MODE_MULTIPLE
         listviewTimerPage.onItemClickListener = this
 
+        MainActivity.checkOverlayPermission(this, resultLauncher)
+
         binding.startBtn.setOnClickListener {
+            // if overlay permission is not granted, cease the start button behavior.
+            if (!Settings.canDrawOverlays(this)) {
+                MainActivity.checkOverlayPermission(this, resultLauncher)
+                return@setOnClickListener
+            }
+
             val hrs = binding.userInputHrs.text.toString()
             val mins = binding.userInputMins.text.toString()
             val secs = binding.userInputSecs.text.toString()
