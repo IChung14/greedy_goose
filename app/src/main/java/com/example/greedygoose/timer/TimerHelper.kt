@@ -7,7 +7,7 @@ import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
 import com.example.greedygoose.data.SPLDAccessModel
 
-class TimerHelper(private var context: Context) {//}, service: IBinder ) {
+class TimerHelper(private var context: Context) {
 
     private val model = SPLDAccessModel(context = context)
     private var usageStatsManager =
@@ -19,11 +19,7 @@ class TimerHelper(private var context: Context) {//}, service: IBinder ) {
     fun runGetAppService(): Boolean {
         val allApplications = getForegroundApp()
 
-        println("***************")
-        println(allApplications)
         //check to see if apps are unproductive
-        println("num unproductive: " + model.unproductive.value.size)
-
         for ((key, value) in allApplications) {
             if (model.unproductive.value.contains(value)) {
                 return true
@@ -36,9 +32,6 @@ class TimerHelper(private var context: Context) {//}, service: IBinder ) {
 
         var foregroundAppPackageName: String? = null
         val currentTime = System.currentTimeMillis()
-        // The `queryEvents` method takes in the `beginTime` and `endTime` to retrieve the usage events.
-        // In our case, beginTime = currentTime - 10 minutes ( 1000 * 60 * 10 milliseconds )
-        // and endTime = currentTime
         val usageEvents = usageStatsManager.queryEvents(currentTime - (1000 * 1), currentTime)
         val usageEvent = UsageEvents.Event()
         while (usageEvents.hasNextEvent()) {

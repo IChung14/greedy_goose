@@ -67,13 +67,8 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
 
-        // maybe first call
-//        timerService.timerState.value?.showUI(binding)
-
-        // *********************************
         // *********************************
         // LIST OF APPS ON PHONE STARTS HERE
-        // *********************************
         // *********************************
 
         listviewTimerPage = findViewById(R.id.applistview)
@@ -132,7 +127,6 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
                 // STARTS TIMER
                 timerService.onTimerStartPressed(elapsedHrs, elapsedMins, elapsedSecs)
             }
-
         }
 
         binding.resetBtn.setOnClickListener {
@@ -159,17 +153,11 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
         apps[unproductiveItem]?.let {
             if (currentCheck) {
                 newList.add(it)
-                println("SOMETHING happened")
             }
             else {
                 newList.remove(it)
-                println("ITEM REMOVED")
             }
         }
-
-        println("NUM ITEMS AFTER: " + newList.size)
-        println(newList)
         viewModel.setUnproductive(newList)
     }
-
 }
