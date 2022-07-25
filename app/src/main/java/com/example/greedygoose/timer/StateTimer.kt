@@ -8,11 +8,13 @@ import java.util.*
 class StateTimer(val context: TimerService, val onExpire:()->Unit) {
     private var timer: Timer? = null
 
+    private lateinit var timerHelper: TimerHelper
     private var setTime = 0L
     var elapsedTime = MutableLiveData(0L)
     var timerState:MutableLiveData<TimerState> = MutableLiveData(NotStartedState(context, this))
 
     fun initTimer(elapsedHrs: Long, elapsedMins: Long, elapsedSecs: Long){
+        timerHelper = TimerHelper(context)
         if(timerState.value is NotStartedState){
             setTime = elapsedHrs + elapsedMins + elapsedSecs
             elapsedTime.value = elapsedHrs + elapsedMins + elapsedSecs
@@ -54,8 +56,10 @@ class StateTimer(val context: TimerService, val onExpire:()->Unit) {
 
     private inner class TimeTask(private var time: Long) : TimerTask() {
         override fun run() {
-            time = if(time-1000 <= 0) 0 else time - 1000
-            elapsedTime.postValue(time)
+            if (timerHelper.runGetAppService()) {
+                time = if(time-1000 <= 0) 0 else time - 1000
+                elapsedTime.postValue(time)
+            }
 
             if (time <= 0L) {
                 onExpire()

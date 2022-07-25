@@ -56,7 +56,6 @@
         android:text="@string/app_selection"
         android:textColor="#E191CA"
         android:textSize="24sp"
-        app:layout_constraintBottom_toTopOf="@+id/scrollView2"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -105,25 +104,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <ScrollView-->
-<!--        android:id="@+id/scrollView2"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="200dp"-->
-<!--        android:layout_marginStart="28dp"-->
-<!--        android:layout_marginTop="44dp"-->
-<!--        android:layout_marginEnd="28dp"-->
-<!--        android:contentDescription="@string/list_of_apps_on_device"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintHorizontal_bias="1.0"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/appSelectionLabel">-->
-
-<!--        &lt;!&ndash;        <LinearLayout&ndash;&gt;-->
-<!--        &lt;!&ndash;            android:layout_width="match_parent"&ndash;&gt;-->
-<!--        &lt;!&ndash;            android:layout_height="wrap_content"&ndash;&gt;-->
-<!--        &lt;!&ndash;            android:orientation="vertical" />&ndash;&gt;-->
-<!--    </ScrollView>-->
-
     <TextView
         android:id="@+id/timerText"
         android:layout_width="wrap_content"
@@ -137,5 +117,17 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ListView
+        android:id="@+id/applistview"
+        android:layout_width="346dp"
+        android:layout_height="269dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginEnd="28dp"
+        android:contentDescription="@string/list_of_apps_on_device"
+        android:checkMark="?android:attr/listChoiceIndicatorMultiple"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/appSelectionLabel"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

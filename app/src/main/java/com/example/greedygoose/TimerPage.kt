@@ -1,22 +1,34 @@
 package com.example.greedygoose
 
 import android.content.*
+import android.content.res.Resources
 import android.os.Bundle
 import android.os.IBinder
 import android.provider.Settings
 import android.text.format.DateUtils
+import android.view.View
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.CheckedTextView
+import android.widget.ListView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.databinding.TimerPageBinding
 import com.example.greedygoose.timer.TimerService
 import com.google.android.material.snackbar.Snackbar
 
-class TimerPage : AppCompatActivity() {
+class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
 
     private lateinit var binding: TimerPageBinding
 
+    private lateinit var viewModel: TimerViewModel
     private lateinit var timerService: TimerService
+    private lateinit var listviewTimerPage: ListView
+
+    private val apps = mutableMapOf<String,String>()
+
     private var timerBound: Boolean = false
+    var arrayAdapter: ArrayAdapter<*>? = null
 
     private var resultLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { }
@@ -45,6 +57,7 @@ class TimerPage : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        viewModel = TimerViewModel(this)
         binding = TimerPageBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -57,6 +70,47 @@ class TimerPage : AppCompatActivity() {
         )
 
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+
+        // *********************************
+        // LIST OF APPS ON PHONE STARTS HERE
+        // *********************************
+
+        listviewTimerPage = findViewById(R.id.applistview)
+
+        val mainIntent = Intent(Intent.ACTION_MAIN, null)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+
+        // get list of all the apps installed
+        val ril = packageManager.queryIntentActivities(mainIntent, 0)
+        var appName: String? = null
+
+        // get size of ril and create a list
+        for (ri in ril) {
+            if (ri.activityInfo != null) {
+                // get package
+                val res: Resources =
+                    packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
+                // if activity label res is found
+                appName = if (ri.activityInfo.labelRes != 0) {
+                        res.getString(ri.activityInfo.labelRes)
+                    } else {
+                        ri.activityInfo.applicationInfo.loadLabel(
+                            packageManager
+                        ).toString()
+                    }
+                apps[appName] = ri.activityInfo.packageName
+            }
+        }
+
+        // set all the apps name in list view
+        arrayAdapter = ArrayAdapter(
+            this@TimerPage,
+            android.R.layout.simple_list_item_multiple_choice,
+            apps.keys.toList()
+        )
+        listviewTimerPage.adapter = arrayAdapter
+        listviewTimerPage.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        listviewTimerPage.onItemClickListener = this
 
         MainActivity.checkOverlayPermission(this, resultLauncher)
 
@@ -82,9 +136,9 @@ class TimerPage : AppCompatActivity() {
                     Snackbar.LENGTH_SHORT
                 ).show()
             }else{
+                // STARTS TIMER
                 timerService.onTimerStartPressed(elapsedHrs, elapsedMins, elapsedSecs)
             }
-
         }
 
         binding.resetBtn.setOnClickListener {
@@ -102,4 +156,20 @@ class TimerPage : AppCompatActivity() {
         super.onDestroy()
     }
 
+    override fun onItemClick (parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        var unproductiveItem:String = parent.getItemAtPosition(position) as String
+        val v = view as CheckedTextView
+        val currentCheck = v.isChecked
+
+        val newList = viewModel.currUnprod.value.toMutableList()
+        apps[unproductiveItem]?.let {
+            if (currentCheck) {
+                newList.add(it)
+            }
+            else {
+                newList.remove(it)
+            }
+        }
+        viewModel.setUnproductive(newList)
+    }
 }
