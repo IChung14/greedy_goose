@@ -77,56 +77,63 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
         // *********************************
         // LIST OF APPS ON PHONE STARTS HERE
         // *********************************
-        if (checkUsageStatsPermission()) {
-            listviewTimerPage = findViewById(R.id.applistview)
-
-            val mainIntent = Intent(Intent.ACTION_MAIN, null)
-            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
-
-            // get list of all the apps installed
-            val ril = packageManager.queryIntentActivities(mainIntent, 0)
-            var appName: String? = null
-
-            // get size of ril and create a list
-            for (ri in ril) {
-                if (ri.activityInfo != null) {
-                    // get package
-                    val res: Resources =
-                        packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
-                    // if activity label res is found
-                    appName = if (ri.activityInfo.labelRes != 0) {
-                        res.getString(ri.activityInfo.labelRes)
-                    } else {
-                        ri.activityInfo.applicationInfo.loadLabel(
-                            packageManager
-                        ).toString()
-                    }
-                    apps[appName] = ri.activityInfo.packageName
-                }
-            }
-
-            // set all the apps name in list view
-            arrayAdapter = ArrayAdapter(
-                this@TimerPage,
-                android.R.layout.simple_list_item_multiple_choice,
-                apps.keys.toList()
-            )
-            listviewTimerPage.adapter = arrayAdapter
-            listviewTimerPage.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-            listviewTimerPage.onItemClickListener = this
-        } else {
+        if (!checkUsageStatsPermission()) {
             // Navigate the user to the permission settings
             Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
                 startActivity(this)
             }
         }
+        listviewTimerPage = findViewById(R.id.applistview)
+
+        val mainIntent = Intent(Intent.ACTION_MAIN, null)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+
+        // get list of all the apps installed
+        val ril = packageManager.queryIntentActivities(mainIntent, 0)
+        var appName: String? = null
+
+        // get size of ril and create a list
+        for (ri in ril) {
+            if (ri.activityInfo != null) {
+                // get package
+                val res: Resources =
+                    packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
+                // if activity label res is found
+                appName = if (ri.activityInfo.labelRes != 0) {
+                    res.getString(ri.activityInfo.labelRes)
+                } else {
+                    ri.activityInfo.applicationInfo.loadLabel(
+                        packageManager
+                    ).toString()
+                }
+                apps[appName] = ri.activityInfo.packageName
+            }
+        }
+
+        // set all the apps name in list view
+        arrayAdapter = ArrayAdapter(
+            this@TimerPage,
+            android.R.layout.simple_list_item_multiple_choice,
+            apps.keys.toList()
+        )
+        listviewTimerPage.adapter = arrayAdapter
+        listviewTimerPage.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        listviewTimerPage.onItemClickListener = this
 
         MainActivity.checkOverlayPermission(this, resultLauncher)
 
         binding.startBtn.setOnClickListener {
             // if overlay permission is not granted, cease the start button behavior.
-            if (!Settings.canDrawOverlays(this)) {
-                MainActivity.checkOverlayPermission(this, resultLauncher)
+            if (!Settings.canDrawOverlays(this) || !checkUsageStatsPermission()) {
+                if(!Settings.canDrawOverlays(this))
+                    MainActivity.checkOverlayPermission(this, resultLauncher)
+                if(!checkUsageStatsPermission()){
+                    // Navigate the user to the permission settings
+                    Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                        startActivity(this)
+                    }
+                }
+
                 return@setOnClickListener
             }
 
