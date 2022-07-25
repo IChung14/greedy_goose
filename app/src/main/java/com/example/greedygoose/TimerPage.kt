@@ -1,9 +1,12 @@
 package com.example.greedygoose
 
+import android.app.AppOpsManager
 import android.content.*
 import android.content.res.Resources
+import android.os.Build
 import android.os.Bundle
 import android.os.IBinder
+import android.os.Process
 import android.provider.Settings
 import android.text.format.DateUtils
 import android.view.View
@@ -25,7 +28,7 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
     private lateinit var timerService: TimerService
     private lateinit var listviewTimerPage: ListView
 
-    private val apps = mutableMapOf<String,String>()
+    private val apps = mutableMapOf<String, String>()
 
     private var timerBound: Boolean = false
     var arrayAdapter: ArrayAdapter<*>? = null
@@ -41,10 +44,10 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
             timerService = binder.getService()
             timerBound = true
 
-            timerService.stateTimer.timerState.observe(this@TimerPage){
+            timerService.stateTimer.timerState.observe(this@TimerPage) {
                 it.showUI(binding)
             }
-            timerService.stateTimer.elapsedTime.observe(this@TimerPage){
+            timerService.stateTimer.elapsedTime.observe(this@TimerPage) {
                 timerService.stateTimer.timerState.value?.showUI(binding)
             }
         }
@@ -74,43 +77,49 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
         // *********************************
         // LIST OF APPS ON PHONE STARTS HERE
         // *********************************
+        if (checkUsageStatsPermission()) {
+            listviewTimerPage = findViewById(R.id.applistview)
 
-        listviewTimerPage = findViewById(R.id.applistview)
+            val mainIntent = Intent(Intent.ACTION_MAIN, null)
+            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-        val mainIntent = Intent(Intent.ACTION_MAIN, null)
-        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+            // get list of all the apps installed
+            val ril = packageManager.queryIntentActivities(mainIntent, 0)
+            var appName: String? = null
 
-        // get list of all the apps installed
-        val ril = packageManager.queryIntentActivities(mainIntent, 0)
-        var appName: String? = null
-
-        // get size of ril and create a list
-        for (ri in ril) {
-            if (ri.activityInfo != null) {
-                // get package
-                val res: Resources =
-                    packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
-                // if activity label res is found
-                appName = if (ri.activityInfo.labelRes != 0) {
+            // get size of ril and create a list
+            for (ri in ril) {
+                if (ri.activityInfo != null) {
+                    // get package
+                    val res: Resources =
+                        packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
+                    // if activity label res is found
+                    appName = if (ri.activityInfo.labelRes != 0) {
                         res.getString(ri.activityInfo.labelRes)
                     } else {
                         ri.activityInfo.applicationInfo.loadLabel(
                             packageManager
                         ).toString()
                     }
-                apps[appName] = ri.activityInfo.packageName
+                    apps[appName] = ri.activityInfo.packageName
+                }
+            }
+
+            // set all the apps name in list view
+            arrayAdapter = ArrayAdapter(
+                this@TimerPage,
+                android.R.layout.simple_list_item_multiple_choice,
+                apps.keys.toList()
+            )
+            listviewTimerPage.adapter = arrayAdapter
+            listviewTimerPage.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+            listviewTimerPage.onItemClickListener = this
+        } else {
+            // Navigate the user to the permission settings
+            Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                startActivity(this)
             }
         }
-
-        // set all the apps name in list view
-        arrayAdapter = ArrayAdapter(
-            this@TimerPage,
-            android.R.layout.simple_list_item_multiple_choice,
-            apps.keys.toList()
-        )
-        listviewTimerPage.adapter = arrayAdapter
-        listviewTimerPage.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-        listviewTimerPage.onItemClickListener = this
 
         MainActivity.checkOverlayPermission(this, resultLauncher)
 
@@ -126,16 +135,20 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
             val secs = binding.userInputSecs.text.toString()
 
             val elapsedHrs = if (hrs.isNotEmpty()) hrs.toLong() * DateUtils.HOUR_IN_MILLIS else 0L
-            val elapsedMins = if (mins.isNotEmpty()) mins.toLong() * DateUtils.MINUTE_IN_MILLIS else 0L
-            val elapsedSecs = if (secs.isNotEmpty()) secs.toLong() * DateUtils.SECOND_IN_MILLIS else  0L
+            val elapsedMins =
+                if (mins.isNotEmpty()) mins.toLong() * DateUtils.MINUTE_IN_MILLIS else 0L
+            val elapsedSecs =
+                if (secs.isNotEmpty()) secs.toLong() * DateUtils.SECOND_IN_MILLIS else 0L
 
             if (timerService.stateTimer.elapsedTime.value!! == 0L && (hrs.isEmpty() && mins.isEmpty() && secs.isEmpty() ||
-                elapsedHrs+elapsedMins+elapsedSecs == 0L)) {
-                Snackbar.make(binding.root,
+                        elapsedHrs + elapsedMins + elapsedSecs == 0L)
+            ) {
+                Snackbar.make(
+                    binding.root,
                     "Please input a time greater than 0 sec",
                     Snackbar.LENGTH_SHORT
                 ).show()
-            }else{
+            } else {
                 // STARTS TIMER
                 timerService.onTimerStartPressed(elapsedHrs, elapsedMins, elapsedSecs)
             }
@@ -156,8 +169,8 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
         super.onDestroy()
     }
 
-    override fun onItemClick (parent: AdapterView<*>, view: View, position: Int, id: Long) {
-        var unproductiveItem:String = parent.getItemAtPosition(position) as String
+    override fun onItemClick(parent: AdapterView<*>, view: View, position: Int, id: Long) {
+        var unproductiveItem: String = parent.getItemAtPosition(position) as String
         val v = view as CheckedTextView
         val currentCheck = v.isChecked
 
@@ -165,11 +178,29 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
         apps[unproductiveItem]?.let {
             if (currentCheck) {
                 newList.add(it)
-            }
-            else {
+            } else {
                 newList.remove(it)
             }
         }
         viewModel.setUnproductive(newList)
+    }
+
+    // The `PACKAGE_USAGE_STATS` permission is a not a runtime permission and hence cannot be
+    // requested directly using `ActivityCompat.requestPermissions`. All special permissions
+    // are handled by `AppOpsManager`.
+    private fun checkUsageStatsPermission(): Boolean {
+        val appOpsManager = getSystemService(AppCompatActivity.APP_OPS_SERVICE) as AppOpsManager
+        val mode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            appOpsManager.unsafeCheckOpNoThrow(
+                "android:get_usage_stats",
+                Process.myUid(), packageName
+            )
+        } else {
+            appOpsManager.checkOpNoThrow(
+                "android:get_usage_stats",
+                Process.myUid(), packageName
+            )
+        }
+        return mode == AppOpsManager.MODE_ALLOWED
     }
 }
