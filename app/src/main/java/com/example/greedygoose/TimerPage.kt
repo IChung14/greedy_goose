@@ -77,58 +77,48 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
         // *********************************
         // LIST OF APPS ON PHONE STARTS HERE
         // *********************************
-        if (checkUsageStatsPermission()) {
-            listviewTimerPage = findViewById(R.id.applistview)
+        listviewTimerPage = findViewById(R.id.applistview)
 
-            val mainIntent = Intent(Intent.ACTION_MAIN, null)
-            mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
+        val mainIntent = Intent(Intent.ACTION_MAIN, null)
+        mainIntent.addCategory(Intent.CATEGORY_LAUNCHER)
 
-            // get list of all the apps installed
-            val ril = packageManager.queryIntentActivities(mainIntent, 0)
-            var appName: String? = null
+        // get list of all the apps installed
+        val ril = packageManager.queryIntentActivities(mainIntent, 0)
+        var appName: String? = null
 
-            // get size of ril and create a list
-            for (ri in ril) {
-                if (ri.activityInfo != null) {
-                    // get package
-                    val res: Resources =
-                        packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
-                    // if activity label res is found
-                    appName = if (ri.activityInfo.labelRes != 0) {
-                        res.getString(ri.activityInfo.labelRes)
-                    } else {
-                        ri.activityInfo.applicationInfo.loadLabel(
-                            packageManager
-                        ).toString()
-                    }
-                    apps[appName] = ri.activityInfo.packageName
+        // get size of ril and create a list
+        for (ri in ril) {
+            if (ri.activityInfo != null) {
+                // get package
+                val res: Resources =
+                    packageManager.getResourcesForApplication(ri.activityInfo.applicationInfo)
+                // if activity label res is found
+                appName = if (ri.activityInfo.labelRes != 0) {
+                    res.getString(ri.activityInfo.labelRes)
+                } else {
+                    ri.activityInfo.applicationInfo.loadLabel(
+                        packageManager
+                    ).toString()
                 }
-            }
-
-            // set all the apps name in list view
-            arrayAdapter = ArrayAdapter(
-                this@TimerPage,
-                android.R.layout.simple_list_item_multiple_choice,
-                apps.keys.toList()
-            )
-            listviewTimerPage.adapter = arrayAdapter
-            listviewTimerPage.choiceMode = ListView.CHOICE_MODE_MULTIPLE
-            listviewTimerPage.onItemClickListener = this
-        } else {
-            // Navigate the user to the permission settings
-            Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
-                startActivity(this)
+                apps[appName] = ri.activityInfo.packageName
             }
         }
 
-        MainActivity.checkOverlayPermission(this, resultLauncher)
+        // set all the apps name in list view
+        arrayAdapter = ArrayAdapter(
+            this@TimerPage,
+            android.R.layout.simple_list_item_multiple_choice,
+            apps.keys.toList()
+        )
+        listviewTimerPage.adapter = arrayAdapter
+        listviewTimerPage.choiceMode = ListView.CHOICE_MODE_MULTIPLE
+        listviewTimerPage.onItemClickListener = this
+
+        checkPermissions()
 
         binding.startBtn.setOnClickListener {
             // if overlay permission is not granted, cease the start button behavior.
-            if (!Settings.canDrawOverlays(this)) {
-                MainActivity.checkOverlayPermission(this, resultLauncher)
-                return@setOnClickListener
-            }
+            if (!checkPermissions()) return@setOnClickListener
 
             val hrs = binding.userInputHrs.text.toString()
             val mins = binding.userInputMins.text.toString()
@@ -183,6 +173,23 @@ class TimerPage : AppCompatActivity(), AdapterView.OnItemClickListener {
             }
         }
         viewModel.setUnproductive(newList)
+    }
+
+    private fun checkPermissions(): Boolean{
+        var allPermissionGranted = true
+
+        if (!Settings.canDrawOverlays(this)) {
+            MainActivity.checkOverlayPermission(this, resultLauncher)
+            allPermissionGranted = false
+        }
+        if (!checkUsageStatsPermission()) {
+            // Navigate the user to the permission settings
+            Intent(Settings.ACTION_USAGE_ACCESS_SETTINGS).apply {
+                startActivity(this)
+            }
+            allPermissionGranted = false
+        }
+        return allPermissionGranted
     }
 
     // The `PACKAGE_USAGE_STATS` permission is a not a runtime permission and hence cannot be

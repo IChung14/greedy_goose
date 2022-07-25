@@ -5,6 +5,7 @@ import android.app.usage.UsageStatsManager
 import android.content.Context
 import android.content.pm.ApplicationInfo
 import android.content.pm.PackageManager
+import com.example.greedygoose.R
 import com.example.greedygoose.data.SPLDAccessModel
 
 class TimerHelper(private var context: Context) {
@@ -14,7 +15,10 @@ class TimerHelper(private var context: Context) {
         context.getSystemService(Context.USAGE_STATS_SERVICE) as UsageStatsManager
     private var packageManager = context.packageManager
     private var nonSystemAppInfoMap = getNonSystemAppsList()
-    private val openApplicationsMap: MutableMap<String, String> = mutableMapOf()
+
+    // <packagelable, packagename>
+    private val openApplicationsMap: MutableMap<String, String> =
+        mutableMapOf(context.getString(R.string.app_name) to context.packageName)
 
     fun runGetAppService(): Boolean {
         val allApplications = getForegroundApp()
@@ -36,11 +40,6 @@ class TimerHelper(private var context: Context) {
         val usageEvent = UsageEvents.Event()
         while (usageEvents.hasNextEvent()) {
             usageEvents.getNextEvent(usageEvent)
-
-            if(usageEvent.packageName == "com.android.vending"){
-
-                println("comparing: ${usageEvent.packageName} : ${model.unproductive.value.toString()}")
-            }
 
             foregroundAppPackageName =
                 if (nonSystemAppInfoMap.containsKey(usageEvent.packageName)) {
