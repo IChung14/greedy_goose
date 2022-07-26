@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
 import com.example.greedygoose.databinding.EntertainmentBinding
-import android.app.AlertDialog
 import androidx.activity.result.contract.ActivityResultContracts.StartActivityForResult
 import androidx.appcompat.app.AppCompatActivity
 import com.example.greedygoose.foreground.FloatingService
