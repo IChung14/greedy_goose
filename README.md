@@ -6,4 +6,4 @@ Our project will revolve around Mr. Greedy Goose, a goose character that will co
 
 ## Wiki
 
-The [wiki](https://git.uwaterloo.ca/i4chung/greedy_goose/-/wikis/home) contains the usage of application along with descriptions about general development process.
+The [wiki](https://github.com/IChung14/greedy_goose/wiki) contains the usage of application along with descriptions about general development process.
