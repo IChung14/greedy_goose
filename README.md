@@ -8,4 +8,4 @@ This application is supported under Android operating system with:
 
 ## Wiki
 
-The [wiki](https://github.com/IChung14/greedy_goose/wiki) contains the usage of application along with descriptions about general development process.
+The [wiki](https://github.com/IChung14/greedy_goose/wiki) contains the usage of application along with project development report.
